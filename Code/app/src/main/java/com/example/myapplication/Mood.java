@@ -14,9 +14,9 @@ public class Mood {
     private State state;
     private String string;
     private String socialSituation;
-    private Image picture;
+    private int picture;
 
-    public Mood(Date date, Time time, Location location, State state, String string, String socialSituation, Image picture) {
+    public Mood(Date date, Time time, Location location, State state, String string, String socialSituation, int picture) {
         this.date = date;
         this.time = time;
         this.location = location;
@@ -74,11 +74,11 @@ public class Mood {
         this.socialSituation = socialSituation;
     }
 
-    public Image getPicture() {
+    public int getPicture() {
         return picture;
     }
 
-    public void setPicture(Image picture) {
+    public void setPicture(int picture) {
         this.picture = picture;
     }
 }

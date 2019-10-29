@@ -4,18 +4,18 @@ import android.graphics.Color;
 
 public class State {
 
-    private Color color;
+    private String color;
     private String emoticons;
 
-    public State(Color color, String emoticons){
+    public State(String color, String emoticons){
         this.color = color;
         this.emoticons = emoticons;
     }
-    public Color getColor() {
+    public String getColor() {
         return color;
     }
 
-    public void setColor(Color color) {
+    public void setColor(String color) {
         this.color = color;
     }
 
