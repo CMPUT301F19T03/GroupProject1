@@ -1,0 +1,4 @@
+#Wed Oct 30 10:38:02 MDT 2019
+base.0=/Users/Tim/Documents/GitHub/GroupProject1/Code/app/build/intermediates/dex/debug/mergeDexDebug/out/classes.dex
+path.0=classes.dex
+renamed.0=classes.dex
