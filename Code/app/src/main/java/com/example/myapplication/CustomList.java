@@ -21,6 +21,7 @@ import java.util.Date;
 public class CustomList extends ArrayAdapter<Mood> {
     private ArrayList<Mood> moods;
     private Context context;
+
     public CustomList(Context context,ArrayList<Mood> moods){
         super(context,0,moods);
         this.moods=moods;
@@ -36,8 +37,9 @@ public class CustomList extends ArrayAdapter<Mood> {
      */
     public View getView(int position, @Nullable View convertView, @NonNull ViewGroup
             parent) {
-// return super.getView(position, convertView, parent);
+
         View view = convertView;
+
         if(view == null){
             view = LayoutInflater.from(context).inflate(R.layout.content, parent,false);
         }

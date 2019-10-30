@@ -46,7 +46,9 @@
         android:layout_marginStart="40dp"
         android:layout_marginLeft="40dp"
         android:layout_marginTop="8dp"
+        android:layout_marginBottom="8dp"
         android:text="@string/delete"
+        app:layout_constraintBottom_toTopOf="@+id/mood_history"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/addButton" />
 
@@ -57,7 +59,9 @@
         android:layout_marginStart="24dp"
         android:layout_marginLeft="24dp"
         android:layout_marginTop="8dp"
+        android:layout_marginBottom="8dp"
         android:text="@string/filter"
+        app:layout_constraintBottom_toTopOf="@+id/mood_history"
         app:layout_constraintStart_toEndOf="@+id/deleteButton"
         app:layout_constraintTop_toBottomOf="@+id/editButton" />
 
@@ -68,15 +72,17 @@
         android:layout_marginStart="24dp"
         android:layout_marginLeft="24dp"
         android:layout_marginTop="8dp"
+        android:layout_marginBottom="8dp"
         android:text="@string/view"
+        app:layout_constraintBottom_toTopOf="@+id/mood_history"
         app:layout_constraintStart_toEndOf="@+id/filterButton"
         app:layout_constraintTop_toBottomOf="@+id/mapButton" />
 
 
     <ListView
         android:id="@+id/mood_history"
-        android:layout_width="408dp"
-        android:layout_height="473dp"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
         app:layout_constraintBottom_toTopOf="@+id/viewFollowersButton"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
