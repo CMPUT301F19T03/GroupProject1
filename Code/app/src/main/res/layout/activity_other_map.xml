@@ -7,12 +7,13 @@
     tools:context=".OtherMap">
 
     <Button
-        android:id="@+id/returnButton2"
+        android:id="@+id/returnButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
         android:layout_marginLeft="16dp"
         android:layout_marginTop="16dp"
+        android:onClick="ReturnButton"
         android:text="@string/return_to_mood_history"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
@@ -24,6 +25,7 @@
         android:layout_marginTop="16dp"
         android:layout_marginEnd="6dp"
         android:layout_marginRight="6dp"
+        android:onClick="UserButton"
         android:text="Yours"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
