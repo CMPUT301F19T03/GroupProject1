@@ -13,5 +13,8 @@ public class Edit extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_edit);
     }
-
+    public void ReturnButton(View view) {
+        Intent intent = new Intent(this, MoodHistory.class);
+        startActivity(intent);
+    }
 }
