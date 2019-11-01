@@ -20,7 +20,7 @@ public class Add extends AppCompatActivity {
 
     /**
      * This button returns the user to the Moodhistory view
-     * @param view 
+     * @param view is the context for this view
      */
     public void ReturnButton(View view) {
         Intent intent = new Intent(this, MoodHistory.class);

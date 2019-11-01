@@ -14,7 +14,7 @@
         <activity android:name=".Usermap" />
         <activity android:name=".FollowHistory" />
         <activity android:name=".Requests" />
-        <activity android:name=".View" />
+        <activity android:name=".ViewMood" />
         <activity android:name=".Edit" />
         <activity android:name=".Add" />
         <activity android:name=".Login" />
