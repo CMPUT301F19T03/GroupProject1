@@ -6,15 +6,21 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 
+import java.sql.Time;
+import java.util.Date;
+
 /**
  * This class is responsible for the mood history activity
  */
 public class MoodHistory extends AppCompatActivity {
+    Participant user;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_mood_history);
+        Intent intent = getIntent();
+        user = (Participant) intent.getSerializableExtra("User");
     }
 
     /**
@@ -47,6 +53,10 @@ public class MoodHistory extends AppCompatActivity {
      */
     public void viewButton(View view) {
         Intent intent = new Intent(this, ViewMood.class);
+        Date date = new Date();
+        Time time = new Time(16000);
+        Mood mood = new Mood(date,time,"Test1","Test2");
+        intent.putExtra("Mood",mood);
         startActivity(intent);
     }
     /**
