@@ -30,5 +30,7 @@ dependencies {
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.1.1'
     implementation 'com.google.firebase:firebase-firestore:21.2.1'
     implementation 'com.android.support:multidex:1.0.3'
+    androidTestImplementation 'com.jayway.android.robotium:robotium-solo:5.3.1'
 }
 apply plugin: 'com.google.gms.google-services'
+

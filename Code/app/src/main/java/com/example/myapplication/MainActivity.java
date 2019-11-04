@@ -31,6 +31,8 @@ public class MainActivity extends AppCompatActivity {
     CollectionReference users;
     Participant user;
     Activity main = this;
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -44,6 +46,9 @@ public class MainActivity extends AppCompatActivity {
             }
         });
         Login("Bob");
+
+        Intent intent= new Intent(this,Login.class);
+        startActivity(intent);
 
     }
 

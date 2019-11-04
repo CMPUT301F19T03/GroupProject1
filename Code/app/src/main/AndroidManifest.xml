@@ -10,6 +10,15 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <activity android:name=".MoodListActivity"></activity>
+        <activity android:name=".MoodHistory"></activity>
+        <activity android:name=".OtherMap" />
+        <activity android:name=".Usermap" />
+        <activity android:name=".FollowHistory" />
+        <activity android:name=".Requests" />
+        <activity android:name=".ViewMood" />
+        <activity android:name=".Edit" />
+        <activity android:name=".Add" />
+        <activity android:name=".Login" />
         <activity android:name=".MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
