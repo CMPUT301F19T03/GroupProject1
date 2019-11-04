@@ -81,4 +81,6 @@ public class Mood {
     public void setPicture(int picture) {
         this.picture = picture;
     }
+
+
 }
