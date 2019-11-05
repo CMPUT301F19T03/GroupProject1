@@ -1,6 +1,7 @@
 package com.example.myapplication;
 
 import android.location.Location;
+import android.media.Image;
 
 import java.io.Serializable;
 import java.sql.Time;
@@ -12,6 +13,24 @@ public class Mood implements Serializable {
     private Location location;
     private String reason;
     private String socialSituation;
+    private int emoticon;
+    private Image picture;
+
+    public int getEmoticon() {
+        return emoticon;
+    }
+
+    public void setEmoticon(int emoticon) {
+        this.emoticon = emoticon;
+    }
+
+    public Image getPicture() {
+        return picture;
+    }
+
+    public void setPicture(Image picture) {
+        this.picture = picture;
+    }
 
     public Mood(Date date, Time time, String reason, String socialSituation) {
         this.date = date;
