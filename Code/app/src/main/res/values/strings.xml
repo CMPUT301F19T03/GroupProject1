@@ -1,8 +1,18 @@
 <resources>
     <string name="app_name">My Application</string>
-    <string name="mood_tracker">Mood Tracker</string>
+    <string name="delete">Delete</string>
+    <string name="add">Add</string>
+    <string name="edit">Edit</string>
+    <string name="map">Map</string>
+    <string name="filter">Filter</string>
+    <string name="view_followers">View Followers</string>
+    <string name="follow">Follow</string>
+    <string name="requests">Requests</string>
+    <string name="view">View</string>
+    <string name="mood_tracker">Mood Tracker</string>    
     <string name="user">User:</string>
     <string name="confirm">confirm</string>
     <string name="username_here">username here</string>
     <string name="return_to_mood_history">Return to Mood History</string>
+
 </resources>
