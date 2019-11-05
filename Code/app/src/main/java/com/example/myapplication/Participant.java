@@ -1,5 +1,7 @@
 package com.example.myapplication;
 
+import android.util.Log;
+
 import java.io.Serializable;
 import java.util.ArrayList;
 
@@ -9,7 +11,7 @@ public class Participant implements Serializable {
     ArrayList<String> requests;
     ArrayList<String> following;
 
-    public Participant(){}
+    public Participant(){ }
 
     public Participant(String name) {
         this.name = name;

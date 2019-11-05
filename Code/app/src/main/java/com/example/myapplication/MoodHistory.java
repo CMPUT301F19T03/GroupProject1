@@ -1,24 +1,42 @@
 package com.example.myapplication;
 
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 
-import java.sql.Time;
-import java.util.Date;
+import com.google.firebase.firestore.CollectionReference;
+import com.google.firebase.firestore.EventListener;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.FirebaseFirestoreException;
+import com.google.firebase.firestore.QuerySnapshot;
+
+import java.util.Calendar;
 
 /**
  * This class is responsible for the mood history activity
  */
 public class MoodHistory extends AppCompatActivity {
+    String TAG = "myTag";
     Participant user;
+    FirebaseFirestore db;
+    CollectionReference users;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_mood_history);
+        db = FirebaseFirestore.getInstance();
+        users = db.collection("Users");
+        users.addSnapshotListener(new EventListener<QuerySnapshot>() {
+            @Override
+            public void onEvent(@Nullable QuerySnapshot queryDocumentSnapshots, @Nullable FirebaseFirestoreException e) {
+                Log.d(TAG, "Something changed");
+            }
+        });
         Intent intent = getIntent();
         user = (Participant) intent.getSerializableExtra("User");
     }
@@ -29,7 +47,7 @@ public class MoodHistory extends AppCompatActivity {
      */
     public void addButton(View view) {
         Intent intent = new Intent(this, Add.class);
-        startActivity(intent);
+        startActivityForResult(intent,1);
     }
     /**
      * this button sends the user to the edit activity
@@ -53,10 +71,9 @@ public class MoodHistory extends AppCompatActivity {
      */
     public void viewButton(View view) {
         Intent intent = new Intent(this, ViewMood.class);
-        Date date = new Date();
-        Date d = new Date(date.getYear(),date.getMonth(),date.getDay());
-        Time time = new Time(16000);
-        Mood mood = new Mood(d,time,"Test1","Test2",R.drawable.bad);
+//        Calendar c = Calendar.getInstance();
+//        Mood mood = new Mood(c.getTime(),"Test1","Test2",R.drawable.bad);
+        Mood mood = user.getMoodHistory().get(1);
         intent.putExtra("Mood",mood);
         startActivity(intent);
     }
@@ -75,5 +92,18 @@ public class MoodHistory extends AppCompatActivity {
     public void requestButton(View view) {
         Intent intent = new Intent(this, Requests.class);
         startActivity(intent);
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode==1) {
+            if (resultCode==RESULT_OK) {
+                Log.d(TAG,"Return from add");
+                Mood addmood = (Mood) data.getSerializableExtra("Addmood");
+                Log.d(TAG,addmood.getReason());
+                user.addMood(addmood);
+            }
+        }
     }
 }

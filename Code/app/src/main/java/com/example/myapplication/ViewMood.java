@@ -30,10 +30,11 @@ public class ViewMood extends AppCompatActivity {
         setContentView(R.layout.activity_view_mood);
         Intent intent = getIntent();
         currentMood = (Mood) intent.getSerializableExtra("Mood");
+
         date = findViewById(R.id.dateView);
-        date.setText(currentMood.getDate().toString());
+        date.setText(currentMood.getStringDate());
         time = findViewById(R.id.timeView);
-        time.setText(currentMood.getTime().toString());
+        time.setText(currentMood.getStringTime());
         reason = findViewById(R.id.reasonView);
         reason.setText(currentMood.getReason());
         social = findViewById(R.id.socialView);
