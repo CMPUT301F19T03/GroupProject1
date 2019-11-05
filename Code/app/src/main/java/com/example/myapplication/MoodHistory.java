@@ -54,8 +54,9 @@ public class MoodHistory extends AppCompatActivity {
     public void viewButton(View view) {
         Intent intent = new Intent(this, ViewMood.class);
         Date date = new Date();
+        Date d = new Date(date.getYear(),date.getMonth(),date.getDay());
         Time time = new Time(16000);
-        Mood mood = new Mood(date,time,"Test1","Test2");
+        Mood mood = new Mood(d,time,"Test1","Test2");
         intent.putExtra("Mood",mood);
         startActivity(intent);
     }
