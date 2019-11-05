@@ -4,9 +4,13 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
+import android.graphics.Color;
+import android.location.Location;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.widget.ArrayAdapter;
+import android.widget.ListView;
 
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.EventListener;
@@ -15,12 +19,19 @@ import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.firestore.QuerySnapshot;
 
 import java.util.Calendar;
+import java.sql.Time;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Date;
 
 /**
- * This class is responsible for the mood history activity
+ * This class is dedicated to the activity_mood_history view and will handle that view's needs
  */
 public class MoodHistory extends AppCompatActivity {
     String TAG = "myTag";
+    ListView moodHistory;
+    ArrayAdapter<Mood> moodArrayAdapter;
+    ArrayList<Mood> moodArrayList;
     Participant user;
     FirebaseFirestore db;
     CollectionReference users;
@@ -39,6 +50,7 @@ public class MoodHistory extends AppCompatActivity {
         });
         Intent intent = getIntent();
         user = (Participant) intent.getSerializableExtra("User");
+        //How to sort the array list:Collections.sort(moodArrayList, new MoodComparator());
     }
 
     /**

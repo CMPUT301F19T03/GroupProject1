@@ -4,10 +4,11 @@ import android.location.Location;
 import android.media.Image;
 
 import com.google.firebase.firestore.Exclude;
+import android.media.Image;
 
 import java.io.Serializable;
-import java.util.Calendar;
 import java.util.Date;
+import java.util.Calendar;
 
 public class Mood implements Serializable {
     private Date datetime;
@@ -16,6 +17,22 @@ public class Mood implements Serializable {
     private String socialSituation;
     private int emoticon;
     private Image picture;
+
+    public int getEmoticon() {
+        return emoticon;
+    }
+
+    public void setEmoticon(int emoticon) {
+        this.emoticon = emoticon;
+    }
+
+    public Image getPicture() {
+        return picture;
+    }
+
+    public void setPicture(Image picture) {
+        this.picture = picture;
+    }
 
     public Mood(){}
 
@@ -30,18 +47,7 @@ public class Mood implements Serializable {
         this.location = location;
         this.reason = reason;
         this.socialSituation = socialSituation;
-        this.emoticon = Emoticon;
-        this.picture = picture;
     }
-
-    public int getEmoticon() {
-        return emoticon;
-    }
-
-    public void setEmoticon(int emoticon) {
-        this.emoticon = emoticon;
-    }
-
     @Exclude
     public Date getDate() {
         Calendar cal = Calendar.getInstance();
@@ -51,12 +57,6 @@ public class Mood implements Serializable {
         cal.set(Calendar.SECOND, 0);
         cal.set(Calendar.MILLISECOND, 0);
         return cal.getTime();
-    }
-    @Exclude
-    public String getStringDate() {
-        Calendar c = Calendar.getInstance();
-        c.setTime(datetime);
-        return c.get(Calendar.YEAR)+"-"+c.get(Calendar.MONTH)+"-"+c.get(Calendar.DAY_OF_MONTH);
     }
     @Exclude
     public Date getTime() {
@@ -107,11 +107,5 @@ public class Mood implements Serializable {
         this.socialSituation = socialSituation;
     }
 
-    public Image getPicture() {
-        return picture;
-    }
 
-    public void setPicture(Image picture) {
-        this.picture = picture;
-    }
 }

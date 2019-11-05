@@ -9,7 +9,6 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".MoodListActivity"></activity>
         <activity android:name=".MoodHistory"></activity>
         <activity android:name=".OtherMap" />
         <activity android:name=".Usermap" />
@@ -27,5 +26,4 @@
             </intent-filter>
         </activity>
     </application>
-
 </manifest>
