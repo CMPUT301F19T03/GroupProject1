@@ -25,7 +25,6 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme" >
-        <activity android:name="com.example.myapplication.MoodListActivity" />
         <activity android:name="com.example.myapplication.MoodHistory" />
         <activity android:name="com.example.myapplication.OtherMap" />
         <activity android:name="com.example.myapplication.Usermap" />
