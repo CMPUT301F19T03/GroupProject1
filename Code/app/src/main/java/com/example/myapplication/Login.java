@@ -21,6 +21,8 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.firestore.QuerySnapshot;
 
+import java.sql.Time;
+import java.util.Date;
 import java.util.HashMap;
 
 public class Login extends AppCompatActivity {
@@ -64,6 +66,11 @@ public class Login extends AppCompatActivity {
                             if (queryDocumentSnapshots.isEmpty()) {
                                 HashMap<String, Object> data = new HashMap<>();
                                 user = new Participant(Rname);
+                                Date date = new Date();
+                                Date d = new Date(date.getYear(),date.getMonth(),date.getDay());
+                                Time time = new Time(16000);
+                                Mood mood = new Mood(d,time,"Test1","Test2",R.drawable.bad);
+                                user.addMood(mood);
                                 data.put("Participant", user);
                                 data.put("Username", Rname);
                                 users

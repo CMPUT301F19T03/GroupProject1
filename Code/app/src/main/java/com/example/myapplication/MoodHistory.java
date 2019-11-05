@@ -56,7 +56,7 @@ public class MoodHistory extends AppCompatActivity {
         Date date = new Date();
         Date d = new Date(date.getYear(),date.getMonth(),date.getDay());
         Time time = new Time(16000);
-        Mood mood = new Mood(d,time,"Test1","Test2");
+        Mood mood = new Mood(d,time,"Test1","Test2",R.drawable.bad);
         intent.putExtra("Mood",mood);
         startActivity(intent);
     }

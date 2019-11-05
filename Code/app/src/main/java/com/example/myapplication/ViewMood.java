@@ -36,12 +36,11 @@ public class ViewMood extends AppCompatActivity {
         time.setText(currentMood.getTime().toString());
         reason = findViewById(R.id.reasonView);
         reason.setText(currentMood.getReason());
-        Log.d("myTag",currentMood.getReason());
         social = findViewById(R.id.socialView);
         social.setText(currentMood.getSocialSituation());
         emote = findViewById(R.id.emoticonView);
+        emote.setImageResource(currentMood.getEmoticon());
         picture = findViewById(R.id.imageView2);
-
 
     }
     /**
