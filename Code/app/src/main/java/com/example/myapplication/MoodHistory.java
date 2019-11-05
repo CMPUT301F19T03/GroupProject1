@@ -9,6 +9,7 @@ import android.location.Location;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
@@ -19,7 +20,6 @@ import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.firestore.QuerySnapshot;
 
 import java.util.Calendar;
-import java.sql.Time;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
@@ -50,7 +50,18 @@ public class MoodHistory extends AppCompatActivity {
         });
         Intent intent = getIntent();
         user = (Participant) intent.getSerializableExtra("User");
-        //How to sort the array list:Collections.sort(moodArrayList, new MoodComparator());
+        moodArrayList = user.getMoodHistory();
+        //How to sort the array list:
+        Collections.sort(moodArrayList, new MoodComparator());
+        moodArrayAdapter = new ArrayAdapter<>(this,R.layout.content,moodArrayList);
+        moodHistory.setAdapter(moodArrayAdapter);
+        moodHistory.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+
+            }
+        });
+
     }
 
     /**
@@ -105,6 +116,8 @@ public class MoodHistory extends AppCompatActivity {
         Intent intent = new Intent(this, Requests.class);
         startActivity(intent);
     }
+
+
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {

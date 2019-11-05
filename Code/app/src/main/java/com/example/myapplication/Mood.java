@@ -18,21 +18,6 @@ public class Mood implements Serializable {
     private int emoticon;
     private Image picture;
 
-    public int getEmoticon() {
-        return emoticon;
-    }
-
-    public void setEmoticon(int emoticon) {
-        this.emoticon = emoticon;
-    }
-
-    public Image getPicture() {
-        return picture;
-    }
-
-    public void setPicture(Image picture) {
-        this.picture = picture;
-    }
 
     public Mood(){}
 
@@ -57,6 +42,16 @@ public class Mood implements Serializable {
         cal.set(Calendar.SECOND, 0);
         cal.set(Calendar.MILLISECOND, 0);
         return cal.getTime();
+    }
+    @Exclude
+    public String getStringDate() {
+        Calendar c = Calendar.getInstance();
+        c.setTime(this.datetime);
+        c.set(Calendar.HOUR_OF_DAY, 0);
+        c.set(Calendar.MINUTE, 0);
+        c.set(Calendar.SECOND, 0);
+        c.set(Calendar.MILLISECOND, 0);
+        return c.get(Calendar.YEAR)+"-"+c.get(Calendar.MONTH)+"-"+c.get(Calendar.DAY_OF_MONTH);
     }
     @Exclude
     public Date getTime() {
@@ -107,5 +102,20 @@ public class Mood implements Serializable {
         this.socialSituation = socialSituation;
     }
 
+    public int getEmoticon() {
+        return emoticon;
+    }
+
+    public void setEmoticon(int emoticon) {
+        this.emoticon = emoticon;
+    }
+
+    public Image getPicture() {
+        return picture;
+    }
+
+    public void setPicture(Image picture) {
+        this.picture = picture;
+    }
 
 }
