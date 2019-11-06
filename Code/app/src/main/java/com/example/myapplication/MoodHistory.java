@@ -1,5 +1,6 @@
 package com.example.myapplication;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -13,16 +14,19 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.CollectionReference;
+import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.firestore.QuerySnapshot;
 
-import java.util.Calendar;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Date;
+import java.util.HashMap;
 
 /**
  * This class is dedicated to the activity_mood_history view and will handle that view's needs
@@ -35,6 +39,7 @@ public class MoodHistory extends AppCompatActivity {
     Participant user;
     FirebaseFirestore db;
     CollectionReference users;
+    int selected = -1;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -46,19 +51,22 @@ public class MoodHistory extends AppCompatActivity {
             @Override
             public void onEvent(@Nullable QuerySnapshot queryDocumentSnapshots, @Nullable FirebaseFirestoreException e) {
                 Log.d(TAG, "Something changed");
+                if (queryDocumentSnapshots.getDocuments().size()>0) {
+                    user = queryDocumentSnapshots.getDocuments().get(0).get("Participant", Participant.class);
+                }
             }
         });
         Intent intent = getIntent();
         user = (Participant) intent.getSerializableExtra("User");
         moodArrayList = user.getMoodHistory();
-        //How to sort the array list:
-        Collections.sort(moodArrayList, new MoodComparator());
-        moodArrayAdapter = new ArrayAdapter<>(this,R.layout.content,moodArrayList);
+        moodArrayAdapter = new CustomList(this,moodArrayList);
+
+        moodHistory = findViewById(R.id.mood_history);
         moodHistory.setAdapter(moodArrayAdapter);
         moodHistory.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
-            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-
+            public void onItemClick(AdapterView<?> adapterView, View view, int pos, long id) {
+                selected = pos;
             }
         });
 
@@ -70,6 +78,7 @@ public class MoodHistory extends AppCompatActivity {
      */
     public void addButton(View view) {
         Intent intent = new Intent(this, Add.class);
+        intent.putExtra("moodList",moodArrayList);
         startActivityForResult(intent,1);
     }
     /**
@@ -93,12 +102,13 @@ public class MoodHistory extends AppCompatActivity {
      * @param view is the view context for this class
      */
     public void viewButton(View view) {
-        Intent intent = new Intent(this, ViewMood.class);
-//        Calendar c = Calendar.getInstance();
-//        Mood mood = new Mood(c.getTime(),"Test1","Test2",R.drawable.bad);
-        Mood mood = user.getMoodHistory().get(1);
-        intent.putExtra("Mood",mood);
-        startActivity(intent);
+        if (selected!=-1) {
+            Intent intent = new Intent(this, ViewMood.class);
+            intent.putExtra("pos", selected);
+            intent.putExtra("Mood",moodArrayList.get(selected));
+            selected = -1;
+            startActivity(intent);
+        }
     }
     /**
      * this button sends the user to the Followed mood history activity
@@ -125,9 +135,41 @@ public class MoodHistory extends AppCompatActivity {
         if (requestCode==1) {
             if (resultCode==RESULT_OK) {
                 Log.d(TAG,"Return from add");
-                Mood addmood = (Mood) data.getSerializableExtra("Addmood");
-                Log.d(TAG,addmood.getReason());
-                user.addMood(addmood);
+                moodArrayList = (ArrayList<Mood>) data.getSerializableExtra("Addmood");
+                //How to sort the array list:
+                Collections.sort(moodArrayList, new MoodComparator());
+                moodArrayAdapter = new CustomList(this,moodArrayList);
+                moodHistory.setAdapter(moodArrayAdapter);
+                user.setMoodHistory(moodArrayList);
+                final HashMap<String, Object> userUpdate = new HashMap<>();
+                userUpdate.put("Participant", user);
+                userUpdate.put("Username", user.getName());
+                users.whereEqualTo("Username",user.getName())
+                        .get()
+                        .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                            @Override
+                            public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                                if (task.isSuccessful()) {
+                                    QuerySnapshot queryDocumentSnapshots = task.getResult();
+                                    users.document(queryDocumentSnapshots.getDocuments().get(0).getId())
+                                            .delete()
+                                            .addOnSuccessListener(new OnSuccessListener<Void>() {
+                                                @Override
+                                                public void onSuccess(Void aVoid) {
+                                                    users.add(userUpdate)
+                                                            .addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
+                                                                @Override
+                                                                public void onSuccess(DocumentReference documentReference) {
+                                                                    Log.d(TAG,"Updated user");
+                                                                }
+                                                            });
+                                                }
+                                            });
+
+                                }
+                            }
+                        });
+
             }
         }
     }

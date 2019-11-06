@@ -5,10 +5,12 @@ import android.media.Image;
 
 import com.google.firebase.firestore.Exclude;
 import android.media.Image;
+import android.util.Log;
 
 import java.io.Serializable;
 import java.util.Date;
 import java.util.Calendar;
+import java.util.Locale;
 
 public class Mood implements Serializable {
     private Date datetime;
@@ -47,11 +49,7 @@ public class Mood implements Serializable {
     public String getStringDate() {
         Calendar c = Calendar.getInstance();
         c.setTime(this.datetime);
-        c.set(Calendar.HOUR_OF_DAY, 0);
-        c.set(Calendar.MINUTE, 0);
-        c.set(Calendar.SECOND, 0);
-        c.set(Calendar.MILLISECOND, 0);
-        return c.get(Calendar.YEAR)+"-"+c.get(Calendar.MONTH)+"-"+c.get(Calendar.DAY_OF_MONTH);
+        return String.format(Locale.CANADA,"%4d-%02d-%02d",c.get(Calendar.YEAR),(c.get(Calendar.MONTH)+1),c.get(Calendar.DAY_OF_MONTH));
     }
     @Exclude
     public Date getTime() {
@@ -66,12 +64,13 @@ public class Mood implements Serializable {
     public String getStringTime() {
         Calendar c = Calendar.getInstance();
         c.setTime(datetime);
-        return c.get(Calendar.HOUR_OF_DAY) + ":" + c.get(Calendar.MINUTE);
+        return String.format(Locale.CANADA,"%02d:%02d",c.get(Calendar.HOUR_OF_DAY),c.get(Calendar.MINUTE));
 
     }
 
     public void setDatetime(Date date) {
-        this.datetime = datetime;
+        Log.d("myTag","Setting datetime");
+        this.datetime = date;
     }
 
     public Date getDatetime() {
