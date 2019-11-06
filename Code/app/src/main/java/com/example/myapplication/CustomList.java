@@ -48,8 +48,8 @@ public class CustomList extends ArrayAdapter<Mood> {
         TextView time = view.findViewById(R.id.time_text);
         TextView date = view.findViewById(R.id.date_text);
         emoticon.setImageResource(mood.getEmoticon());
-        time.setText(mood.getTime().toString());
-        date.setText(mood.getDate().toString());
+        time.setText(mood.getStringTime());
+        date.setText(mood.getStringDate());
         return view;
     }
 }
