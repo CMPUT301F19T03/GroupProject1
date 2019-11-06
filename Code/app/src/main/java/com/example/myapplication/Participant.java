@@ -1,7 +1,10 @@
 package com.example.myapplication;
 
+import android.util.Log;
+
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Collections;
 
 public class Participant implements Serializable {
     String name;
@@ -9,7 +12,7 @@ public class Participant implements Serializable {
     ArrayList<String> requests;
     ArrayList<String> following;
 
-    public Participant(){}
+    public Participant(){ }
 
     public Participant(String name) {
         this.name = name;
@@ -20,6 +23,9 @@ public class Participant implements Serializable {
 
     public void addMood(Mood mood) {
         moodHistory.add(mood);
+        //How to sort the array list:
+        Collections.sort(moodHistory, new MoodComparator());
+
     }
     public void addRequest(String request) {
         requests.add(request);

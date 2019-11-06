@@ -30,18 +30,18 @@ public class ViewMood extends AppCompatActivity {
         setContentView(R.layout.activity_view_mood);
         Intent intent = getIntent();
         currentMood = (Mood) intent.getSerializableExtra("Mood");
+
         date = findViewById(R.id.dateView);
-        date.setText(currentMood.getDate().toString());
+        date.setText(currentMood.getStringDate());
         time = findViewById(R.id.timeView);
-        time.setText(currentMood.getTime().toString());
+        time.setText(currentMood.getStringTime());
         reason = findViewById(R.id.reasonView);
         reason.setText(currentMood.getReason());
-        Log.d("myTag",currentMood.getReason());
         social = findViewById(R.id.socialView);
         social.setText(currentMood.getSocialSituation());
         emote = findViewById(R.id.emoticonView);
+        emote.setImageResource(currentMood.getEmoticon());
         picture = findViewById(R.id.imageView2);
-
 
     }
     /**
