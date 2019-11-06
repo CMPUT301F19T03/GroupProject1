@@ -143,7 +143,6 @@ public class MoodHistory extends AppCompatActivity {
                 user.setMoodHistory(moodArrayList);
                 final HashMap<String, Object> userUpdate = new HashMap<>();
                 userUpdate.put("Participant", user);
-                userUpdate.put("Username", user.getName());
                 users.whereEqualTo("Username",user.getName())
                         .get()
                         .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
@@ -152,17 +151,11 @@ public class MoodHistory extends AppCompatActivity {
                                 if (task.isSuccessful()) {
                                     QuerySnapshot queryDocumentSnapshots = task.getResult();
                                     users.document(queryDocumentSnapshots.getDocuments().get(0).getId())
-                                            .delete()
+                                            .update("Participant",userUpdate)
                                             .addOnSuccessListener(new OnSuccessListener<Void>() {
                                                 @Override
                                                 public void onSuccess(Void aVoid) {
-                                                    users.add(userUpdate)
-                                                            .addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
-                                                                @Override
-                                                                public void onSuccess(DocumentReference documentReference) {
-                                                                    Log.d(TAG,"Updated user");
-                                                                }
-                                                            });
+                                                    Log.d(TAG,"Updated user");
                                                 }
                                             });
 
