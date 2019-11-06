@@ -72,6 +72,10 @@ public class Login extends AppCompatActivity {
                             if (queryDocumentSnapshots.isEmpty()) {
                                 HashMap<String, Object> data = new HashMap<>();
                                 user = new Participant(Rname);
+//                                Calendar c = Calendar.getInstance();
+//
+//                                Mood mood = new Mood(c.getTime(),"Test1","Test2",R.drawable.bad);
+//                                user.addMood(mood);
                                 data.put("Participant", user);
                                 data.put("Username", Rname);
                                 users
@@ -86,6 +90,7 @@ public class Login extends AppCompatActivity {
                                 Log.d("myTag","found existing user");
                                 user = queryDocumentSnapshots.getDocuments().get(0).get("Participant", Participant.class);
                             }
+                            Log.d(TAG,"Input name: "+Rname);
                             Log.d(TAG, "User: " + user.getName());
                             Intent intent = new Intent(main, MoodHistory.class);
                             intent.putExtra("User", user);

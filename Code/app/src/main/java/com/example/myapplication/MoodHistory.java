@@ -151,7 +151,7 @@ public class MoodHistory extends AppCompatActivity {
                                 if (task.isSuccessful()) {
                                     QuerySnapshot queryDocumentSnapshots = task.getResult();
                                     users.document(queryDocumentSnapshots.getDocuments().get(0).getId())
-                                            .update("Participant",userUpdate)
+                                            .update(userUpdate)
                                             .addOnSuccessListener(new OnSuccessListener<Void>() {
                                                 @Override
                                                 public void onSuccess(Void aVoid) {
