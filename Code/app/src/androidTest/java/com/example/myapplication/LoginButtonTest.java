@@ -14,9 +14,13 @@ import org.junit.runner.RunWith;
 import static junit.framework.TestCase.assertTrue;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+
+
+@RunWith(AndroidJUnit4.class)
 public class LoginButtonTest {
     private Solo solo;
-    ActivityTestRule<Login> rule =
+    @Rule
+    public ActivityTestRule<Login> rule =
             new ActivityTestRule<>(Login.class, true, true);
     @Before
     public void setUp() throws Exception{
@@ -28,13 +32,19 @@ public class LoginButtonTest {
     }
     @Test
     public void MoodViewTest(){
+
+        // Purely for navigational purposes
         solo.assertCurrentActivity("Wrong Activity", Login.class);
         solo.enterText((EditText) solo.getView(R.id.userText),"Tim");
         solo.clickOnButton("confirm");
         solo.clearEditText((EditText) solo.getView(R.id.userText));
-        assertTrue(solo.waitForText("View", 1, 2000));
+        solo.assertCurrentActivity("Wrong Activity 2", MoodHistory.class);
+
+        assertTrue(solo.waitForText("View",1,2000));
         solo.clickOnButton("View");
-        assertTrue(solo.waitForText("Test1",1,2000));
+        solo.assertCurrentActivity("Wrong Activity 3", ViewMood.class);
+        solo.goBack();
+        solo.assertCurrentActivity("Wrong Activity 2B", MoodHistory.class);
     }
     @After
     public void tearDown() throws Exception{
