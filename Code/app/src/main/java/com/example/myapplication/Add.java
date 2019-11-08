@@ -82,7 +82,6 @@ public class Add extends AppCompatActivity implements TimePickerDialog.OnTimeSet
             }
         });
         final EditText ReasonText = findViewById(R.id.addReasonText);
-//        final EditText SocialText = findViewById(R.id.addSocialText);
 
         locationToggle = findViewById(R.id.locationToggle);
         locationToggle.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
@@ -108,10 +107,11 @@ public class Add extends AppCompatActivity implements TimePickerDialog.OnTimeSet
                     Mood mood;
                     String reason = ReasonText.getText().toString();
                     String social = add_situation.getSelectedItem().toString();
+                    String emoticon = res.getResourceEntryName(emote);
                     if (locationToggle.isChecked()) {
-                        mood = new Mood(date, userLocation.latitude, userLocation.longitude, reason, social, emote);
+                        mood = new Mood(date, userLocation.latitude, userLocation.longitude, reason, social, emoticon);
                     } else {
-                        mood = new Mood(date, reason, social, emote);
+                        mood = new Mood(date, reason, social, emoticon);
                     }
                     moodList.add(mood);
                     Intent data = new Intent();

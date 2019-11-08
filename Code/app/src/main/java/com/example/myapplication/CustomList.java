@@ -51,8 +51,7 @@ public class CustomList extends ArrayAdapter<Mood> {
         ImageView emoticon = view.findViewById(R.id.emoticon_image);
         TextView time = view.findViewById(R.id.time_text);
         TextView date = view.findViewById(R.id.date_text);
-        Log.d("myTag","emote is: "+mood.getEmoticon());
-        emoticon.setImageResource(mood.getEmoticon());
+        emoticon.setImageResource(mood.getEmoteIcon());
         time.setText(mood.getStringTime());
         date.setText(mood.getStringDate());
         return view;

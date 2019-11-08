@@ -68,7 +68,7 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
         android:layout_marginLeft="16dp"
-        android:layout_marginTop="64dp"
+        android:layout_marginTop="56dp"
         android:text="MOOD:"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/dateView" />
@@ -133,11 +133,11 @@
         android:layout_marginLeft="128dp"
         android:layout_marginEnd="128dp"
         android:layout_marginRight="128dp"
-        android:layout_marginBottom="50dp"
         android:text="@string/confirm"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/spinner2" />
 
     <ToggleButton
         android:id="@+id/photoToggle"
@@ -157,7 +157,7 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="64dp"
         android:layout_marginLeft="64dp"
-        android:layout_marginTop="48dp"
+        android:layout_marginTop="20dp"
         android:text="Photo?"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/neutralButton" />
@@ -168,7 +168,7 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
         android:layout_marginLeft="16dp"
-        android:layout_marginTop="36dp"
+        android:layout_marginTop="24dp"
         android:text="Edit time?"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/returnButton" />
@@ -189,7 +189,7 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="64dp"
         android:layout_marginLeft="64dp"
-        android:layout_marginTop="64dp"
+        android:layout_marginTop="56dp"
         android:text="Reason:"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/locationView" />
@@ -198,9 +198,11 @@
         android:id="@+id/socialView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="24dp"
+        android:layout_marginTop="20dp"
         android:text="Social Situation:"
-        app:layout_constraintStart_toStartOf="@+id/reasonView"
+        android:textSize="18sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/reasonView" />
 
     <EditText
@@ -215,18 +217,6 @@
         app:layout_constraintBottom_toBottomOf="@+id/reasonView"
         app:layout_constraintStart_toEndOf="@+id/reasonView" />
 
-    <EditText
-        android:id="@+id/addSocialText"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
-        android:layout_marginLeft="16dp"
-        android:hint="Add social situation"
-        android:text=""
-        android:textSize="12sp"
-        app:layout_constraintBottom_toBottomOf="@+id/socialView"
-        app:layout_constraintStart_toEndOf="@+id/socialView" />
-
     <Button
         android:id="@+id/EditLocation"
         android:layout_width="wrap_content"
@@ -236,5 +226,15 @@
         android:text="Edit Location?"
         app:layout_constraintStart_toEndOf="@+id/editLocationToggle"
         app:layout_constraintTop_toBottomOf="@+id/photoToggle" />
+
+    <Spinner
+        android:id="@+id/spinner2"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="24dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/socialView" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
