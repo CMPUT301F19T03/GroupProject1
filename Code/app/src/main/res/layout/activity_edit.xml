@@ -120,7 +120,7 @@
         app:srcCompat="@drawable/good" />
 
     <ImageButton
-        android:id="@+id/bagButton"
+        android:id="@+id/ba3Button"
         android:layout_width="50dp"
         android:layout_height="50dp"
         android:layout_marginTop="32dp"
@@ -145,7 +145,7 @@
         android:layout_height="50dp"
         android:layout_marginTop="32dp"
         android:scaleType="centerCrop"
-        app:layout_constraintStart_toEndOf="@+id/bagButton"
+        app:layout_constraintStart_toEndOf="@+id/ba3Button"
         app:layout_constraintTop_toBottomOf="@+id/dateText"
         app:srcCompat="@drawable/worst" />
 
