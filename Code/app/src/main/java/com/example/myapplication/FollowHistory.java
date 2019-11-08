@@ -6,6 +6,11 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 
+/**
+ * Allows the user to see the moods of the people they are following
+ * Issues:
+ * Needs to be implemented at all
+ */
 public class FollowHistory extends AppCompatActivity {
 
     @Override

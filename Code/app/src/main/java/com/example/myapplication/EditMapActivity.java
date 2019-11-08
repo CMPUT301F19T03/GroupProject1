@@ -22,7 +22,10 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 
-
+/**
+ * This class is responsible for holding the map for Edit
+ * It draws the map and puts a marker on it where the user specifies
+ */
 public class EditMapActivity extends AppCompatActivity implements OnMapReadyCallback{
 
     private GoogleMap mMap;
@@ -32,30 +35,42 @@ public class EditMapActivity extends AppCompatActivity implements OnMapReadyCall
     private static final int PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION = 1;
     private boolean mLocationPermissionGranted;
 
+    /**
+     * This is called when the activity is created. It sets up initial values and then starts the map fragment
+     * @param savedInstanceState this is values saved by previous instances of the activity
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_edit_map);
+        // Get the location for the mood that is to be edited
         Intent intent = getIntent();
         latLng = new LatLng(intent.getDoubleExtra("Lat",0),intent.getDoubleExtra("long",0));
-
+        // Start the map fragment and go to onMapReady when it is done
         SupportMapFragment mapFrag = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.Editmap);
         mapFrag.getMapAsync(this);
     }
 
-
+    /**
+     * This is called when the mapFrag is finished constructing from onCreate
+     * It sets the onClickListeners and the mapUI settings
+     * @param googleMap this is the map that was created
+     */
     @Override
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
         getLocationPermission();
         if (mLocationPermissionGranted) {
             mMap.setMyLocationEnabled(true);
+            // Put the map over the user's position
             mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, 14.0f));
             mMap.setMapType(GoogleMap.MAP_TYPE_HYBRID);
             mMap.getUiSettings().setMapToolbarEnabled(false);
             mMap.getUiSettings().setZoomControlsEnabled(true);
+            // Put a marker on the position the user specified
             marker = mMap.addMarker(new MarkerOptions().position(latLng)
                         .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_AZURE)));
+            // When the user clicks on the map save that location and put a marker there
             mMap.setOnMapClickListener(new GoogleMap.OnMapClickListener() {
 
                 @Override
@@ -71,12 +86,14 @@ public class EditMapActivity extends AppCompatActivity implements OnMapReadyCall
                     //place marker where user just clicked
                     marker = mMap.addMarker(new MarkerOptions().position(point)
                             .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_AZURE)));
-
                 }
             });
         }
     }
-
+    /**
+     * If we have already been given permissions set the bool to true
+     * Otherwise request permissions from the user
+     */
     private void getLocationPermission() {
         if (ContextCompat.checkSelfPermission(this.getApplicationContext(),
                 Manifest.permission.ACCESS_FINE_LOCATION)
@@ -87,7 +104,13 @@ public class EditMapActivity extends AppCompatActivity implements OnMapReadyCall
                     PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION);
         }
     }
-
+    /**
+     * when the user decides if the app can access their current location
+     * either set the bool to true or exit the activity
+     * @param requestCode the request code sent in getLocationPermission
+     * @param permissions which permissions were requested
+     * @param grantResults array for which permissions were granted
+     */
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         mLocationPermissionGranted = false;
@@ -99,7 +122,11 @@ public class EditMapActivity extends AppCompatActivity implements OnMapReadyCall
             }
         }
     }
-
+    /**
+     * If the user clicks submit and they have a currently selected location, return them to the
+     * calling activity with the location
+     * @param view this is the view that was clicked
+     */
     public void SubmitLocation(View view) {
         if (latLng!=null) {
             Intent data = new Intent();
@@ -109,6 +136,10 @@ public class EditMapActivity extends AppCompatActivity implements OnMapReadyCall
             finish();
         }
     }
+    /**
+     * If the user clicks on cancel end the activity and tell the calling activity they cancelled
+     * @param view this is the view that was clicked
+     */
     public void CancelLocation(View view) {
         setResult(RESULT_CANCELED);
         finish();
