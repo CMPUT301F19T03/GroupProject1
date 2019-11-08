@@ -78,6 +78,7 @@
         android:layout_width="50dp"
         android:layout_height="50dp"
         android:layout_marginTop="24dp"
+        android:onClick="selectGreat"
         android:scaleType="centerCrop"
         app:layout_constraintStart_toEndOf="@+id/moodView"
         app:layout_constraintTop_toBottomOf="@+id/dateButton"
@@ -87,15 +88,17 @@
         android:id="@+id/goodButton"
         android:layout_width="50dp"
         android:layout_height="50dp"
+        android:onClick="selectGood"
         android:scaleType="centerCrop"
         app:layout_constraintStart_toEndOf="@+id/greatButton"
         app:layout_constraintTop_toTopOf="@+id/greatButton"
         app:srcCompat="@drawable/good" />
 
     <ImageButton
-        android:id="@+id/bagButton"
+        android:id="@+id/ba3Button"
         android:layout_width="50dp"
         android:layout_height="50dp"
+        android:onClick="selectBad"
         android:scaleType="centerCrop"
         app:layout_constraintStart_toEndOf="@+id/neutralButton"
         app:layout_constraintTop_toTopOf="@+id/neutralButton"
@@ -105,6 +108,7 @@
         android:id="@+id/neutralButton"
         android:layout_width="50dp"
         android:layout_height="50dp"
+        android:onClick="selectNeutral"
         android:scaleType="centerCrop"
         app:layout_constraintStart_toEndOf="@+id/goodButton"
         app:layout_constraintTop_toTopOf="@+id/goodButton"
@@ -114,9 +118,10 @@
         android:id="@+id/worstButton"
         android:layout_width="50dp"
         android:layout_height="50dp"
+        android:onClick="selectWorst"
         android:scaleType="centerCrop"
-        app:layout_constraintStart_toEndOf="@+id/bagButton"
-        app:layout_constraintTop_toTopOf="@+id/bagButton"
+        app:layout_constraintStart_toEndOf="@+id/ba3Button"
+        app:layout_constraintTop_toTopOf="@+id/ba3Button"
         app:srcCompat="@drawable/worst" />
 
     <Button
