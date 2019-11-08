@@ -56,7 +56,7 @@ public class Edit extends AppCompatActivity implements TimePickerDialog.OnTimeSe
         final Mood editMood = moodList.get(pos);
         cal = Calendar.getInstance();
         cal.setTime(editMood.getDatetime());
-        emote = editMood.getEmoticon();
+        emote = editMood.getEmoteIcon();
         reason = editMood.getReason();
         social = editMood.getSocialSituation();
         locationToggle = findViewById(R.id.editLocationToggle);
@@ -149,7 +149,7 @@ public class Edit extends AppCompatActivity implements TimePickerDialog.OnTimeSe
                     editMood.setDatetime(date);
                     editMood.setReason(reason);
                     editMood.setSocialSituation(social);
-                    editMood.setEmoticon(emote);
+                    editMood.setEmoteIcon(emote);
                     Intent data = new Intent();
                     data.putExtra("Addmood", moodList);
                     setResult(RESULT_OK, data);
