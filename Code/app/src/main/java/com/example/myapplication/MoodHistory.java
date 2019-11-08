@@ -86,8 +86,12 @@ public class MoodHistory extends AppCompatActivity {
      * @param view is the view context for this class
      */
     public void editButton(View view) {
-        Intent intent = new Intent(this, Edit.class);
-        startActivity(intent);
+        if (selected!=-1) {
+            Intent intent = new Intent(this, Edit.class);
+            intent.putExtra("moodList", moodArrayList);
+            intent.putExtra("pos", selected);
+            startActivityForResult(intent,1);
+        }
     }
     /**
      * this button sends the user to the usermap activity

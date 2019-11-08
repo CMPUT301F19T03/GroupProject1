@@ -3,11 +3,9 @@ package com.example.myapplication;
 import android.Manifest;
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.location.Location;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
@@ -18,18 +16,18 @@ import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.BitmapDescriptor;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 
 
-public class AddMapActivity extends AppCompatActivity implements OnMapReadyCallback{
+public class EditMapActivity extends AppCompatActivity implements OnMapReadyCallback{
 
     private GoogleMap mMap;
     private LatLng latLng;
     private Marker marker;
-    private boolean latlngExists;
 
     private static final int PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION = 1;
     private boolean mLocationPermissionGranted;
@@ -37,16 +35,11 @@ public class AddMapActivity extends AppCompatActivity implements OnMapReadyCallb
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_add_map);
+        setContentView(R.layout.activity_edit_map);
         Intent intent = getIntent();
-        if (intent.hasExtra("Lat")) {
-            latLng = new LatLng(intent.getDoubleExtra("Lat",0),intent.getDoubleExtra("long",0));
-            latlngExists = true;
-        } else {
-            latlngExists = false;
-        }
+        latLng = new LatLng(intent.getDoubleExtra("Lat",0),intent.getDoubleExtra("long",0));
 
-        SupportMapFragment mapFrag = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map);
+        SupportMapFragment mapFrag = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.Editmap);
         mapFrag.getMapAsync(this);
     }
 
@@ -57,14 +50,12 @@ public class AddMapActivity extends AppCompatActivity implements OnMapReadyCallb
         getLocationPermission();
         if (mLocationPermissionGranted) {
             mMap.setMyLocationEnabled(true);
-            if (latlngExists) {
-                mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, 14.0f));
-            } else {
-                mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(53.5232, -113.5263), 14.0f));
-            }
+            mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, 14.0f));
             mMap.setMapType(GoogleMap.MAP_TYPE_HYBRID);
             mMap.getUiSettings().setMapToolbarEnabled(false);
             mMap.getUiSettings().setZoomControlsEnabled(true);
+            marker = mMap.addMarker(new MarkerOptions().position(latLng)
+                        .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_AZURE)));
             mMap.setOnMapClickListener(new GoogleMap.OnMapClickListener() {
 
                 @Override
@@ -78,7 +69,7 @@ public class AddMapActivity extends AppCompatActivity implements OnMapReadyCallb
                     }
 
                     //place marker where user just clicked
-                    marker = mMap.addMarker(new MarkerOptions().position(point).title("Marker")
+                    marker = mMap.addMarker(new MarkerOptions().position(point)
                             .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_AZURE)));
 
                 }
