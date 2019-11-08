@@ -67,7 +67,7 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
         android:layout_marginLeft="16dp"
-        android:layout_marginTop="64dp"
+        android:layout_marginTop="56dp"
         android:text="MOOD:"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/dateView" />
@@ -136,7 +136,7 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/spinner1"  />
+        app:layout_constraintTop_toBottomOf="@+id/spinner1" />
 
     <ToggleButton
         android:id="@+id/photoToggle"
@@ -156,7 +156,7 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="64dp"
         android:layout_marginLeft="64dp"
-        android:layout_marginTop="48dp"
+        android:layout_marginTop="20dp"
         android:text="Photo?"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/neutralButton" />
@@ -167,7 +167,7 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
         android:layout_marginLeft="16dp"
-        android:layout_marginTop="36dp"
+        android:layout_marginTop="24dp"
         android:text="Select a time"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/returnButton" />
@@ -188,7 +188,7 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="64dp"
         android:layout_marginLeft="64dp"
-        android:layout_marginTop="64dp"
+        android:layout_marginTop="56dp"
         android:text="Reason:"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/locationView" />
@@ -197,8 +197,11 @@
         android:id="@+id/socialView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="24dp"
-        android:text="Social Situation:"
+        android:layout_marginStart="64dp"
+        android:layout_marginLeft="64dp"
+        android:layout_marginTop="20dp"
+        android:text="Social Situation"
+        android:textSize="18sp"
         app:layout_constraintStart_toStartOf="@+id/reasonView"
         app:layout_constraintTop_toBottomOf="@+id/reasonView" />
 
@@ -214,16 +217,14 @@
         app:layout_constraintBottom_toBottomOf="@+id/reasonView"
         app:layout_constraintStart_toEndOf="@+id/reasonView" />
 
-    <EditText
-        android:id="@+id/addSocialText"
-        android:layout_width="wrap_content"
+    <Spinner
+        android:id="@+id/spinner1"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
-        android:layout_marginLeft="16dp"
-        android:hint="Add social situation"
-        android:text=""
-        android:textSize="12sp"
-        app:layout_constraintBottom_toBottomOf="@+id/socialView"
-        app:layout_constraintStart_toEndOf="@+id/socialView" />
+        android:layout_marginTop="24dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/socialView" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

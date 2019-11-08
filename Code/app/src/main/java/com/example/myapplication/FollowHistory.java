@@ -14,7 +14,6 @@ public class FollowHistory extends AppCompatActivity {
         setContentView(R.layout.activity_follow_history);
     }
     public void ReturnButton(View view) {
-        Intent intent = new Intent(this, MoodHistory.class);
-        startActivity(intent);
+        finish();
     }
 }
