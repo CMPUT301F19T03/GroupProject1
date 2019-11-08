@@ -21,8 +21,8 @@ public class OtherMap extends AppCompatActivity {
      * @param view is the context for this view
      */
     public void ReturnButton(View view) {
-        Intent intent = new Intent(this, MoodHistory.class);
-        startActivity(intent);
+        setResult(RESULT_OK);
+        finish();
     }
 
     /**
@@ -30,7 +30,13 @@ public class OtherMap extends AppCompatActivity {
      * @param view is the view context for this class
      */
     public void UserButton(View view) {
-        Intent intent = new Intent(this, Usermap.class);
-        startActivity(intent);
+        setResult(RESULT_CANCELED);
+        finish();
+    }
+
+    @Override
+    public void onBackPressed() {
+        setResult(RESULT_CANCELED);
+        finish();
     }
 }

@@ -1,5 +1,6 @@
 package com.example.myapplication;
 
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.DialogFragment;
 
@@ -7,13 +8,19 @@ import android.app.DatePickerDialog;
 import android.app.TimePickerDialog;
 import android.content.Intent;
 import android.content.res.Resources;
+import android.location.Location;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.CompoundButton;
 import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.TimePicker;
+import android.widget.ToggleButton;
+
+import com.google.android.gms.maps.model.LatLng;
 
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -27,15 +34,17 @@ public class Add extends AppCompatActivity implements TimePickerDialog.OnTimeSet
     Calendar cal;
     TextView timeText;
     TextView dateText;
+    ToggleButton locationToggle;
     String dateString;
     String timeString;
     Resources res;
+    LatLng userLocation = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add);
-        Intent intent = getIntent();
+        final Intent intent = getIntent();
         final ArrayList<Mood> moodList = (ArrayList<Mood>) intent.getSerializableExtra("moodList");
         timeText = findViewById(R.id.timeView);
         dateText = findViewById(R.id.dateView);
@@ -70,21 +79,42 @@ public class Add extends AppCompatActivity implements TimePickerDialog.OnTimeSet
         final EditText SocialText = findViewById(R.id.addSocialText);
         final int emote = R.drawable.great;
 
+        locationToggle = findViewById(R.id.locationToggle);
+        locationToggle.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                if (isChecked) {
+                    // The location is enabled
+                    Intent mapIntent = new Intent(Add.this,AddMapActivity.class);
+                    startActivityForResult(mapIntent,1);
+
+                } else {
+                    // The location is disabled
+                    userLocation = null;
+                }
+            }
+        });
+
         final Button confirm = findViewById(R.id.ConfirmAdd);
         confirm.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if (!ReasonText.getText().toString().isEmpty() && !SocialText.getText().toString().isEmpty()) {
-                    Date date = cal.getTime();
-                    Mood mood = new Mood(date,ReasonText.getText().toString(),SocialText.getText().toString(),emote);
-                    moodList.add(mood);
-                    Intent data = new Intent();
-                    data.putExtra("Addmood",moodList);
-                    setResult(RESULT_OK,data);
-                    finish();
+                Date date = cal.getTime();
+                Mood mood;
+                String reason = ReasonText.getText().toString();
+                String social = SocialText.getText().toString();
+                if (locationToggle.isChecked()) {
+                    mood = new Mood(date,userLocation.latitude,userLocation.longitude,reason,social,emote);
+                } else {
+                    mood = new Mood(date, reason, social, emote);
                 }
+                moodList.add(mood);
+                Intent data = new Intent();
+                data.putExtra("Addmood",moodList);
+                setResult(RESULT_OK,data);
+                finish();
             }
         });
+
 
     }
 
@@ -112,5 +142,18 @@ public class Add extends AppCompatActivity implements TimePickerDialog.OnTimeSet
         cal.set(Calendar.DAY_OF_MONTH,day);
         dateString = String.format(res.getString(R.string.DateString),cal.get(Calendar.YEAR),(cal.get(Calendar.MONTH)+1),cal.get(Calendar.DAY_OF_MONTH));
         dateText.setText(dateString);
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode==1) {
+            if (resultCode==RESULT_CANCELED) {
+                locationToggle.setChecked(false);
+            } else if (resultCode==RESULT_OK) {
+                userLocation = data.getExtras().getParcelable("location");
+                Log.d("myTag","getlat: "+userLocation.latitude);
+            }
+        }
     }
 }

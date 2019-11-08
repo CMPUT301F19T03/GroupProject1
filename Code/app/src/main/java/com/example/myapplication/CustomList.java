@@ -12,6 +12,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 
 /**
@@ -37,6 +38,8 @@ public class CustomList extends ArrayAdapter<Mood> {
      */
     public View getView(int position, @Nullable View convertView, @NonNull ViewGroup
             parent) {
+        //Sort the array whenever it needs to be drawn
+        Collections.sort(moods, new MoodComparator());
 
         View view = convertView;
 
