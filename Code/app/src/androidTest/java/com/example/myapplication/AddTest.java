@@ -64,7 +64,7 @@ public class AddTest {
         solo.assertCurrentActivity("Wrong Activity", MoodHistory.class);
         solo.clickOnButton("Add");
         solo.assertCurrentActivity("Wrong Activity", Add.class);
-        solo.clickOnImageButton(5);
+        solo.clickOnImageButton(2);
         solo.enterText((EditText) solo.getView(R.id.addReasonText), "test 2");
 
         solo.clickOnButton("confirm");
