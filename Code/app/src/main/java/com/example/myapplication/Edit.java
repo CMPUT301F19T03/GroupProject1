@@ -11,10 +11,12 @@ import android.content.res.Resources;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.CompoundButton;
 import android.widget.DatePicker;
 import android.widget.EditText;
+import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.TimePicker;
 import android.widget.ToggleButton;
@@ -40,9 +42,9 @@ public class Edit extends AppCompatActivity implements TimePickerDialog.OnTimeSe
     Integer emote;
     String reason;
     String social;
+    Spinner edit_situation;
 
     EditText ReasonText;
-    EditText SocialText;
 
 
     @Override
@@ -59,6 +61,12 @@ public class Edit extends AppCompatActivity implements TimePickerDialog.OnTimeSe
         emote = editMood.getEmoteIcon();
         reason = editMood.getReason();
         social = editMood.getSocialSituation();
+
+        edit_situation = findViewById(R.id.spinner2);
+        ArrayAdapter<String> myadapter = new ArrayAdapter<String>(Edit.this,
+                android.R.layout.simple_expandable_list_item_1,getResources().getStringArray(R.array.SocialSituations));
+        myadapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        edit_situation.setAdapter(myadapter);
         locationToggle = findViewById(R.id.editLocationToggle);
         final Button locationButton = findViewById(R.id.EditLocation);
 
@@ -73,8 +81,11 @@ public class Edit extends AppCompatActivity implements TimePickerDialog.OnTimeSe
 
         ReasonText = findViewById(R.id.addReasonText);
         ReasonText.setText(reason);
-        SocialText = findViewById(R.id.addSocialText);
-        SocialText.setText(social);
+        if (!social.isEmpty()){
+            int spinnerpos = myadapter.getPosition(social);
+            edit_situation.setSelection(spinnerpos);
+        }
+
 
         timeText = findViewById(R.id.timeView);
         dateText = findViewById(R.id.dateView);
@@ -135,7 +146,7 @@ public class Edit extends AppCompatActivity implements TimePickerDialog.OnTimeSe
                 if (emote!=-1) {
                     Date date = cal.getTime();
                     String reason = ReasonText.getText().toString();
-                    String social = SocialText.getText().toString();
+                    String social = edit_situation.getSelectedItem().toString();
                     if (locationToggle.isChecked()) {
                         //Include the location
                         editMood.setLatitude(userLocation.latitude);

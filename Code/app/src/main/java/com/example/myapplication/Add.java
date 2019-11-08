@@ -11,10 +11,12 @@ import android.content.res.Resources;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.CompoundButton;
 import android.widget.DatePicker;
 import android.widget.EditText;
+import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.TimePicker;
 import android.widget.ToggleButton;
@@ -39,6 +41,7 @@ public class Add extends AppCompatActivity implements TimePickerDialog.OnTimeSet
     Resources res;
     LatLng userLocation = null;
     Integer emote;
+    Spinner add_situation;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -55,6 +58,11 @@ public class Add extends AppCompatActivity implements TimePickerDialog.OnTimeSet
         dateString = String.format(res.getString(R.string.DateString),cal.get(Calendar.YEAR),(cal.get(Calendar.MONTH)+1),cal.get(Calendar.DAY_OF_MONTH));
         dateText.setText(dateString);
         emote = -1;
+        add_situation = findViewById(R.id.spinner1);
+        ArrayAdapter<String> myadapter = new ArrayAdapter<String>(Add.this,
+                android.R.layout.simple_expandable_list_item_1,getResources().getStringArray(R.array.SocialSituations));
+        myadapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        add_situation.setAdapter(myadapter);
 
         Button timePick = findViewById(R.id.timeButton);
         timePick.setOnClickListener(new View.OnClickListener() {
@@ -74,8 +82,6 @@ public class Add extends AppCompatActivity implements TimePickerDialog.OnTimeSet
             }
         });
         final EditText ReasonText = findViewById(R.id.addReasonText);
-        final EditText SocialText = findViewById(R.id.addSocialText);
-
 
         locationToggle = findViewById(R.id.locationToggle);
         locationToggle.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
@@ -100,7 +106,7 @@ public class Add extends AppCompatActivity implements TimePickerDialog.OnTimeSet
                     Date date = cal.getTime();
                     Mood mood;
                     String reason = ReasonText.getText().toString();
-                    String social = SocialText.getText().toString();
+                    String social = add_situation.getSelectedItem().toString();
                     String emoticon = res.getResourceEntryName(emote);
                     if (locationToggle.isChecked()) {
                         mood = new Mood(date, userLocation.latitude, userLocation.longitude, reason, social, emoticon);
@@ -113,6 +119,7 @@ public class Add extends AppCompatActivity implements TimePickerDialog.OnTimeSet
                     setResult(RESULT_OK, data);
                     finish();
                 }
+
             }
         });
 

@@ -56,6 +56,11 @@ public class MoodHistory extends AppCompatActivity {
                 }
             }
         });
+        Log.d(TAG,"bad: "+R.drawable.bad);
+        Log.d(TAG,"good: "+R.drawable.good);
+        Log.d(TAG,"great: "+R.drawable.great);
+        Log.d(TAG,"neutral: "+R.drawable.neutral);
+        Log.d(TAG,"worst: "+R.drawable.worst);
         Intent intent = getIntent();
         user = (Participant) intent.getSerializableExtra("User");
         moodArrayList = user.getMoodHistory();
