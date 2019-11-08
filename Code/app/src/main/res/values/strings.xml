@@ -16,5 +16,11 @@
     <string name="return_to_mood_history">Return to Mood History</string>
     <string name="DateString">Date: %1$4d-%2$02d-%3$02d</string>
     <string name="TimeString">Time: %1$02d:%2$02d</string>
+    <string-array name="SocialSituation">
+        <item> ALONE </item>
+        <item> WITH SOMEONE </item>
+        <item> WITH MORE THAN 2 PEOPLE </item>
+        <item> WITH A CROWD </item>
+    </string-array>
 
 </resources>

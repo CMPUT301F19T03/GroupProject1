@@ -192,8 +192,11 @@
         android:id="@+id/socialView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="24dp"
-        android:text="Social Situation:"
+        android:layout_marginStart="64dp"
+        android:layout_marginLeft="64dp"
+        android:layout_marginTop="28dp"
+        android:text="Social Situation"
+        android:textSize="18sp"
         app:layout_constraintStart_toStartOf="@+id/reasonView"
         app:layout_constraintTop_toBottomOf="@+id/reasonView" />
 
@@ -209,16 +212,16 @@
         app:layout_constraintBottom_toBottomOf="@+id/reasonView"
         app:layout_constraintStart_toEndOf="@+id/reasonView" />
 
-    <EditText
-        android:id="@+id/addSocialText"
-        android:layout_width="wrap_content"
+    <Spinner
+        android:id="@+id/spinner1"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
-        android:layout_marginLeft="16dp"
-        android:hint="Add social situation"
-        android:text=""
-        android:textSize="12sp"
-        app:layout_constraintBottom_toBottomOf="@+id/socialView"
-        app:layout_constraintStart_toEndOf="@+id/socialView" />
+        android:layout_marginTop="46dp"
+        android:layout_marginBottom="50dp"
+        app:layout_constraintBottom_toTopOf="@+id/ConfirmAdd"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/socialView" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
