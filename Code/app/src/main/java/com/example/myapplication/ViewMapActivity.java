@@ -24,12 +24,9 @@ import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 
 
-public class AddMapActivity extends AppCompatActivity implements OnMapReadyCallback{
+public class ViewMapActivity extends AppCompatActivity implements OnMapReadyCallback{
 
-    private GoogleMap mMap;
     private LatLng latLng;
-    private Marker marker;
-    private boolean latlngExists;
 
     private static final int PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION = 1;
     private boolean mLocationPermissionGranted;
@@ -37,52 +34,28 @@ public class AddMapActivity extends AppCompatActivity implements OnMapReadyCallb
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_add_map);
+        setContentView(R.layout.activity_view_map);
         Intent intent = getIntent();
-        if (intent.hasExtra("Lat")) {
-            latLng = new LatLng(intent.getDoubleExtra("Lat",0),intent.getDoubleExtra("long",0));
-            latlngExists = true;
-        } else {
-            latlngExists = false;
-        }
+        latLng = new LatLng(intent.getDoubleExtra("Lat",0),intent.getDoubleExtra("Long",0));
 
-        SupportMapFragment mapFrag = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map);
+        SupportMapFragment mapFrag = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.Viewmap);
         mapFrag.getMapAsync(this);
     }
 
 
     @Override
     public void onMapReady(GoogleMap googleMap) {
-        mMap = googleMap;
         getLocationPermission();
         if (mLocationPermissionGranted) {
-            mMap.setMyLocationEnabled(true);
-            if (latlngExists) {
-                mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, 14.0f));
-            } else {
-                mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(53.5232, -113.5263), 14.0f));
-            }
-            mMap.setMapType(GoogleMap.MAP_TYPE_HYBRID);
-            mMap.getUiSettings().setMapToolbarEnabled(false);
-            mMap.getUiSettings().setZoomControlsEnabled(true);
-            mMap.setOnMapClickListener(new GoogleMap.OnMapClickListener() {
+            googleMap.setMyLocationEnabled(true);
+            googleMap.moveCamera( CameraUpdateFactory.newLatLngZoom(latLng , 16.0f) );
 
-                @Override
-                public void onMapClick(LatLng point) {
-                    //save current location
-                    latLng = point;
+            googleMap.setMapType(GoogleMap.MAP_TYPE_HYBRID);
+            googleMap.getUiSettings().setMapToolbarEnabled(false);
+            googleMap.getUiSettings().setZoomControlsEnabled(true);
+            Marker marker = googleMap.addMarker(new MarkerOptions().position(latLng).title("Marker")
+                    .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_AZURE)));
 
-                    //remove previously placed Marker
-                    if (marker != null) {
-                        marker.remove();
-                    }
-
-                    //place marker where user just clicked
-                    marker = mMap.addMarker(new MarkerOptions().position(point).title("Marker")
-                            .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_AZURE)));
-
-                }
-            });
         }
     }
 
@@ -109,17 +82,7 @@ public class AddMapActivity extends AppCompatActivity implements OnMapReadyCallb
         }
     }
 
-    public void SubmitLocation(View view) {
-        if (latLng!=null) {
-            Intent data = new Intent();
-            Log.d("myTag","sendlat: "+latLng.latitude);
-            data.putExtra("location",latLng);
-            setResult(RESULT_OK,data);
-            finish();
-        }
-    }
-    public void CancelLocation(View view) {
-        setResult(RESULT_CANCELED);
+    public void BackButton(View view) {
         finish();
     }
 }

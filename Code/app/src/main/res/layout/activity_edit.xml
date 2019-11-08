@@ -7,15 +7,15 @@
     tools:context=".Edit">
 
     <ToggleButton
-        android:id="@+id/locationToggle"
+        android:id="@+id/editLocationToggle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="132dp"
+        android:checked="true"
         android:text="ToggleButton"
         android:textOff="No"
         android:textOn="Yes"
         app:layout_constraintStart_toEndOf="@+id/locationView"
-        app:layout_constraintTop_toBottomOf="@+id/neutralButton" />
+        app:layout_constraintTop_toTopOf="@+id/locationView" />
 
     <TextView
         android:id="@+id/locationView"
@@ -23,10 +23,10 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="56dp"
         android:layout_marginLeft="56dp"
-        android:layout_marginTop="148dp"
+        android:layout_marginTop="32dp"
         android:text="Location?"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/neutralButton" />
+        app:layout_constraintTop_toBottomOf="@+id/photoView" />
 
     <Button
         android:id="@+id/returnButton"
@@ -46,9 +46,9 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
         android:layout_marginLeft="16dp"
-        android:layout_marginTop="64dp"
-        android:text="TIME:"
-        app:layout_constraintStart_toStartOf="parent"
+        android:layout_marginTop="52dp"
+        android:text=""
+        app:layout_constraintStart_toEndOf="@+id/timeButton"
         app:layout_constraintTop_toBottomOf="@+id/returnButton" />
 
     <TextView
@@ -57,9 +57,9 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
         android:layout_marginLeft="16dp"
-        android:layout_marginTop="16dp"
-        android:text="DATE:"
-        app:layout_constraintStart_toStartOf="parent"
+        android:layout_marginTop="24dp"
+        android:text=""
+        app:layout_constraintStart_toEndOf="@+id/dateButton"
         app:layout_constraintTop_toBottomOf="@+id/timeView" />
 
     <TextView
@@ -73,84 +73,60 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/dateView" />
 
-    <EditText
-        android:id="@+id/dateText"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="13dp"
-        android:layout_marginLeft="13dp"
-        android:ems="10"
-        android:hint="YYYY/MM/DD"
-        android:inputType="textPersonName"
-        app:layout_constraintStart_toEndOf="@+id/dateView"
-        app:layout_constraintTop_toBottomOf="@+id/timeText" />
-
-    <EditText
-        android:id="@+id/timeText"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
-        android:layout_marginLeft="16dp"
-        android:layout_marginTop="44dp"
-        android:ems="10"
-        android:hint="HOUR:MINUTE"
-        android:inputType="textPersonName"
-        app:layout_constraintStart_toEndOf="@+id/timeView"
-        app:layout_constraintTop_toBottomOf="@+id/returnButton" />
-
     <ImageButton
         android:id="@+id/greatButton"
         style="@style/Widget.AppCompat.ImageButton"
         android:layout_width="50dp"
         android:layout_height="50dp"
-        android:layout_marginTop="32dp"
+        android:layout_marginTop="24dp"
+        android:onClick="selectGreat"
         android:scaleType="centerCrop"
         app:layout_constraintStart_toEndOf="@+id/moodView"
-        app:layout_constraintTop_toBottomOf="@+id/dateText"
+        app:layout_constraintTop_toBottomOf="@+id/dateButton"
         app:srcCompat="@drawable/great" />
 
     <ImageButton
         android:id="@+id/goodButton"
         android:layout_width="50dp"
         android:layout_height="50dp"
-        android:layout_marginTop="32dp"
+        android:onClick="selectGood"
         android:scaleType="centerCrop"
         app:layout_constraintStart_toEndOf="@+id/greatButton"
-        app:layout_constraintTop_toBottomOf="@+id/dateText"
+        app:layout_constraintTop_toTopOf="@+id/greatButton"
         app:srcCompat="@drawable/good" />
 
     <ImageButton
         android:id="@+id/ba3Button"
         android:layout_width="50dp"
         android:layout_height="50dp"
-        android:layout_marginTop="32dp"
+        android:onClick="selectBad"
         android:scaleType="centerCrop"
         app:layout_constraintStart_toEndOf="@+id/neutralButton"
-        app:layout_constraintTop_toBottomOf="@+id/dateText"
+        app:layout_constraintTop_toTopOf="@+id/neutralButton"
         app:srcCompat="@drawable/bad" />
 
     <ImageButton
         android:id="@+id/neutralButton"
         android:layout_width="50dp"
         android:layout_height="50dp"
-        android:layout_marginTop="32dp"
+        android:onClick="selectNeutral"
         android:scaleType="centerCrop"
         app:layout_constraintStart_toEndOf="@+id/goodButton"
-        app:layout_constraintTop_toBottomOf="@+id/dateText"
+        app:layout_constraintTop_toTopOf="@+id/goodButton"
         app:srcCompat="@drawable/neutral" />
 
     <ImageButton
         android:id="@+id/worstButton"
         android:layout_width="50dp"
         android:layout_height="50dp"
-        android:layout_marginTop="32dp"
+        android:onClick="selectWorst"
         android:scaleType="centerCrop"
         app:layout_constraintStart_toEndOf="@+id/ba3Button"
-        app:layout_constraintTop_toBottomOf="@+id/dateText"
+        app:layout_constraintTop_toTopOf="@+id/ba3Button"
         app:srcCompat="@drawable/worst" />
 
     <Button
-        android:id="@+id/confirmButton"
+        android:id="@+id/ConfirmEdit"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="128dp"
@@ -169,12 +145,11 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="9dp"
         android:layout_marginLeft="9dp"
-        android:layout_marginTop="84dp"
         android:text="ToggleButton"
         android:textOff="No"
         android:textOn="Yes"
         app:layout_constraintStart_toEndOf="@+id/photoView"
-        app:layout_constraintTop_toBottomOf="@+id/neutralButton" />
+        app:layout_constraintTop_toTopOf="@+id/photoView" />
 
     <TextView
         android:id="@+id/photoView"
@@ -182,9 +157,84 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="64dp"
         android:layout_marginLeft="64dp"
-        android:layout_marginTop="104dp"
+        android:layout_marginTop="48dp"
         android:text="Photo?"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/neutralButton" />
+
+    <Button
+        android:id="@+id/timeButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginLeft="16dp"
+        android:layout_marginTop="36dp"
+        android:text="Edit time?"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/returnButton" />
+
+    <Button
+        android:id="@+id/dateButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginLeft="16dp"
+        android:text="Edit date?"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/timeButton" />
+
+    <TextView
+        android:id="@+id/reasonView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="64dp"
+        android:layout_marginLeft="64dp"
+        android:layout_marginTop="64dp"
+        android:text="Reason:"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/locationView" />
+
+    <TextView
+        android:id="@+id/socialView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="24dp"
+        android:text="Social Situation:"
+        app:layout_constraintStart_toStartOf="@+id/reasonView"
+        app:layout_constraintTop_toBottomOf="@+id/reasonView" />
+
+    <EditText
+        android:id="@+id/addReasonText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginLeft="16dp"
+        android:hint="Add reason"
+        android:text=""
+        android:textSize="12sp"
+        app:layout_constraintBottom_toBottomOf="@+id/reasonView"
+        app:layout_constraintStart_toEndOf="@+id/reasonView" />
+
+    <EditText
+        android:id="@+id/addSocialText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginLeft="16dp"
+        android:hint="Add social situation"
+        android:text=""
+        android:textSize="12sp"
+        app:layout_constraintBottom_toBottomOf="@+id/socialView"
+        app:layout_constraintStart_toEndOf="@+id/socialView" />
+
+    <Button
+        android:id="@+id/EditLocation"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginLeft="16dp"
+        android:text="Edit Location?"
+        app:layout_constraintStart_toEndOf="@+id/editLocationToggle"
+        app:layout_constraintTop_toBottomOf="@+id/photoToggle" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
