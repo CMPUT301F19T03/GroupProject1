@@ -10,6 +10,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
+import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -51,7 +52,11 @@ public class Login extends AppCompatActivity {
 
     public void loginButton(View view) {
         String name = ((EditText) findViewById(R.id.userText)).getText().toString();
-        Login(name);
+        if (name.isEmpty()) {
+            Toast.makeText(this,"Username can't be empty",Toast.LENGTH_SHORT).show();
+        } else {
+            Login(name);
+        }
 
     }
 
@@ -88,6 +93,8 @@ public class Login extends AppCompatActivity {
                             }
                             Log.d(TAG,"Input name: "+Rname);
                             Log.d(TAG, "User: " + user.getName());
+                            EditText nameText = findViewById(R.id.userText);
+                            nameText.setText("");
                             Intent intent = new Intent(main, MoodHistory.class);
                             intent.putExtra("User", user);
                             startActivity(intent);
