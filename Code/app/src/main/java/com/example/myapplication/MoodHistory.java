@@ -6,7 +6,6 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
 import android.graphics.Color;
-import android.location.Location;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -18,14 +17,13 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.CollectionReference;
-import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.FirebaseFirestoreException;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashMap;
 
 /**
@@ -51,8 +49,10 @@ public class MoodHistory extends AppCompatActivity {
             @Override
             public void onEvent(@Nullable QuerySnapshot queryDocumentSnapshots, @Nullable FirebaseFirestoreException e) {
                 Log.d(TAG, "Something changed");
-                if (queryDocumentSnapshots.getDocuments().size()>0) {
-                    user = queryDocumentSnapshots.getDocuments().get(0).get("Participant", Participant.class);
+                for (QueryDocumentSnapshot doc : queryDocumentSnapshots) {
+                    if (doc.get("Username")==user.getName()) {
+                        user = queryDocumentSnapshots.getDocuments().get(0).get("Participant", Participant.class);
+                    }
                 }
             }
         });
@@ -136,14 +136,11 @@ public class MoodHistory extends AppCompatActivity {
             if (resultCode==RESULT_OK) {
                 Log.d(TAG,"Return from add");
                 moodArrayList = (ArrayList<Mood>) data.getSerializableExtra("Addmood");
-                //How to sort the array list:
-                Collections.sort(moodArrayList, new MoodComparator());
                 moodArrayAdapter = new CustomList(this,moodArrayList);
                 moodHistory.setAdapter(moodArrayAdapter);
                 user.setMoodHistory(moodArrayList);
                 final HashMap<String, Object> userUpdate = new HashMap<>();
                 userUpdate.put("Participant", user);
-                userUpdate.put("Username", user.getName());
                 users.whereEqualTo("Username",user.getName())
                         .get()
                         .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
@@ -151,18 +148,15 @@ public class MoodHistory extends AppCompatActivity {
                             public void onComplete(@NonNull Task<QuerySnapshot> task) {
                                 if (task.isSuccessful()) {
                                     QuerySnapshot queryDocumentSnapshots = task.getResult();
+                                    Participant updated = queryDocumentSnapshots.getDocuments().get(0).get("Participant", Participant.class);
+                                    Log.d(TAG,"Updating user: "+updated.getName());
                                     users.document(queryDocumentSnapshots.getDocuments().get(0).getId())
-                                            .delete()
+                                            .update(userUpdate)
                                             .addOnSuccessListener(new OnSuccessListener<Void>() {
                                                 @Override
                                                 public void onSuccess(Void aVoid) {
-                                                    users.add(userUpdate)
-                                                            .addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
-                                                                @Override
-                                                                public void onSuccess(DocumentReference documentReference) {
-                                                                    Log.d(TAG,"Updated user");
-                                                                }
-                                                            });
+
+                                                    Log.d(TAG,"Updated user");
                                                 }
                                             });
 

@@ -14,7 +14,8 @@ import java.util.Locale;
 
 public class Mood implements Serializable {
     private Date datetime;
-    private Location location;
+    private double longitude;
+    private double latitude;
     private String reason;
     private String socialSituation;
     private int emoticon;
@@ -29,11 +30,22 @@ public class Mood implements Serializable {
         this.socialSituation = socialSituation;
         this.emoticon = Emoticon;
     }
-    public Mood(Date datetime, Location location, String reason, String socialSituation,int Emoticon, Image picture) {
+    public Mood(Date datetime, double lat, double lng, String reason, String socialSituation,int Emoticon, Image picture) {
         this.datetime = datetime;
-        this.location = location;
+        this.latitude = lat;
+        this.longitude = lng;
         this.reason = reason;
         this.socialSituation = socialSituation;
+        this.picture = picture;
+        this.emoticon = Emoticon;
+    }
+    public Mood(Date datetime, double lat, double lng, String reason, String socialSituation,int Emoticon) {
+        this.datetime = datetime;
+        this.latitude = lat;
+        this.longitude = lng;
+        this.reason = reason;
+        this.socialSituation = socialSituation;
+        this.emoticon = Emoticon;
     }
     @Exclude
     public Date getDate() {
@@ -77,12 +89,19 @@ public class Mood implements Serializable {
         return datetime;
     }
 
+    @Exclude
     public Location getLocation() {
+        Location location = new Location("");
+        location.setLongitude(this.longitude);
+        location.setLatitude(this.latitude);
         return location;
     }
-
+    @Exclude
     public void setLocation(Location location) {
-        this.location = location;
+        if (location!=null) {
+            this.latitude = location.getLatitude();
+            this.longitude = location.getLongitude();
+        }
     }
 
     public String getReason() {
@@ -117,4 +136,19 @@ public class Mood implements Serializable {
         this.picture = picture;
     }
 
+    public double getLongitude() {
+        return longitude;
+    }
+
+    public void setLongitude(double longitude) {
+        this.longitude = longitude;
+    }
+
+    public double getLatitude() {
+        return latitude;
+    }
+
+    public void setLatitude(double latitude) {
+        this.latitude = latitude;
+    }
 }

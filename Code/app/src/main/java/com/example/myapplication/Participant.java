@@ -23,8 +23,6 @@ public class Participant implements Serializable {
 
     public void addMood(Mood mood) {
         moodHistory.add(mood);
-        //How to sort the array list:
-        Collections.sort(moodHistory, new MoodComparator());
 
     }
     public void addRequest(String request) {
