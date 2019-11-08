@@ -9,6 +9,7 @@ import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 /**
  * This class is responsible for the View Mood activity
@@ -50,5 +51,17 @@ public class ViewMood extends AppCompatActivity {
      */
     public void ReturnButton(View view){
         finish();
+    }
+
+    public void LocationButton(View view) {
+        Log.d("myTag","Lat value: "+currentMood.getLatitude());
+        if (currentMood.getLatitude()!=null) {
+            Intent intent = new Intent(this, ViewMapActivity.class);
+            intent.putExtra("Lat", currentMood.getLatitude());
+            intent.putExtra("Long", currentMood.getLongitude());
+            startActivity(intent);
+        } else {
+            Toast.makeText(this,"No Location for this mood",Toast.LENGTH_SHORT).show();
+        }
     }
 }

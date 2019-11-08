@@ -8,7 +8,6 @@ import android.app.DatePickerDialog;
 import android.app.TimePickerDialog;
 import android.content.Intent;
 import android.content.res.Resources;
-import android.location.Location;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -41,6 +40,7 @@ public class Add extends AppCompatActivity implements TimePickerDialog.OnTimeSet
     String timeString;
     Resources res;
     LatLng userLocation = null;
+    Integer emote;
     Spinner add_situation;
 
     @Override
@@ -52,16 +52,15 @@ public class Add extends AppCompatActivity implements TimePickerDialog.OnTimeSet
         timeText = findViewById(R.id.timeView);
         dateText = findViewById(R.id.dateView);
         cal = Calendar.getInstance();
-        cal.set(Calendar.SECOND,0);
-        cal.set(Calendar.MILLISECOND,0);
         res = getResources();
         timeString = String.format(res.getString(R.string.TimeString),cal.get(Calendar.HOUR_OF_DAY),cal.get(Calendar.MINUTE));
         timeText.setText(timeString);
         dateString = String.format(res.getString(R.string.DateString),cal.get(Calendar.YEAR),(cal.get(Calendar.MONTH)+1),cal.get(Calendar.DAY_OF_MONTH));
         dateText.setText(dateString);
+        emote = -1;
         add_situation = findViewById(R.id.spinner1);
         ArrayAdapter<String> myadapter = new ArrayAdapter<String>(Add.this,
-                android.R.layout.simple_expandable_list_item_1,getResources().getStringArray(R.array.SocialSituation));
+                android.R.layout.simple_expandable_list_item_1,getResources().getStringArray(R.array.SocialSituations));
         myadapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         add_situation.setAdapter(myadapter);
 
@@ -83,8 +82,7 @@ public class Add extends AppCompatActivity implements TimePickerDialog.OnTimeSet
             }
         });
         final EditText ReasonText = findViewById(R.id.addReasonText);
-        //final EditText SocialText = findViewById(R.id.addSocialText);
-        final int emote = R.drawable.great;
+//        final EditText SocialText = findViewById(R.id.addSocialText);
 
         locationToggle = findViewById(R.id.locationToggle);
         locationToggle.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
@@ -105,20 +103,23 @@ public class Add extends AppCompatActivity implements TimePickerDialog.OnTimeSet
         confirm.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Date date = cal.getTime();
-                Mood mood;
-                String reason = ReasonText.getText().toString();
-                String social = add_situation.getSelectedItem().toString();
-                if (locationToggle.isChecked()) {
-                    mood = new Mood(date,userLocation.latitude,userLocation.longitude,reason,social,emote);
-                } else {
-                    mood = new Mood(date, reason, social, emote);
+                if (emote!=-1) {
+                    Date date = cal.getTime();
+                    Mood mood;
+                    String reason = ReasonText.getText().toString();
+                    String social = add_situation.getSelectedItem().toString();
+                    if (locationToggle.isChecked()) {
+                        mood = new Mood(date, userLocation.latitude, userLocation.longitude, reason, social, emote);
+                    } else {
+                        mood = new Mood(date, reason, social, emote);
+                    }
+                    moodList.add(mood);
+                    Intent data = new Intent();
+                    data.putExtra("Addmood", moodList);
+                    setResult(RESULT_OK, data);
+                    finish();
                 }
-                moodList.add(mood);
-                Intent data = new Intent();
-                data.putExtra("Addmood",moodList);
-                setResult(RESULT_OK,data);
-                finish();
+
             }
         });
 
@@ -163,4 +164,12 @@ public class Add extends AppCompatActivity implements TimePickerDialog.OnTimeSet
             }
         }
     }
+
+
+    //The following methods are used to remember which Emotion is selected.
+    public void selectGreat(View view){        emote = R.drawable.great; }
+    public void selectGood(View view){        emote = R.drawable.good; }
+    public void selectNeutral(View view){        emote = R.drawable.neutral; }
+    public void selectBad(View view){        emote = R.drawable.bad; }
+    public void selectWorst(View view){        emote = R.drawable.worst; }
 }

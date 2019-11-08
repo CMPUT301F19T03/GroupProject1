@@ -9,14 +9,14 @@
     <string name="follow">Follow</string>
     <string name="requests">Requests</string>
     <string name="view">View</string>
-    <string name="mood_tracker">Mood Tracker</string>    
+    <string name="mood_tracker">Mood Tracker</string>
     <string name="user">User:</string>
     <string name="confirm">confirm</string>
     <string name="username_here">username here</string>
     <string name="return_to_mood_history">Return to Mood History</string>
     <string name="DateString">Date: %1$4d-%2$02d-%3$02d</string>
     <string name="TimeString">Time: %1$02d:%2$02d</string>
-    <string-array name="SocialSituation">
+    <string-array name="SocialSituations">
         <item> ALONE </item>
         <item> WITH SOMEONE </item>
         <item> WITH MORE THAN 2 PEOPLE </item>
