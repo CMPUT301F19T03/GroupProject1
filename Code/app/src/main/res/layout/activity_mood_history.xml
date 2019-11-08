@@ -50,6 +50,7 @@
         android:layout_marginLeft="40dp"
         android:layout_marginTop="8dp"
         android:layout_marginBottom="8dp"
+        android:onClick="deleteButton"
         android:text="@string/delete"
         app:layout_constraintBottom_toTopOf="@+id/mood_history"
         app:layout_constraintStart_toStartOf="parent"

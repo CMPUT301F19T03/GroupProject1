@@ -8,7 +8,6 @@ import android.app.DatePickerDialog;
 import android.app.TimePickerDialog;
 import android.content.Intent;
 import android.content.res.Resources;
-import android.location.Location;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -49,8 +48,6 @@ public class Add extends AppCompatActivity implements TimePickerDialog.OnTimeSet
         timeText = findViewById(R.id.timeView);
         dateText = findViewById(R.id.dateView);
         cal = Calendar.getInstance();
-        cal.set(Calendar.SECOND,0);
-        cal.set(Calendar.MILLISECOND,0);
         res = getResources();
         timeString = String.format(res.getString(R.string.TimeString),cal.get(Calendar.HOUR_OF_DAY),cal.get(Calendar.MINUTE));
         timeText.setText(timeString);

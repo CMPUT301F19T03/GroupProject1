@@ -127,6 +127,38 @@ public class MoodHistory extends AppCompatActivity {
         startActivity(intent);
     }
 
+    public void deleteButton(View view) {
+        if (selected!=-1) {
+            moodArrayList.remove(selected);
+            moodArrayAdapter.notifyDataSetChanged();
+            final HashMap<String, Object> userUpdate = new HashMap<>();
+            userUpdate.put("Participant", user);
+            users.whereEqualTo("Username",user.getName())
+                    .get()
+                    .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                        @Override
+                        public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                            if (task.isSuccessful()) {
+                                QuerySnapshot queryDocumentSnapshots = task.getResult();
+                                Participant updated = queryDocumentSnapshots.getDocuments().get(0).get("Participant", Participant.class);
+                                Log.d(TAG,"Deleting from user: "+updated.getName());
+                                users.document(queryDocumentSnapshots.getDocuments().get(0).getId())
+                                        .update(userUpdate)
+                                        .addOnSuccessListener(new OnSuccessListener<Void>() {
+                                            @Override
+                                            public void onSuccess(Void aVoid) {
+
+                                                Log.d(TAG,"deleted successfully");
+                                            }
+                                        });
+
+                            }
+                        }
+                    });
+            selected=-1;
+        }
+    }
+
 
 
     @Override
