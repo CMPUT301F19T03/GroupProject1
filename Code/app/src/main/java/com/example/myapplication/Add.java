@@ -54,7 +54,7 @@ public class Add extends AppCompatActivity implements TimePickerDialog.OnTimeSet
         timeText.setText(timeString);
         dateString = String.format(res.getString(R.string.DateString),cal.get(Calendar.YEAR),(cal.get(Calendar.MONTH)+1),cal.get(Calendar.DAY_OF_MONTH));
         dateText.setText(dateString);
-        emote = R.drawable.neutral;
+        emote = -1;
 
         Button timePick = findViewById(R.id.timeButton);
         timePick.setOnClickListener(new View.OnClickListener() {
@@ -96,20 +96,22 @@ public class Add extends AppCompatActivity implements TimePickerDialog.OnTimeSet
         confirm.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Date date = cal.getTime();
-                Mood mood;
-                String reason = ReasonText.getText().toString();
-                String social = SocialText.getText().toString();
-                if (locationToggle.isChecked()) {
-                    mood = new Mood(date,userLocation.latitude,userLocation.longitude,reason,social,emote);
-                } else {
-                    mood = new Mood(date, reason, social, emote);
+                if (emote!=-1) {
+                    Date date = cal.getTime();
+                    Mood mood;
+                    String reason = ReasonText.getText().toString();
+                    String social = SocialText.getText().toString();
+                    if (locationToggle.isChecked()) {
+                        mood = new Mood(date, userLocation.latitude, userLocation.longitude, reason, social, emote);
+                    } else {
+                        mood = new Mood(date, reason, social, emote);
+                    }
+                    moodList.add(mood);
+                    Intent data = new Intent();
+                    data.putExtra("Addmood", moodList);
+                    setResult(RESULT_OK, data);
+                    finish();
                 }
-                moodList.add(mood);
-                Intent data = new Intent();
-                data.putExtra("Addmood",moodList);
-                setResult(RESULT_OK,data);
-                finish();
             }
         });
 

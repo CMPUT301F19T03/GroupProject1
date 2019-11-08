@@ -14,8 +14,8 @@ import java.util.Locale;
 
 public class Mood implements Serializable {
     private Date datetime;
-    private double longitude;
-    private double latitude;
+    private Double longitude;
+    private Double latitude;
     private String reason;
     private String socialSituation;
     private int emoticon;
@@ -30,7 +30,7 @@ public class Mood implements Serializable {
         this.socialSituation = socialSituation;
         this.emoticon = Emoticon;
     }
-    public Mood(Date datetime, double lat, double lng, String reason, String socialSituation,int Emoticon, Image picture) {
+    public Mood(Date datetime, Double lat, Double lng, String reason, String socialSituation,int Emoticon, Image picture) {
         this.datetime = datetime;
         this.latitude = lat;
         this.longitude = lng;
@@ -39,7 +39,7 @@ public class Mood implements Serializable {
         this.picture = picture;
         this.emoticon = Emoticon;
     }
-    public Mood(Date datetime, double lat, double lng, String reason, String socialSituation,int Emoticon) {
+    public Mood(Date datetime, Double lat, Double lng, String reason, String socialSituation,int Emoticon) {
         this.datetime = datetime;
         this.latitude = lat;
         this.longitude = lng;
@@ -136,19 +136,19 @@ public class Mood implements Serializable {
         this.picture = picture;
     }
 
-    public double getLongitude() {
+    public Double getLongitude() {
         return longitude;
     }
 
-    public void setLongitude(double longitude) {
+    public void setLongitude(Double longitude) {
         this.longitude = longitude;
     }
 
-    public double getLatitude() {
+    public Double getLatitude() {
         return latitude;
     }
 
-    public void setLatitude(double latitude) {
+    public void setLatitude(Double latitude) {
         this.latitude = latitude;
     }
 }
