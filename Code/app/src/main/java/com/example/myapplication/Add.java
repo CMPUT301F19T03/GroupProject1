@@ -38,6 +38,7 @@ public class Add extends AppCompatActivity implements TimePickerDialog.OnTimeSet
     String timeString;
     Resources res;
     LatLng userLocation = null;
+    Integer emote;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -53,7 +54,7 @@ public class Add extends AppCompatActivity implements TimePickerDialog.OnTimeSet
         timeText.setText(timeString);
         dateString = String.format(res.getString(R.string.DateString),cal.get(Calendar.YEAR),(cal.get(Calendar.MONTH)+1),cal.get(Calendar.DAY_OF_MONTH));
         dateText.setText(dateString);
-
+        emote = R.drawable.neutral;
 
         Button timePick = findViewById(R.id.timeButton);
         timePick.setOnClickListener(new View.OnClickListener() {
@@ -74,7 +75,7 @@ public class Add extends AppCompatActivity implements TimePickerDialog.OnTimeSet
         });
         final EditText ReasonText = findViewById(R.id.addReasonText);
         final EditText SocialText = findViewById(R.id.addSocialText);
-        final int emote = R.drawable.great;
+
 
         locationToggle = findViewById(R.id.locationToggle);
         locationToggle.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
@@ -153,4 +154,12 @@ public class Add extends AppCompatActivity implements TimePickerDialog.OnTimeSet
             }
         }
     }
+
+
+    //The following methods are used to remember which Emotion is selected.
+    public void selectGreat(View view){        emote = R.drawable.great; }
+    public void selectGood(View view){        emote = R.drawable.good; }
+    public void selectNeutral(View view){        emote = R.drawable.neutral; }
+    public void selectBad(View view){        emote = R.drawable.bad; }
+    public void selectWorst(View view){        emote = R.drawable.worst; }
 }
