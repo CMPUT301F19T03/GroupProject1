@@ -83,7 +83,8 @@ public class MoodHistory extends AppCompatActivity {
         moodHistory.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int pos, long id) {
-                selected = pos;
+                Mood temp = (Mood)moodHistory.getItemAtPosition(pos);
+                selected = moodArrayList.indexOf((temp));
             }
         });
 
@@ -125,7 +126,6 @@ public class MoodHistory extends AppCompatActivity {
     public void viewButton(View view) {
         if (selected!=-1) {
             Intent intent = new Intent(this, ViewMood.class);
-            intent.putExtra("pos", selected);
             intent.putExtra("Mood",moodArrayList.get(selected));
             selected = -1;
             startActivity(intent);
