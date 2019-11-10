@@ -11,6 +11,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.ListView;
 
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -37,7 +38,18 @@ public class MoodHistory extends AppCompatActivity {
     Participant user;
     FirebaseFirestore db;
     CollectionReference users;
+    ArrayList<Mood> greatMoods;
+    ArrayList<Mood> goodMoods;
+    ArrayList<Mood> neutralMoods;
+    ArrayList<Mood> badMoods;
+    ArrayList<Mood> worstMoods;
+    ArrayAdapter<Mood> greatAdapter;
+    ArrayAdapter<Mood> goodAdapter;
+    ArrayAdapter<Mood> neutralAdapter;
+    ArrayAdapter<Mood> badAdapter;
+    ArrayAdapter<Mood> worstAdapter;
     int selected = -1;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -136,6 +148,26 @@ public class MoodHistory extends AppCompatActivity {
         startActivity(intent);
     }
 
+    /**
+     * this button sets the Visibility of the button filters to visible, and allows the user to filter the search based on the given mood state...
+     * @param view is the view context for this class.
+     */
+    public void filterButton(View view){
+        Button allButton = findViewById(R.id.allButton);
+        Button greatButton = findViewById(R.id.greatButton);
+        Button goodButton = findViewById(R.id.goodButton);
+        Button neutralButton = findViewById(R.id.neutralButton);
+        Button badButton = findViewById(R.id.badButton);
+        Button worstButton = findViewById(R.id.worstButton);
+
+        allButton.setVisibility(View.VISIBLE);
+        greatButton.setVisibility(View.VISIBLE);
+        goodButton.setVisibility(View.VISIBLE);
+        neutralButton.setVisibility(View.VISIBLE);
+        badButton.setVisibility(View.VISIBLE);
+        worstButton.setVisibility(View.VISIBLE);
+    }
+
     public void deleteButton(View view) {
         if (selected!=-1) {
             moodArrayList.remove(selected);
@@ -169,7 +201,38 @@ public class MoodHistory extends AppCompatActivity {
     }
 
 
+    public void allButton(View view){
+        moodArrayAdapter = new CustomList(this,moodArrayList);
+        moodHistory.setAdapter(moodArrayAdapter);
+    }
+    public void greatButton(View view){
+        filteredMoods(greatMoods,greatAdapter,"great");
+    }
+    public void goodButton(View view){
+        filteredMoods(goodMoods,goodAdapter,"good");
+    }
+    public void neutralButton(View view){
+        filteredMoods(neutralMoods,neutralAdapter,"neutral");
+    }
+    public void badButton(View view){
+        filteredMoods(badMoods,badAdapter,"bad");
+    }
+    public void worstButton(View view) {
+        filteredMoods(worstMoods,worstAdapter,"worst");
+    }
 
+    public void filteredMoods(ArrayList<Mood> filteredMoods, ArrayAdapter<Mood> filterAdapter,String state){
+        filteredMoods = new ArrayList<>();
+        for (int i = 0; i < moodArrayList.size();i++){
+
+            if (moodArrayList.get(i).getEmoticon().equals(state)){
+                filteredMoods.add(moodArrayList.get(i));
+            }
+        }
+        moodHistory = findViewById(R.id.mood_history);
+        filterAdapter = new CustomList(this,filteredMoods);
+        moodHistory.setAdapter(filterAdapter);
+    }
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
