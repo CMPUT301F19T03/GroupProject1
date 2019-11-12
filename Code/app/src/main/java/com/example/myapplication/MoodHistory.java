@@ -87,6 +87,7 @@ public class MoodHistory extends AppCompatActivity {
      */
     public void mapButton(View view) {
         Intent intent = new Intent(this, Usermap.class);
+        intent.putExtra("user",user);
         startActivity(intent);
     }
     /**
@@ -173,7 +174,6 @@ public class MoodHistory extends AppCompatActivity {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        Log.d("myTag","Returning from activity");
         if (requestCode==1) {
             if (resultCode==RESULT_OK) {
                 Log.d(TAG,"Return from add");
