@@ -1,10 +1,99 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".MoodHistory">
+
+    <HorizontalScrollView
+        android:id="@+id/FilterScroll"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:visibility="gone"
+
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/filterButton">
+
+        <LinearLayout
+            android:id="@+id/FilterButtons"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent">
+            <TextView
+                android:paddingTop="10dp"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:text="Filter By:">
+
+            </TextView>
+
+            <ImageButton
+                android:id="@+id/GreatFilterButton"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:adjustViewBounds="true"
+                android:onClick="greatFilterButton"
+                android:padding="10dp"
+                android:scaleType="fitCenter"
+                android:src="@drawable/great">
+            </ImageButton>
+
+            <ImageButton
+                android:id="@+id/GoodFilterButton"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:adjustViewBounds="true"
+                android:onClick="goodFilterButton"
+                android:padding="10dp"
+                android:scaleType="fitCenter"
+                android:src="@drawable/good">
+            </ImageButton>
+
+            <ImageButton
+                android:id="@+id/NeutralFilterButton"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:adjustViewBounds="true"
+                android:onClick="neutralFilterButton"
+                android:padding="10dp"
+                android:scaleType="fitCenter"
+                android:src="@drawable/neutral">
+            </ImageButton>
+
+            <ImageButton
+                android:id="@+id/BadFilterButton"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:adjustViewBounds="true"
+                android:onClick="badFilterButton"
+                android:padding="10dp"
+                android:scaleType="fitCenter"
+                android:src="@drawable/bad">
+            </ImageButton>
+
+            <ImageButton
+                android:id="@+id/WorstFilterButton"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:adjustViewBounds="true"
+                android:onClick="worstFilterButton"
+                android:padding="10dp"
+                android:scaleType="fitCenter"
+                android:src="@drawable/worst">
+            </ImageButton>
+
+            <Button
+                android:id="@+id/ClearFilterButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:onClick="clearFilterButton"
+                android:text="Clear">
+            </Button>
+
+
+        </LinearLayout>
+    </HorizontalScrollView>
 
     <Button
         android:id="@+id/addButton"
@@ -48,11 +137,8 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="40dp"
         android:layout_marginLeft="40dp"
-        android:layout_marginTop="8dp"
-        android:layout_marginBottom="8dp"
         android:onClick="deleteButton"
         android:text="@string/delete"
-        app:layout_constraintBottom_toTopOf="@+id/mood_history"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/addButton" />
 
@@ -62,10 +148,8 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="24dp"
         android:layout_marginLeft="24dp"
-        android:layout_marginTop="8dp"
-        android:layout_marginBottom="8dp"
+        android:onClick="filterButton"
         android:text="@string/filter"
-        app:layout_constraintBottom_toTopOf="@+id/mood_history"
         app:layout_constraintStart_toEndOf="@+id/deleteButton"
         app:layout_constraintTop_toBottomOf="@+id/editButton" />
 
@@ -75,11 +159,8 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="24dp"
         android:layout_marginLeft="24dp"
-        android:layout_marginTop="8dp"
-        android:layout_marginBottom="8dp"
-        android:text="@string/view"
         android:onClick="viewButton"
-        app:layout_constraintBottom_toTopOf="@+id/mood_history"
+        android:text="@string/view"
         app:layout_constraintStart_toEndOf="@+id/filterButton"
         app:layout_constraintTop_toBottomOf="@+id/mapButton" />
 
@@ -91,7 +172,7 @@
         app:layout_constraintBottom_toTopOf="@+id/viewFollowersButton"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/filterButton">
+        app:layout_constraintTop_toBottomOf="@id/FilterScroll">
 
     </ListView>
 

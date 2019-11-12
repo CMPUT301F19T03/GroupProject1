@@ -11,7 +11,9 @@ import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.HorizontalScrollView;
 import android.widget.ListView;
+import android.widget.ScrollView;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -34,6 +36,8 @@ public class MoodHistory extends AppCompatActivity {
     ListView moodHistory;
     ArrayAdapter<Mood> moodArrayAdapter;
     ArrayList<Mood> moodArrayList;
+    ArrayAdapter<Mood> filterAdapter;
+    ArrayList<Mood> filterList;
     Participant user;
     FirebaseFirestore db;
     CollectionReference users;
@@ -56,11 +60,6 @@ public class MoodHistory extends AppCompatActivity {
                 }
             }
         });
-        Log.d(TAG,"bad: "+R.drawable.bad);
-        Log.d(TAG,"good: "+R.drawable.good);
-        Log.d(TAG,"great: "+R.drawable.great);
-        Log.d(TAG,"neutral: "+R.drawable.neutral);
-        Log.d(TAG,"worst: "+R.drawable.worst);
         Intent intent = getIntent();
         user = (Participant) intent.getSerializableExtra("User");
         moodArrayList = user.getMoodHistory();
@@ -71,7 +70,8 @@ public class MoodHistory extends AppCompatActivity {
         moodHistory.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int pos, long id) {
-                selected = pos;
+                Mood temp = (Mood)moodHistory.getItemAtPosition(pos);
+                selected = moodArrayList.indexOf(temp);
             }
         });
 
@@ -113,7 +113,6 @@ public class MoodHistory extends AppCompatActivity {
     public void viewButton(View view) {
         if (selected!=-1) {
             Intent intent = new Intent(this, ViewMood.class);
-            intent.putExtra("pos", selected);
             intent.putExtra("Mood",moodArrayList.get(selected));
             selected = -1;
             startActivity(intent);
@@ -134,6 +133,70 @@ public class MoodHistory extends AppCompatActivity {
     public void requestButton(View view) {
         Intent intent = new Intent(this, Requests.class);
         startActivity(intent);
+    }
+
+    public  void clearFilterButton(View view) {
+        moodHistory.setAdapter(moodArrayAdapter);
+    }
+
+    public void filterButton(View view) {
+        HorizontalScrollView filterScroll = findViewById(R.id.FilterScroll);
+        if (filterScroll.getVisibility()==View.GONE) {
+            filterScroll.setVisibility(View.VISIBLE);
+        } else {
+            filterScroll.setVisibility(View.GONE);
+        }
+    }
+    public void greatFilterButton(View view) {
+        filterList = new ArrayList<>();
+        for (Mood mood : moodArrayList) {
+            if (mood.getEmoticon().equals("great")) {
+                filterList.add(mood);
+            }
+        }
+        filterAdapter = new CustomList(this,filterList);
+        moodHistory.setAdapter(filterAdapter);
+    }
+
+    public void goodFilterButton(View view) {
+        filterList = new ArrayList<>();
+        for (Mood mood : moodArrayList) {
+            if (mood.getEmoticon().equals("good")) {
+                filterList.add(mood);
+            }
+        }
+        filterAdapter = new CustomList(this,filterList);
+        moodHistory.setAdapter(filterAdapter);
+    }
+    public void neutralFilterButton(View view) {
+        filterList = new ArrayList<>();
+        for (Mood mood : moodArrayList) {
+            if (mood.getEmoticon().equals("neutral")) {
+                filterList.add(mood);
+            }
+        }
+        filterAdapter = new CustomList(this,filterList);
+        moodHistory.setAdapter(filterAdapter);
+    }
+    public void badFilterButton(View view) {
+        filterList = new ArrayList<>();
+        for (Mood mood : moodArrayList) {
+            if (mood.getEmoticon().equals("bad")) {
+                filterList.add(mood);
+            }
+        }
+        filterAdapter = new CustomList(this,filterList);
+        moodHistory.setAdapter(filterAdapter);
+    }
+    public void worstFilterButton(View view) {
+        filterList = new ArrayList<>();
+        for (Mood mood : moodArrayList) {
+            if (mood.getEmoticon().equals("worst")) {
+                filterList.add(mood);
+            }
+        }
+        filterAdapter = new CustomList(this,filterList);
+        moodHistory.setAdapter(filterAdapter);
     }
 
     public void deleteButton(View view) {
