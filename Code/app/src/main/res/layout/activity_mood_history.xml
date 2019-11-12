@@ -99,71 +99,35 @@
         android:id="@+id/addButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="40dp"
-        android:layout_marginLeft="40dp"
         android:layout_marginTop="8dp"
         android:onClick="addButton"
         android:text="@string/add"
+        app:layout_constraintEnd_toStartOf="@+id/filterButton"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-
-    <Button
-        android:id="@+id/editButton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="24dp"
-        android:layout_marginLeft="24dp"
-        android:layout_marginTop="8dp"
-        android:text="@string/edit"
-        android:onClick="editButton"
-        app:layout_constraintStart_toEndOf="@+id/addButton"
         app:layout_constraintTop_toTopOf="parent" />
 
     <Button
         android:id="@+id/mapButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="24dp"
-        android:layout_marginLeft="24dp"
         android:layout_marginTop="8dp"
-        android:text="@string/map"
         android:onClick="mapButton"
-        app:layout_constraintStart_toEndOf="@+id/editButton"
+        android:text="@string/map"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/filterButton"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <Button
-        android:id="@+id/deleteButton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="40dp"
-        android:layout_marginLeft="40dp"
-        android:onClick="deleteButton"
-        android:text="@string/delete"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/addButton" />
 
     <Button
         android:id="@+id/filterButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="24dp"
-        android:layout_marginLeft="24dp"
+        android:layout_marginTop="8dp"
         android:onClick="filterButton"
         android:text="@string/filter"
-        app:layout_constraintStart_toEndOf="@+id/deleteButton"
-        app:layout_constraintTop_toBottomOf="@+id/editButton" />
-
-    <Button
-        android:id="@+id/viewButton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="24dp"
-        android:layout_marginLeft="24dp"
-        android:onClick="viewButton"
-        android:text="@string/view"
-        app:layout_constraintStart_toEndOf="@+id/filterButton"
-        app:layout_constraintTop_toBottomOf="@+id/mapButton" />
-
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
     <ListView
         android:id="@+id/mood_history"
