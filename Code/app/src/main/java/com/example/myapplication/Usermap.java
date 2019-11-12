@@ -29,6 +29,8 @@ import java.util.ArrayList;
 
 /**
  * This class is responsible for the Usermap activity
+ * Portions of this page are modifications based on work created and shared by Google and used according to terms described in the Creative Commons 4.0 Attribution License.
+ * https://developers.google.com/maps/documentation/android-sdk/start
  */
 public class Usermap extends AppCompatActivity implements OnMapReadyCallback {
     Participant user;
@@ -77,6 +79,7 @@ public class Usermap extends AppCompatActivity implements OnMapReadyCallback {
 
     /**
      * Resizes the icon from the resources folder into a size that can be drawn on the map
+     * from https://stackoverflow.com/questions/14851641/change-marker-size-in-google-maps-api-v2
      * @param icon the icon to be resized
      * @return a Bitmap of the resized image
      */

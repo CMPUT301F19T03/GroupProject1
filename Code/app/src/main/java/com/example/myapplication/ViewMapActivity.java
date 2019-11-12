@@ -23,7 +23,12 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 
-
+/**
+ * This class is responsible for holding the map for View
+ * It draws the map and puts a marker on it according to the mood the user chose
+ * Portions of this page are modifications based on work created and shared by Google and used according to terms described in the Creative Commons 4.0 Attribution License.
+ * https://developers.google.com/maps/documentation/android-sdk/start
+ */
 public class ViewMapActivity extends AppCompatActivity implements OnMapReadyCallback{
 
     private LatLng latLng;
