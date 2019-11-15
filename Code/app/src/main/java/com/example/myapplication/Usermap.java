@@ -1,5 +1,6 @@
 package com.example.myapplication;
 
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
@@ -20,8 +21,7 @@ public class Usermap extends AppCompatActivity {
      * @param view is the context for this view
      */
     public void ReturnButton(View view) {
-        Intent intent = new Intent(this, MoodHistory.class);
-        startActivity(intent);
+        finish();
     }
 
     /**
@@ -30,6 +30,19 @@ public class Usermap extends AppCompatActivity {
      */
     public void OthersButton(View view) {
         Intent intent = new Intent(this, OtherMap.class);
-        startActivity(intent);
+        startActivityForResult(intent,1);
+    }
+
+    @Override
+    public void onBackPressed() {
+        finish();
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (resultCode==RESULT_OK) {
+            finish();
+        }
     }
 }

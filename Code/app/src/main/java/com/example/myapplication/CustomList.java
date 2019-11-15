@@ -1,6 +1,7 @@
 package com.example.myapplication;
 
 import android.content.Context;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -12,6 +13,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 
 /**
@@ -37,6 +39,8 @@ public class CustomList extends ArrayAdapter<Mood> {
      */
     public View getView(int position, @Nullable View convertView, @NonNull ViewGroup
             parent) {
+        //Sort the array whenever it needs to be drawn
+        Collections.sort(moods, new MoodComparator());
 
         View view = convertView;
 
@@ -47,7 +51,7 @@ public class CustomList extends ArrayAdapter<Mood> {
         ImageView emoticon = view.findViewById(R.id.emoticon_image);
         TextView time = view.findViewById(R.id.time_text);
         TextView date = view.findViewById(R.id.date_text);
-        emoticon.setImageResource(mood.getEmoticon());
+        emoticon.setImageResource(mood.getEmoteIcon());
         time.setText(mood.getStringTime());
         date.setText(mood.getStringDate());
         return view;

@@ -10,6 +10,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
+import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -26,6 +27,9 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 
+/**
+ * 
+ */
 public class Login extends AppCompatActivity {
 
     String TAG = "myTag";
@@ -51,8 +55,17 @@ public class Login extends AppCompatActivity {
 
     public void loginButton(View view) {
         String name = ((EditText) findViewById(R.id.userText)).getText().toString();
-        Login(name);
+        if (name.isEmpty()) {
+            Toast.makeText(this,"Username can't be empty",Toast.LENGTH_SHORT).show();
+        } else {
+            Login(name);
+        }
 
+    }
+
+    @Override
+    public void onBackPressed() {
+        // Don't allow user to press back
     }
 
     public void Login(String name) {
@@ -67,10 +80,6 @@ public class Login extends AppCompatActivity {
                             if (queryDocumentSnapshots.isEmpty()) {
                                 HashMap<String, Object> data = new HashMap<>();
                                 user = new Participant(Rname);
-                                Calendar c = Calendar.getInstance();
-
-                                Mood mood = new Mood(c.getTime(),"Test1","Test2",R.drawable.bad);
-                                user.addMood(mood);
                                 data.put("Participant", user);
                                 data.put("Username", Rname);
                                 users
@@ -85,7 +94,10 @@ public class Login extends AppCompatActivity {
                                 Log.d("myTag","found existing user");
                                 user = queryDocumentSnapshots.getDocuments().get(0).get("Participant", Participant.class);
                             }
+                            Log.d(TAG,"Input name: "+Rname);
                             Log.d(TAG, "User: " + user.getName());
+                            EditText nameText = findViewById(R.id.userText);
+                            nameText.setText("");
                             Intent intent = new Intent(main, MoodHistory.class);
                             intent.putExtra("User", user);
                             startActivity(intent);

@@ -7,6 +7,56 @@
     tools:context=".MoodHistory">
 
     <Button
+        android:id="@+id/worstButton"
+        android:layout_width="53dp"
+        android:layout_height="49dp"
+        android:onClick="worstButton"
+        android:text="@string/Worst"
+        android:visibility="invisible"
+        app:layout_constraintStart_toEndOf="@+id/badButton"
+        app:layout_constraintTop_toTopOf="@+id/badButton" />
+
+    <Button
+        android:id="@+id/badButton"
+        android:layout_width="53dp"
+        android:layout_height="49dp"
+        android:onClick="badButton"
+        android:text="@string/Bad"
+        android:visibility="invisible"
+        app:layout_constraintStart_toEndOf="@+id/neutralButton"
+        app:layout_constraintTop_toTopOf="@+id/neutralButton" />
+
+    <Button
+        android:id="@+id/neutralButton"
+        android:layout_width="53dp"
+        android:layout_height="49dp"
+        android:onClick="neutralButton"
+        android:text="@string/Neutral"
+        android:visibility="invisible"
+        app:layout_constraintStart_toEndOf="@+id/goodButton"
+        app:layout_constraintTop_toTopOf="@+id/goodButton" />
+
+    <Button
+        android:id="@+id/goodButton"
+        android:layout_width="53dp"
+        android:layout_height="49dp"
+        android:onClick="goodButton"
+        android:text="@string/Good"
+        android:visibility="invisible"
+        app:layout_constraintStart_toEndOf="@+id/greatButton"
+        app:layout_constraintTop_toBottomOf="@+id/allButton" />
+
+    <Button
+        android:id="@+id/greatButton"
+        android:layout_width="53dp"
+        android:layout_height="49dp"
+        android:onClick="greatButton"
+        android:text="@string/Great"
+        android:visibility="invisible"
+        app:layout_constraintStart_toStartOf="@+id/allButton"
+        app:layout_constraintTop_toBottomOf="@+id/allButton" />
+
+    <Button
         android:id="@+id/addButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -50,6 +100,7 @@
         android:layout_marginLeft="40dp"
         android:layout_marginTop="8dp"
         android:layout_marginBottom="8dp"
+        android:onClick="deleteButton"
         android:text="@string/delete"
         app:layout_constraintBottom_toTopOf="@+id/mood_history"
         app:layout_constraintStart_toStartOf="parent"
@@ -63,6 +114,7 @@
         android:layout_marginLeft="24dp"
         android:layout_marginTop="8dp"
         android:layout_marginBottom="8dp"
+        android:onClick="filterButton"
         android:text="@string/filter"
         app:layout_constraintBottom_toTopOf="@+id/mood_history"
         app:layout_constraintStart_toEndOf="@+id/deleteButton"
@@ -128,4 +180,17 @@
         android:onClick="viewFollowButton"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
+
+    <Button
+        android:id="@+id/allButton"
+        android:layout_width="53dp"
+        android:layout_height="49dp"
+        android:onClick="allButton"
+        android:text="All"
+        android:visibility="invisible"
+        app:layout_constraintEnd_toStartOf="@+id/viewFollowersButton"
+        app:layout_constraintHorizontal_bias="0.228"
+        app:layout_constraintStart_toEndOf="@+id/followButton"
+        app:layout_constraintTop_toBottomOf="@+id/mood_history" />
+
 </androidx.constraintlayout.widget.ConstraintLayout>

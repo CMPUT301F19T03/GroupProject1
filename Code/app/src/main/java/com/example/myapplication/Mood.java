@@ -1,5 +1,6 @@
 package com.example.myapplication;
 
+import android.content.res.Resources;
 import android.location.Location;
 import android.media.Image;
 
@@ -14,26 +15,39 @@ import java.util.Locale;
 
 public class Mood implements Serializable {
     private Date datetime;
-    private Location location;
+    private Double longitude;
+    private Double latitude;
     private String reason;
     private String socialSituation;
-    private int emoticon;
+    private String emoticon;
     private Image picture;
+
 
 
     public Mood(){}
 
-    public Mood(Date datetime, String reason, String socialSituation, int Emoticon) {
+    public Mood(Date datetime, String reason, String socialSituation, String Emoticon) {
         this.datetime = datetime;
         this.reason = reason;
         this.socialSituation = socialSituation;
         this.emoticon = Emoticon;
     }
-    public Mood(Date datetime, Location location, String reason, String socialSituation,int Emoticon, Image picture) {
+    public Mood(Date datetime, Double lat, Double lng, String reason, String socialSituation,String Emoticon, Image picture) {
         this.datetime = datetime;
-        this.location = location;
+        this.latitude = lat;
+        this.longitude = lng;
         this.reason = reason;
         this.socialSituation = socialSituation;
+        this.picture = picture;
+        this.emoticon = Emoticon;
+    }
+    public Mood(Date datetime, Double lat, Double lng, String reason, String socialSituation,String Emoticon) {
+        this.datetime = datetime;
+        this.latitude = lat;
+        this.longitude = lng;
+        this.reason = reason;
+        this.socialSituation = socialSituation;
+        this.emoticon = Emoticon;
     }
     @Exclude
     public Date getDate() {
@@ -77,12 +91,19 @@ public class Mood implements Serializable {
         return datetime;
     }
 
+    @Exclude
     public Location getLocation() {
+        Location location = new Location("");
+        location.setLongitude(this.longitude);
+        location.setLatitude(this.latitude);
         return location;
     }
-
+    @Exclude
     public void setLocation(Location location) {
-        this.location = location;
+        if (location!=null) {
+            this.latitude = location.getLatitude();
+            this.longitude = location.getLongitude();
+        }
     }
 
     public String getReason() {
@@ -101,14 +122,24 @@ public class Mood implements Serializable {
         this.socialSituation = socialSituation;
     }
 
-    public int getEmoticon() {
+    public String getEmoticon() {
         return emoticon;
     }
 
-    public void setEmoticon(int emoticon) {
+    public void setEmoticon(String emoticon) {
         this.emoticon = emoticon;
     }
 
+    @Exclude
+    public int getEmoteIcon() {
+        Resources res = MainActivity.RESOURCES;
+        return res.getIdentifier(this.emoticon,"drawable",MainActivity.PACKAGE_NAME);
+    }
+    @Exclude
+    public void setEmoteIcon(int emoteIcon) {
+        Resources res = MainActivity.RESOURCES;
+        this.emoticon = res.getResourceEntryName(emoteIcon);
+    }
     public Image getPicture() {
         return picture;
     }
@@ -117,4 +148,19 @@ public class Mood implements Serializable {
         this.picture = picture;
     }
 
+    public Double getLongitude() {
+        return longitude;
+    }
+
+    public void setLongitude(Double longitude) {
+        this.longitude = longitude;
+    }
+
+    public Double getLatitude() {
+        return latitude;
+    }
+
+    public void setLatitude(Double latitude) {
+        this.latitude = latitude;
+    }
 }
