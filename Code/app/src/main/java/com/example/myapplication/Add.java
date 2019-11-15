@@ -4,22 +4,36 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.DialogFragment;
 
+import android.annotation.SuppressLint;
+import android.app.ActionBar;
+import android.app.Activity;
 import android.app.DatePickerDialog;
 import android.app.TimePickerDialog;
 import android.content.Intent;
 import android.content.res.Resources;
 import android.os.Bundle;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
+import android.view.GestureDetector;
+import android.view.MotionEvent;
 import android.view.View;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.CompoundButton;
 import android.widget.DatePicker;
 import android.widget.EditText;
+import android.widget.ImageSwitcher;
+import android.widget.ImageView;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.TimePicker;
+import android.widget.Toast;
 import android.widget.ToggleButton;
+import android.widget.ViewFlipper;
+import android.widget.ViewSwitcher;
 
 import com.google.android.gms.maps.model.LatLng;
 
@@ -39,22 +53,36 @@ public class Add extends AppCompatActivity implements TimePickerDialog.OnTimeSet
     Calendar cal;
     TextView timeText;
     TextView dateText;
+    EditText ReasonText;
     ToggleButton locationToggle;
+    private ImageView moodEmote;
     String dateString;
     String timeString;
     Resources res;
     LatLng userLocation = null;
     Integer emote;
     Spinner add_situation;
+    Activity context;
+
+    private static final int SWIPE_MIN_DISTANCE = 120;
+    private static final int SWIPE_MAX_OFF_PATH = 250;
+    private static final int SWIPE_THRESHOLD_VELOCITY = 200;
+    View.OnTouchListener gestureListener;
+    private int index;
+    private String[] subjectArray;
+
+    private GestureDetector mDetector;
 
     /**
      * This is run when the activity is created. It sets up listeners and initial values
      * @param savedInstanceState this is the values saved in previous instances of the class
      */
+    @SuppressLint("ClickableViewAccessibility")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add);
+        context = this;
         // Get the List of Moods from moodHistory
         final Intent intent = getIntent();
         final ArrayList<Mood> moodList = (ArrayList<Mood>) intent.getSerializableExtra("moodList");
@@ -65,16 +93,14 @@ public class Add extends AppCompatActivity implements TimePickerDialog.OnTimeSet
         // Find text boxes and fill them
         timeText = findViewById(R.id.timeView);
         dateText = findViewById(R.id.dateView);
-        final EditText ReasonText = findViewById(R.id.addReasonText);
+        ReasonText = findViewById(R.id.addReasonText);
         timeString = String.format(res.getString(R.string.TimeString),cal.get(Calendar.HOUR_OF_DAY),cal.get(Calendar.MINUTE));
         timeText.setText(timeString);
         dateString = String.format(res.getString(R.string.DateString),cal.get(Calendar.YEAR),(cal.get(Calendar.MONTH)+1),cal.get(Calendar.DAY_OF_MONTH));
         dateText.setText(dateString);
-        // Set initial value to ensure the user picks an emote
-        emote = -1;
         // Set up the spinner for social situation
         add_situation = findViewById(R.id.spinner1);
-        ArrayAdapter<String> myAdapter = new ArrayAdapter<String>(Add.this,
+        final ArrayAdapter<String> myAdapter = new ArrayAdapter<>(Add.this,
                 android.R.layout.simple_expandable_list_item_1,getResources().getStringArray(R.array.SocialSituations));
         myAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         add_situation.setAdapter(myAdapter);
@@ -117,34 +143,94 @@ public class Add extends AppCompatActivity implements TimePickerDialog.OnTimeSet
         confirm.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                //If an emote button has not been clicked do not do anything
-                if (emote!=-1) {
-                    //Get the date from the Calendar object that can be set from the Pickers
-                    Date date = cal.getTime();
-                    Mood mood;
-                    //Get the reason and social situation of the mood
-                    String reason = ReasonText.getText().toString();
-                    String social = add_situation.getSelectedItem().toString();
-                    // Get the name of the emoticon for future safe storage in the firebase
-                    String emoticon = res.getResourceEntryName(emote);
-                    // If the user added a location include it in the Mood
-                    if (locationToggle.isChecked()) {
-                        mood = new Mood(date, userLocation.latitude, userLocation.longitude, reason, social, emoticon);
-                    } else {
-                        mood = new Mood(date, reason, social, emoticon);
-                    }
-                    //Add the mood to the list and send the list back to moodHistory to update the firebase
-                    moodList.add(mood);
-                    Intent data = new Intent();
-                    data.putExtra("Addmood", moodList);
-                    setResult(RESULT_OK, data);
-                    finish();
+                //Get the date from the Calendar object that can be set from the Pickers
+                Date date = cal.getTime();
+                Mood mood;
+                //Get the reason and social situation of the mood
+                String reason = ReasonText.getText().toString();
+                if (reason.split(" ").length>3) {
+                    Toast.makeText(context,"Reason can only be 3 words",Toast.LENGTH_SHORT).show();
+                    return;
                 }
+                String social = add_situation.getSelectedItem().toString();
+                // Get the name of the emoticon for future safe storage in the firebase
+                String emoticon = res.getResourceEntryName(emote);
+                // If the user added a location include it in the Mood
+                if (locationToggle.isChecked()) {
+                    mood = new Mood(date, userLocation.latitude, userLocation.longitude, reason, social, emoticon);
+                } else {
+                    mood = new Mood(date, reason, social, emoticon);
+                }
+                //Add the mood to the list and send the list back to moodHistory to update the firebase
+                moodList.add(mood);
+                Intent data = new Intent();
+                data.putExtra("Addmood", moodList);
+                setResult(RESULT_OK, data);
+                finish();
 
             }
         });
 
+        index = 2;
+        subjectArray = getResources().getStringArray(R.array.emotes);
+        moodEmote = findViewById(R.id.addEmote);
+        int id = getResources().getIdentifier(subjectArray[index],"drawable",getPackageName());
+        emote = id;
+        moodEmote.setImageResource(id);
+        gestureListener = new View.OnTouchListener() {
+            float prevX;
+            @Override
+            public boolean onTouch(View view, MotionEvent motionEvent) {
+                switch (motionEvent.getAction()) {
+                    case MotionEvent.ACTION_DOWN:
+                        prevX = motionEvent.getX();
+                        Log.d("myTag","prevX: "+prevX);
+                        return true;
+                    case MotionEvent.ACTION_UP:
+                        float newX = motionEvent.getX();
+                        Log.d("myTag","newX: "+newX);
 
+                        if (Math.abs(newX - prevX) > SWIPE_MIN_DISTANCE) {
+                            if (newX > prevX) {
+                                Log.d("myTag", "swipe right");
+                                index = index - 1;
+                                if (index<0) {
+                                    index=0;
+                                }
+
+                                int id = getResources().getIdentifier(subjectArray[index], "drawable", getPackageName());
+                                emote = id;
+                                moodEmote.setImageResource(id);
+                                return true;
+                            } else {
+                                Log.d("myTag", "swipe left");
+                                index = index + 1;
+                                if (index>=subjectArray.length) {
+                                    index = subjectArray.length-1;
+                                }
+
+                                int id = getResources().getIdentifier(subjectArray[index],"drawable",getPackageName());
+                                emote = id;
+                                moodEmote.setImageResource(id);
+                                return true;
+                            }
+                        }
+                    default:
+                        return false;
+                }
+            }
+        };
+
+        mDetector = new GestureDetector(moodEmote.getContext(),new MGestureDetector());
+        gestureListener = new View.OnTouchListener(){
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                return mDetector.onTouchEvent(event);
+            }
+        };
+        moodEmote.setOnTouchListener(gestureListener);
+
+        Toast.makeText(this,"Swipe emote to select other moods",Toast.LENGTH_LONG).show();
     }
 
     /**
@@ -154,7 +240,6 @@ public class Add extends AppCompatActivity implements TimePickerDialog.OnTimeSet
     public void ReturnButton(View view) {
         finish();
     }
-
 
     /**
      * This is an interface that detects when the user enters a time in the timepicker
@@ -206,44 +291,53 @@ public class Add extends AppCompatActivity implements TimePickerDialog.OnTimeSet
                 locationToggle.setChecked(false);
             } else if (resultCode==RESULT_OK) {
                 userLocation = data.getExtras().getParcelable("location");
-                Log.d("myTag","getlat: "+userLocation.latitude);
             }
         }
     }
 
-    /**
-     * If the user clicks on the great emote button set the emote to the great resource
-     * @param view this is the view that was clicked
-     */
-    public void selectGreat(View view){
-        emote = R.drawable.great;
-    }
-    /**
-     * If the user clicks on the good emote button set the emote to the good resource
-     * @param view this is the view that was clicked
-     */
-    public void selectGood(View view){
-        emote = R.drawable.good;
-    }
-    /**
-     * If the user clicks on the neutral emote button set the emote to the neutral resource
-     * @param view this is the view that was clicked
-     */
-    public void selectNeutral(View view){
-        emote = R.drawable.neutral;
-    }
-    /**
-     * If the user clicks on the bad emote button set the emote to the bad resource
-     * @param view this is the view that was clicked
-     */
-    public void selectBad(View view){
-        emote = R.drawable.bad;
-    }
-    /**
-     * If the user clicks on the worst emote button set the emote to the worst resource
-     * @param view this is the view that was clicked
-     */
-    public void selectWorst(View view){
-        emote = R.drawable.worst;
+    class MGestureDetector extends GestureDetector.SimpleOnGestureListener {
+        @Override
+        public boolean onDown(MotionEvent e) {
+            Log.d("myTag","down");
+            return true;
+        }
+
+        @Override
+        public boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX, float velocityY) {
+            Log.d("myTag","Fling");
+            try{
+                if(Math.abs(e1.getY()-e2.getY()) > SWIPE_MAX_OFF_PATH)
+                    return false;
+                if(e1.getX() - e2.getX() > SWIPE_MIN_DISTANCE && Math.abs(velocityX) > SWIPE_THRESHOLD_VELOCITY){
+                    Log.d("myTag", "Move Next");
+                    index = index + 1;
+                    if (index>=subjectArray.length) {
+                        index = subjectArray.length-1;
+                    }
+
+                    int id = getResources().getIdentifier(subjectArray[index],"drawable",getPackageName());
+                    emote = id;
+                    moodEmote.setImageResource(id);
+                    return true;
+                } else if(e2.getX() - e1.getX() > SWIPE_MIN_DISTANCE && Math.abs(velocityX) > SWIPE_THRESHOLD_VELOCITY){
+                    Log.d("myTag", "Move Previous");
+                    index = index - 1;
+                    if (index<0) {
+                        index=0;
+                    }
+
+                    int id = getResources().getIdentifier(subjectArray[index], "drawable", getPackageName());
+                    emote = id;
+                    moodEmote.setImageResource(id);
+                    return true;
+                }
+                return false;
+            }
+            catch(Exception e){
+                return false;
+            }
+        }
+
     }
 }
+
