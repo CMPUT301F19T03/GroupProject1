@@ -237,7 +237,8 @@ public class Edit extends AppCompatActivity implements TimePickerDialog.OnTimeSe
         if (requestCode==1) {
             if (resultCode==RESULT_OK) {
                 userLocation = data.getExtras().getParcelable("location");
-                Log.d("myTag","getlat: "+userLocation.latitude);
+            } else if (resultCode==RESULT_CANCELED) {
+                locationToggle.setChecked(false);
             }
         }
     }
