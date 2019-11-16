@@ -7,6 +7,8 @@ import com.google.protobuf.NullValue;
 
 import org.junit.Test;
 
+master
+import java.util.ArrayList;
 import java.util.Date;
 
 import static org.junit.Assert.*;
@@ -98,6 +100,45 @@ public class LoginInfoTest1 {
         assertTrue(participant.getMoodHistory().get(1).getReason() == "arb reason 2");
         assertTrue(participant.getMoodHistory().get(1).getSocialSituation() == "At work again");
         assertTrue(participant.getMoodHistory().get(1).getEmoticon() == "bad");
+master
+    }
+    @Test
+    public void testFollowersandRequests(){
+        Participant participant = mockUser();
+        assertEquals(1,participant.getMoodHistory().size());
+        ArrayList<String> requests = new ArrayList<>();
+
+        requests.add("Janet");
+        requests.add("Rico");
+        requests.add("Foxtrot");
+        requests.add("Charlie");
+
+        participant.setRequests(requests);
+
+        assertTrue(participant.getRequests().get(0) == "Janet");
+        assertTrue(participant.getRequests().get(1) == "Rico");
+        assertTrue(participant.getRequests().get(2) == "Foxtrot");
+        assertTrue(participant.getRequests().get(3) == "Charlie");
+
+        ArrayList<String> followers = new ArrayList<>();
+
+        followers.add("Alpha");
+        followers.add("Beta");
+        followers.add("Charlie");
+        followers.add("Omega");
+
+        participant.setFollowing(followers);
+
+        assertTrue(participant.getFollowing().get(0) == "Alpha");
+        assertTrue(participant.getFollowing().get(1) == "Beta");
+        assertTrue(participant.getFollowing().get(2) == "Charlie");
+        assertTrue(participant.getFollowing().get(3) == "Omega");
+
+        participant.getRequests().remove(2);
+        assertTrue(participant.getRequests().get(2) == "Charlie");
+
+        participant.getFollowing().remove(1);
+        assertTrue(participant.getFollowing().get(1) == "Charlie");
 
     }
 }
