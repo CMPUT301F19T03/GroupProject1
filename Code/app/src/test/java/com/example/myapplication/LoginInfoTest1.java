@@ -7,6 +7,7 @@ import com.google.protobuf.NullValue;
 
 import org.junit.Test;
 
+master
 import java.util.ArrayList;
 import java.util.Date;
 
@@ -99,6 +100,7 @@ public class LoginInfoTest1 {
         assertTrue(participant.getMoodHistory().get(1).getReason() == "arb reason 2");
         assertTrue(participant.getMoodHistory().get(1).getSocialSituation() == "At work again");
         assertTrue(participant.getMoodHistory().get(1).getEmoticon() == "bad");
+master
     }
     @Test
     public void testFollowersandRequests(){
