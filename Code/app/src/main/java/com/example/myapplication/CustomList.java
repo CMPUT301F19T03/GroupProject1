@@ -49,10 +49,10 @@ public class CustomList extends ArrayAdapter<Mood> {
 
     /**
      * This retrieves the view for the customlist to function
-     * @param position
-     * @param convertView
-     * @param parent
-     * @return
+     * @param position This is the position of this item within the CustomList
+     * @param convertView This is the view for this item
+     * @param parent This is the parent of this view
+     * @return returns a view for a Mood object within a ListView
      */
     public View getView(final int position, @Nullable View convertView, @NonNull final ViewGroup
             parent) {

@@ -1,44 +1,27 @@
 package com.example.myapplication;
 
-import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.DialogFragment;
-import androidx.viewpager.widget.PagerAdapter;
 import androidx.viewpager.widget.ViewPager;
 
-import android.annotation.SuppressLint;
-import android.app.ActionBar;
 import android.app.Activity;
 import android.app.DatePickerDialog;
 import android.app.TimePickerDialog;
-import android.content.Context;
 import android.content.Intent;
 import android.content.res.Resources;
 import android.os.Bundle;
-import android.text.Editable;
-import android.text.TextWatcher;
-import android.util.Log;
-import android.view.GestureDetector;
-import android.view.MotionEvent;
 import android.view.View;
-import android.view.ViewGroup;
-import android.view.animation.Animation;
-import android.view.animation.AnimationUtils;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.CompoundButton;
 import android.widget.DatePicker;
 import android.widget.EditText;
-import android.widget.ImageSwitcher;
-import android.widget.ImageView;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.TimePicker;
 import android.widget.Toast;
 import android.widget.ToggleButton;
-import android.widget.ViewFlipper;
-import android.widget.ViewSwitcher;
 
 import com.google.android.gms.maps.model.LatLng;
 
@@ -73,7 +56,6 @@ public class Add extends AppCompatActivity implements TimePickerDialog.OnTimeSet
      * This is run when the activity is created. It sets up listeners and initial values
      * @param savedInstanceState this is the values saved in previous instances of the class
      */
-    @SuppressLint("ClickableViewAccessibility")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -101,8 +83,8 @@ public class Add extends AppCompatActivity implements TimePickerDialog.OnTimeSet
         myAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         add_situation.setAdapter(myAdapter);
 
-        viewPager = (ViewPager) findViewById(R.id.viewPager);
-        ImagePagerAdapter adapter = new ImagePagerAdapter();
+        viewPager = findViewById(R.id.AddviewPager);
+        ImagePagerAdapter adapter = new ImagePagerAdapter(context);
         viewPager.setAdapter(adapter);
         viewPager.setCurrentItem(2);
 
@@ -124,18 +106,31 @@ public class Add extends AppCompatActivity implements TimePickerDialog.OnTimeSet
                 datePicker.show(getSupportFragmentManager(),"date picker");
             }
         });
+        final Button locationButton = findViewById(R.id.EditLocation);
+        // If they click on 'Edit location' send them to EditMapActivity
+        locationButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent EditMapIntent = new Intent(Add.this, EditMapActivity.class);
+                EditMapIntent.putExtra("Lat", userLocation.latitude);
+                EditMapIntent.putExtra("long", userLocation.longitude);
+                startActivityForResult(EditMapIntent, 2);
+            }
+        });
         // When the user turns on choosing location send them to AddMapActivity to select a location
         // When the user turns off choosing location remove their location
         locationToggle = findViewById(R.id.locationToggle);
         locationToggle.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 if (isChecked) {
+                    locationButton.setVisibility(View.VISIBLE);
                     // The location is enabled
                     Intent mapIntent = new Intent(Add.this,AddMapActivity.class);
                     startActivityForResult(mapIntent,1);
                 } else {
                     // The location is disabled
                     userLocation = null;
+                    locationButton.setVisibility(View.GONE);
                 }
             }
         });
@@ -235,42 +230,11 @@ public class Add extends AppCompatActivity implements TimePickerDialog.OnTimeSet
             } else if (resultCode==RESULT_OK) {
                 userLocation = data.getExtras().getParcelable("location");
             }
+        } else if (requestCode==2) {
+            if (resultCode==RESULT_OK) {
+                userLocation = data.getExtras().getParcelable("location");
+            }
         }
-    }
-
-    private class ImagePagerAdapter extends PagerAdapter {
-        private String[] mImages = res.getStringArray(R.array.emotes);
-
-        @Override
-        public int getCount() {
-            return mImages.length;
-        }
-
-        @Override
-        public boolean isViewFromObject(@NonNull View view, @NonNull Object object) {
-            return view == ((ImageView)object);
-        }
-
-        @NonNull
-        @Override
-        public Object instantiateItem(@NonNull ViewGroup container, int position) {
-            Context context = Add.this;
-            Resources res = context.getResources();
-            ImageView imageView = new ImageView(context);
-            int padding = res.getDimensionPixelSize(R.dimen.padding_medium);
-            imageView.setPadding(padding,padding,padding,padding);
-            imageView.setScaleType(ImageView.ScaleType.FIT_CENTER);
-            int id = res.getIdentifier(mImages[position],"drawable",getPackageName());
-            imageView.setImageResource(id);
-            ((ViewPager)container).addView(imageView,0);
-            return imageView;
-        }
-
-        @Override
-        public void destroyItem(@NonNull ViewGroup container, int position, @NonNull Object object) {
-            ((ViewPager)container).removeView((ImageView)object);
-        }
-
     }
 }
 
