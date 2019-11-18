@@ -1,10 +1,7 @@
 package com.example.myapplication;
 
-import android.util.Log;
-
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.Collections;
 
 public class Participant implements Serializable {
     String name;

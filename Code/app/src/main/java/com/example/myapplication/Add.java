@@ -3,13 +3,14 @@ package com.example.myapplication;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.DialogFragment;
+import androidx.viewpager.widget.ViewPager;
 
+import android.app.Activity;
 import android.app.DatePickerDialog;
 import android.app.TimePickerDialog;
 import android.content.Intent;
 import android.content.res.Resources;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
@@ -19,6 +20,7 @@ import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.TimePicker;
+import android.widget.Toast;
 import android.widget.ToggleButton;
 
 import com.google.android.gms.maps.model.LatLng;
@@ -39,13 +41,16 @@ public class Add extends AppCompatActivity implements TimePickerDialog.OnTimeSet
     Calendar cal;
     TextView timeText;
     TextView dateText;
+    EditText ReasonText;
     ToggleButton locationToggle;
     String dateString;
     String timeString;
     Resources res;
     LatLng userLocation = null;
-    Integer emote;
     Spinner add_situation;
+    Activity context;
+
+    ViewPager viewPager;
 
     /**
      * This is run when the activity is created. It sets up listeners and initial values
@@ -55,6 +60,7 @@ public class Add extends AppCompatActivity implements TimePickerDialog.OnTimeSet
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add);
+        context = this;
         // Get the List of Moods from moodHistory
         final Intent intent = getIntent();
         final ArrayList<Mood> moodList = (ArrayList<Mood>) intent.getSerializableExtra("moodList");
@@ -65,19 +71,22 @@ public class Add extends AppCompatActivity implements TimePickerDialog.OnTimeSet
         // Find text boxes and fill them
         timeText = findViewById(R.id.timeView);
         dateText = findViewById(R.id.dateView);
-        final EditText ReasonText = findViewById(R.id.addReasonText);
+        ReasonText = findViewById(R.id.addReasonText);
         timeString = String.format(res.getString(R.string.TimeString),cal.get(Calendar.HOUR_OF_DAY),cal.get(Calendar.MINUTE));
         timeText.setText(timeString);
         dateString = String.format(res.getString(R.string.DateString),cal.get(Calendar.YEAR),(cal.get(Calendar.MONTH)+1),cal.get(Calendar.DAY_OF_MONTH));
         dateText.setText(dateString);
-        // Set initial value to ensure the user picks an emote
-        emote = -1;
         // Set up the spinner for social situation
         add_situation = findViewById(R.id.spinner1);
-        ArrayAdapter<String> myAdapter = new ArrayAdapter<String>(Add.this,
+        final ArrayAdapter<String> myAdapter = new ArrayAdapter<>(Add.this,
                 android.R.layout.simple_expandable_list_item_1,getResources().getStringArray(R.array.SocialSituations));
         myAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         add_situation.setAdapter(myAdapter);
+
+        viewPager = findViewById(R.id.AddviewPager);
+        ImagePagerAdapter adapter = new ImagePagerAdapter(context);
+        viewPager.setAdapter(adapter);
+        viewPager.setCurrentItem(2);
 
         // Set up a button to start the time Picker
         Button timePick = findViewById(R.id.timeButton);
@@ -97,18 +106,31 @@ public class Add extends AppCompatActivity implements TimePickerDialog.OnTimeSet
                 datePicker.show(getSupportFragmentManager(),"date picker");
             }
         });
+        final Button locationButton = findViewById(R.id.EditLocation);
+        // If they click on 'Edit location' send them to EditMapActivity
+        locationButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent EditMapIntent = new Intent(Add.this, EditMapActivity.class);
+                EditMapIntent.putExtra("Lat", userLocation.latitude);
+                EditMapIntent.putExtra("long", userLocation.longitude);
+                startActivityForResult(EditMapIntent, 2);
+            }
+        });
         // When the user turns on choosing location send them to AddMapActivity to select a location
         // When the user turns off choosing location remove their location
         locationToggle = findViewById(R.id.locationToggle);
         locationToggle.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 if (isChecked) {
+                    locationButton.setVisibility(View.VISIBLE);
                     // The location is enabled
                     Intent mapIntent = new Intent(Add.this,AddMapActivity.class);
                     startActivityForResult(mapIntent,1);
                 } else {
                     // The location is disabled
                     userLocation = null;
+                    locationButton.setVisibility(View.GONE);
                 }
             }
         });
@@ -117,34 +139,36 @@ public class Add extends AppCompatActivity implements TimePickerDialog.OnTimeSet
         confirm.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                //If an emote button has not been clicked do not do anything
-                if (emote!=-1) {
-                    //Get the date from the Calendar object that can be set from the Pickers
-                    Date date = cal.getTime();
-                    Mood mood;
-                    //Get the reason and social situation of the mood
-                    String reason = ReasonText.getText().toString();
-                    String social = add_situation.getSelectedItem().toString();
-                    // Get the name of the emoticon for future safe storage in the firebase
-                    String emoticon = res.getResourceEntryName(emote);
-                    // If the user added a location include it in the Mood
-                    if (locationToggle.isChecked()) {
-                        mood = new Mood(date, userLocation.latitude, userLocation.longitude, reason, social, emoticon);
-                    } else {
-                        mood = new Mood(date, reason, social, emoticon);
-                    }
-                    //Add the mood to the list and send the list back to moodHistory to update the firebase
-                    moodList.add(mood);
-                    Intent data = new Intent();
-                    data.putExtra("Addmood", moodList);
-                    setResult(RESULT_OK, data);
-                    finish();
+                //Get the date from the Calendar object that can be set from the Pickers
+                Date date = cal.getTime();
+                Mood mood;
+                //Get the reason and social situation of the mood
+                String reason = ReasonText.getText().toString();
+                if (reason.split(" ").length>3) {
+                    Toast.makeText(context,"Reason can only be 3 words",Toast.LENGTH_SHORT).show();
+                    return;
                 }
+                String social = add_situation.getSelectedItem().toString();
+                // Get the name of the emoticon for future safe storage in the firebase
+                int pos = viewPager.getCurrentItem();
+                String emoticon = res.getStringArray(R.array.emotes)[pos];
+                // If the user added a location include it in the Mood
+                if (locationToggle.isChecked()) {
+                    mood = new Mood(date, userLocation.latitude, userLocation.longitude, reason, social, emoticon);
+                } else {
+                    mood = new Mood(date, reason, social, emoticon);
+                }
+                //Add the mood to the list and send the list back to moodHistory to update the firebase
+                moodList.add(mood);
+                Intent data = new Intent();
+                data.putExtra("Addmood", moodList);
+                setResult(RESULT_OK, data);
+                finish();
 
             }
         });
 
-
+        Toast.makeText(this,"Swipe emote to select other moods",Toast.LENGTH_SHORT).show();
     }
 
     /**
@@ -154,7 +178,6 @@ public class Add extends AppCompatActivity implements TimePickerDialog.OnTimeSet
     public void ReturnButton(View view) {
         finish();
     }
-
 
     /**
      * This is an interface that detects when the user enters a time in the timepicker
@@ -206,44 +229,12 @@ public class Add extends AppCompatActivity implements TimePickerDialog.OnTimeSet
                 locationToggle.setChecked(false);
             } else if (resultCode==RESULT_OK) {
                 userLocation = data.getExtras().getParcelable("location");
-                Log.d("myTag","getlat: "+userLocation.latitude);
+            }
+        } else if (requestCode==2) {
+            if (resultCode==RESULT_OK) {
+                userLocation = data.getExtras().getParcelable("location");
             }
         }
     }
-
-    /**
-     * If the user clicks on the great emote button set the emote to the great resource
-     * @param view this is the view that was clicked
-     */
-    public void selectGreat(View view){
-        emote = R.drawable.great;
-    }
-    /**
-     * If the user clicks on the good emote button set the emote to the good resource
-     * @param view this is the view that was clicked
-     */
-    public void selectGood(View view){
-        emote = R.drawable.good;
-    }
-    /**
-     * If the user clicks on the neutral emote button set the emote to the neutral resource
-     * @param view this is the view that was clicked
-     */
-    public void selectNeutral(View view){
-        emote = R.drawable.neutral;
-    }
-    /**
-     * If the user clicks on the bad emote button set the emote to the bad resource
-     * @param view this is the view that was clicked
-     */
-    public void selectBad(View view){
-        emote = R.drawable.bad;
-    }
-    /**
-     * If the user clicks on the worst emote button set the emote to the worst resource
-     * @param view this is the view that was clicked
-     */
-    public void selectWorst(View view){
-        emote = R.drawable.worst;
-    }
 }
+

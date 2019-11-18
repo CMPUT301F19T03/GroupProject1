@@ -33,6 +33,28 @@
         android:layout_marginLeft="20dp">
 
     </TextView>
+    <View
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_weight="1">
+    </View>
+
+    <ImageButton
+        android:id="@+id/ListEdit"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="end"
+        android:src="@drawable/baseline_edit_black_18dp">
+    </ImageButton>
+
+    <ImageButton
+        android:id="@+id/ListDelete"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="end"
+        android:src="@drawable/baseline_delete_black_18dp">
+    </ImageButton>
+
 
 
 
