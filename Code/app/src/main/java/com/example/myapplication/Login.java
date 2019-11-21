@@ -22,9 +22,6 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.firestore.QuerySnapshot;
 
-import java.sql.Time;
-import java.util.Calendar;
-import java.util.Date;
 import java.util.HashMap;
 
 /**
@@ -58,7 +55,7 @@ public class Login extends AppCompatActivity {
         if (name.isEmpty()) {
             Toast.makeText(this,"Username can't be empty",Toast.LENGTH_SHORT).show();
         } else {
-            Login(name);
+            LoginFun(name);
         }
 
     }
@@ -68,7 +65,7 @@ public class Login extends AppCompatActivity {
         // Don't allow user to press back
     }
 
-    public void Login(String name) {
+    public void LoginFun(String name) {
         final String Rname = name;
         users.whereEqualTo("Username", name)
                 .get()
