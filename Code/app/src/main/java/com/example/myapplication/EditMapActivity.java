@@ -16,7 +16,6 @@ import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
-import com.google.android.gms.maps.model.BitmapDescriptor;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
@@ -25,6 +24,8 @@ import com.google.android.gms.maps.model.MarkerOptions;
 /**
  * This class is responsible for holding the map for Edit
  * It draws the map and puts a marker on it where the user specifies
+ * Portions of this page are modifications based on work created and shared by Google and used according to terms described in the Creative Commons 4.0 Attribution License.
+ * https://developers.google.com/maps/documentation/android-sdk/start
  */
 public class EditMapActivity extends AppCompatActivity implements OnMapReadyCallback{
 
@@ -95,9 +96,7 @@ public class EditMapActivity extends AppCompatActivity implements OnMapReadyCall
      * Otherwise request permissions from the user
      */
     private void getLocationPermission() {
-        if (ContextCompat.checkSelfPermission(this.getApplicationContext(),
-                Manifest.permission.ACCESS_FINE_LOCATION)
-                == PackageManager.PERMISSION_GRANTED) {
+        if (ContextCompat.checkSelfPermission(this.getApplicationContext(), Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
             mLocationPermissionGranted = true;
         } else {
             ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
@@ -114,11 +113,9 @@ public class EditMapActivity extends AppCompatActivity implements OnMapReadyCall
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         mLocationPermissionGranted = false;
-        switch (requestCode) {
-            case PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION: {
-                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                    mLocationPermissionGranted = true;
-                }
+        if (requestCode == PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION) {
+            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                mLocationPermissionGranted = true;
             }
         }
     }
@@ -130,7 +127,6 @@ public class EditMapActivity extends AppCompatActivity implements OnMapReadyCall
     public void SubmitLocation(View view) {
         if (latLng!=null) {
             Intent data = new Intent();
-            Log.d("myTag","sendlat: "+latLng.latitude);
             data.putExtra("location",latLng);
             setResult(RESULT_OK,data);
             finish();

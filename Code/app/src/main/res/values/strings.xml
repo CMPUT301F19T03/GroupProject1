@@ -30,4 +30,12 @@
         <item> WITH A CROWD </item>
     </string-array>
 
+    <string-array name="emotes">
+        <item> worst </item>
+        <item> bad </item>
+        <item> neutral </item>
+        <item> good </item>
+        <item> great </item>
+    </string-array>
+
 </resources>

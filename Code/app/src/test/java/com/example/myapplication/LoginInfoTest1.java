@@ -17,6 +17,10 @@ public class LoginInfoTest1 {
         participant.addMood(mockMood());
         return participant;
     }
+    private Participant mockEmptyUser(){
+        Participant participant = new Participant("mockUser2");
+        return participant;
+    }
     private Mood mockMood(){
         Date date = new Date(1998,13,1);
         return new Mood(date,"No reason","Out with Friends","great");
@@ -43,6 +47,14 @@ public class LoginInfoTest1 {
         Mood secondmood = new Mood();
         participant.addMood(secondmood);
         assertTrue("False Add, should succeed backend only.",participant.getMoodHistory().get(2) == secondmood);
+
+        // creating empty user
+        Participant newuser = mockEmptyUser();
+        assertEquals(0,newuser.getMoodHistory().size());
+
+        newuser.addMood(secondmood);
+        assertTrue("False Add, should succeed backend only.",newuser.getMoodHistory().get(0) == secondmood);
+
     }
 
     /**
@@ -64,6 +76,8 @@ public class LoginInfoTest1 {
         participant.getMoodHistory().get(1).setReason("Wife");
         participant.getMoodHistory().get(1).setEmoticon("great");
         participant.getMoodHistory().get(1).setSocialSituation("Court");
+        //Date date2 = new Date(1990,7,1);
+       // participant.getMoodHistory().get(1).setDatetime(date2);
 
 //        Date date2 = new Date(1232,6,3);
 //        participant.getMoodHistory().get(1).setDate();
@@ -71,9 +85,21 @@ public class LoginInfoTest1 {
         assertTrue(participant.getMoodHistory().get(1).getReason() == "Wife");
         assertTrue(participant.getMoodHistory().get(1).getEmoticon() == "great");
         assertTrue(participant.getMoodHistory().get(1).getSocialSituation() == "Court");
-        assertTrue(participant.getMoodHistory().get(1).getDatetime() == date1);
+        //assertTrue(participant.getMoodHistory().get(1).getDatetime() == date2);
 
         assertTrue("Wrong Name",participant.getName()== "mockUser");
+
+        participant.getMoodHistory().get(0).setReason("No reason");
+        participant.getMoodHistory().get(0).setEmoticon("great");
+        participant.getMoodHistory().get(0).setSocialSituation("office chat");
+        //Date date3 = new Date(1430,3,2);
+        //participant.getMoodHistory().get(0).setDatetime(date3);
+
+        assertTrue(participant.getMoodHistory().get(0).getReason() == "No reason");
+        assertTrue(participant.getMoodHistory().get(0).getEmoticon() == "great");
+        assertTrue(participant.getMoodHistory().get(0).getSocialSituation() == "office chat");
+        //assertTrue(participant.getMoodHistory().get(0).getDatetime() == date3);
+
     }
     @Test
     public void testDelete(){
@@ -93,12 +119,42 @@ public class LoginInfoTest1 {
         Mood mood3 = new Mood(date1,"arb reason 2","At work again","bad");
         participant.addMood(mood3);
 
+        //delete middle
         participant.getMoodHistory().remove(1);
+        //test if values are at the correct index
+        assertEquals(2,participant.getMoodHistory().size());
+        assertTrue(participant.getMoodHistory().get(1).getReason() == "arb reason 2");
+        assertTrue(participant.getMoodHistory().get(1).getSocialSituation() == "At work again");
+        assertTrue(participant.getMoodHistory().get(1).getEmoticon() == "bad");
+
+        //re-add
+        participant.addMood(mood2);
+        participant.getMoodHistory().remove(2);
 
         assertEquals(2,participant.getMoodHistory().size());
         assertTrue(participant.getMoodHistory().get(1).getReason() == "arb reason 2");
         assertTrue(participant.getMoodHistory().get(1).getSocialSituation() == "At work again");
         assertTrue(participant.getMoodHistory().get(1).getEmoticon() == "bad");
+
+
+        participant.addMood(mood2);
+        participant.getMoodHistory().remove(0);
+
+        assertEquals(2,participant.getMoodHistory().size());
+        assertTrue(participant.getMoodHistory().get(0).getReason() == "arb reason 2");
+        assertTrue(participant.getMoodHistory().get(0).getSocialSituation() == "At work again");
+        assertTrue(participant.getMoodHistory().get(0).getEmoticon() == "bad");
+
+        assertTrue(participant.getMoodHistory().get(1).getReason() == "arb reason");
+        assertTrue(participant.getMoodHistory().get(1).getSocialSituation() == "At work");
+        assertTrue(participant.getMoodHistory().get(1).getEmoticon() == "neutral");
+
+        participant.getMoodHistory().remove(0);
+        assertTrue(participant.getMoodHistory().size() == 1);
+        participant.getMoodHistory().remove(0);
+        assertTrue(participant.getMoodHistory().size() == 0);
+
+
     }
     @Test
     public void testFollowersandRequests(){
@@ -140,3 +196,4 @@ public class LoginInfoTest1 {
 
     }
 }
+

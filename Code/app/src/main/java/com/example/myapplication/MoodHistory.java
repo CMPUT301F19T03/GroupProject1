@@ -4,14 +4,14 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
-import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
-import android.widget.Button;
+import android.widget.HorizontalScrollView;
 import android.widget.ListView;
 
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -34,27 +34,19 @@ public class MoodHistory extends AppCompatActivity {
     String TAG = "myTag";
     ListView moodHistory;
     ArrayAdapter<Mood> moodArrayAdapter;
-    ArrayList<Mood> moodArrayList;
+    static ArrayList<Mood> moodArrayList;
+    ArrayAdapter<Mood> filterAdapter;
+    ArrayList<Mood> filterList;
     Participant user;
     FirebaseFirestore db;
     CollectionReference users;
-    ArrayList<Mood> greatMoods;
-    ArrayList<Mood> goodMoods;
-    ArrayList<Mood> neutralMoods;
-    ArrayList<Mood> badMoods;
-    ArrayList<Mood> worstMoods;
-    ArrayAdapter<Mood> greatAdapter;
-    ArrayAdapter<Mood> goodAdapter;
-    ArrayAdapter<Mood> neutralAdapter;
-    ArrayAdapter<Mood> badAdapter;
-    ArrayAdapter<Mood> worstAdapter;
-    int selected = -1;
-
+    Activity historyActivity;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_mood_history);
+        historyActivity = this;
         db = FirebaseFirestore.getInstance();
         users = db.collection("Users");
         users.addSnapshotListener(new EventListener<QuerySnapshot>() {
@@ -68,25 +60,13 @@ public class MoodHistory extends AppCompatActivity {
                 }
             }
         });
-        Log.d(TAG,"bad: "+R.drawable.bad);
-        Log.d(TAG,"good: "+R.drawable.good);
-        Log.d(TAG,"great: "+R.drawable.great);
-        Log.d(TAG,"neutral: "+R.drawable.neutral);
-        Log.d(TAG,"worst: "+R.drawable.worst);
         Intent intent = getIntent();
         user = (Participant) intent.getSerializableExtra("User");
         moodArrayList = user.getMoodHistory();
-        moodArrayAdapter = new CustomList(this,moodArrayList);
+        moodArrayAdapter = new CustomList(this,moodArrayList,user);
 
         moodHistory = findViewById(R.id.mood_history);
         moodHistory.setAdapter(moodArrayAdapter);
-        moodHistory.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> adapterView, View view, int pos, long id) {
-                Mood temp = (Mood)moodHistory.getItemAtPosition(pos);
-                selected = moodArrayList.indexOf((temp));
-            }
-        });
 
     }
 
@@ -100,36 +80,13 @@ public class MoodHistory extends AppCompatActivity {
         startActivityForResult(intent,1);
     }
     /**
-     * this button sends the user to the edit activity
-     * @param view is the view context for this class
-     */
-    public void editButton(View view) {
-        if (selected!=-1) {
-            Intent intent = new Intent(this, Edit.class);
-            intent.putExtra("moodList", moodArrayList);
-            intent.putExtra("pos", selected);
-            startActivityForResult(intent,1);
-        }
-    }
-    /**
      * this button sends the user to the usermap activity
      * @param view is the view context for this class
      */
     public void mapButton(View view) {
         Intent intent = new Intent(this, Usermap.class);
+        intent.putExtra("user",user);
         startActivity(intent);
-    }
-    /**
-     * this button sends the user to the ViewMood activity
-     * @param view is the view context for this class
-     */
-    public void viewButton(View view) {
-        if (selected!=-1) {
-            Intent intent = new Intent(this, ViewMood.class);
-            intent.putExtra("Mood",moodArrayList.get(selected));
-            selected = -1;
-            startActivity(intent);
-        }
     }
     /**
      * this button sends the user to the Followed mood history activity
@@ -148,91 +105,70 @@ public class MoodHistory extends AppCompatActivity {
         startActivity(intent);
     }
 
-    /**
-     * this button sets the Visibility of the button filters to visible, and allows the user to filter the search based on the given mood state...
-     * @param view is the view context for this class.
-     */
-    public void filterButton(View view){
-        Button allButton = findViewById(R.id.allButton);
-        Button greatButton = findViewById(R.id.greatButton);
-        Button goodButton = findViewById(R.id.goodButton);
-        Button neutralButton = findViewById(R.id.neutralButton);
-        Button badButton = findViewById(R.id.badButton);
-        Button worstButton = findViewById(R.id.worstButton);
-
-        allButton.setVisibility(View.VISIBLE);
-        greatButton.setVisibility(View.VISIBLE);
-        goodButton.setVisibility(View.VISIBLE);
-        neutralButton.setVisibility(View.VISIBLE);
-        badButton.setVisibility(View.VISIBLE);
-        worstButton.setVisibility(View.VISIBLE);
-    }
-
-    public void deleteButton(View view) {
-        if (selected!=-1) {
-            moodArrayList.remove(selected);
-            moodArrayAdapter.notifyDataSetChanged();
-            final HashMap<String, Object> userUpdate = new HashMap<>();
-            userUpdate.put("Participant", user);
-            users.whereEqualTo("Username",user.getName())
-                    .get()
-                    .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-                        @Override
-                        public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                            if (task.isSuccessful()) {
-                                QuerySnapshot queryDocumentSnapshots = task.getResult();
-                                Participant updated = queryDocumentSnapshots.getDocuments().get(0).get("Participant", Participant.class);
-                                Log.d(TAG,"Deleting from user: "+updated.getName());
-                                users.document(queryDocumentSnapshots.getDocuments().get(0).getId())
-                                        .update(userUpdate)
-                                        .addOnSuccessListener(new OnSuccessListener<Void>() {
-                                            @Override
-                                            public void onSuccess(Void aVoid) {
-
-                                                Log.d(TAG,"deleted successfully");
-                                            }
-                                        });
-
-                            }
-                        }
-                    });
-            selected=-1;
-        }
-    }
-
-
-    public void allButton(View view){
-        moodArrayAdapter = new CustomList(this,moodArrayList);
+    public  void clearFilterButton(View view) {
         moodHistory.setAdapter(moodArrayAdapter);
     }
-    public void greatButton(View view){
-        filteredMoods(greatMoods,greatAdapter,"great");
-    }
-    public void goodButton(View view){
-        filteredMoods(goodMoods,goodAdapter,"good");
-    }
-    public void neutralButton(View view){
-        filteredMoods(neutralMoods,neutralAdapter,"neutral");
-    }
-    public void badButton(View view){
-        filteredMoods(badMoods,badAdapter,"bad");
-    }
-    public void worstButton(View view) {
-        filteredMoods(worstMoods,worstAdapter,"worst");
-    }
 
-    public void filteredMoods(ArrayList<Mood> filteredMoods, ArrayAdapter<Mood> filterAdapter,String state){
-        filteredMoods = new ArrayList<>();
-        for (int i = 0; i < moodArrayList.size();i++){
-
-            if (moodArrayList.get(i).getEmoticon().equals(state)){
-                filteredMoods.add(moodArrayList.get(i));
+    public void filterButton(View view) {
+        HorizontalScrollView filterScroll = findViewById(R.id.FilterScroll);
+        if (filterScroll.getVisibility()==View.GONE) {
+            filterScroll.setVisibility(View.VISIBLE);
+        } else {
+            filterScroll.setVisibility(View.GONE);
+        }
+    }
+    public void greatFilterButton(View view) {
+        filterList = new ArrayList<>();
+        for (Mood mood : moodArrayList) {
+            if (mood.getEmoticon().equals("great")) {
+                filterList.add(mood);
             }
         }
-        moodHistory = findViewById(R.id.mood_history);
-        filterAdapter = new CustomList(this,filteredMoods);
+        filterAdapter = new CustomList(this,filterList,user);
         moodHistory.setAdapter(filterAdapter);
     }
+
+    public void goodFilterButton(View view) {
+        filterList = new ArrayList<>();
+        for (Mood mood : moodArrayList) {
+            if (mood.getEmoticon().equals("good")) {
+                filterList.add(mood);
+            }
+        }
+        filterAdapter = new CustomList(this,filterList,user);
+        moodHistory.setAdapter(filterAdapter);
+    }
+    public void neutralFilterButton(View view) {
+        filterList = new ArrayList<>();
+        for (Mood mood : moodArrayList) {
+            if (mood.getEmoticon().equals("neutral")) {
+                filterList.add(mood);
+            }
+        }
+        filterAdapter = new CustomList(this,filterList,user);
+        moodHistory.setAdapter(filterAdapter);
+    }
+    public void badFilterButton(View view) {
+        filterList = new ArrayList<>();
+        for (Mood mood : moodArrayList) {
+            if (mood.getEmoticon().equals("bad")) {
+                filterList.add(mood);
+            }
+        }
+        filterAdapter = new CustomList(this,filterList,user);
+        moodHistory.setAdapter(filterAdapter);
+    }
+    public void worstFilterButton(View view) {
+        filterList = new ArrayList<>();
+        for (Mood mood : moodArrayList) {
+            if (mood.getEmoticon().equals("worst")) {
+                filterList.add(mood);
+            }
+        }
+        filterAdapter = new CustomList(this,filterList,user);
+        moodHistory.setAdapter(filterAdapter);
+    }
+
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
@@ -240,7 +176,7 @@ public class MoodHistory extends AppCompatActivity {
             if (resultCode==RESULT_OK) {
                 Log.d(TAG,"Return from add");
                 moodArrayList = (ArrayList<Mood>) data.getSerializableExtra("Addmood");
-                moodArrayAdapter = new CustomList(this,moodArrayList);
+                moodArrayAdapter = new CustomList(this,moodArrayList,user);
                 moodHistory.setAdapter(moodArrayAdapter);
                 user.setMoodHistory(moodArrayList);
                 final HashMap<String, Object> userUpdate = new HashMap<>();

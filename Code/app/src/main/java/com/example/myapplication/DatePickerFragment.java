@@ -12,12 +12,12 @@ import java.util.Calendar;
  * This class creates the fragment that holds the DatePicker
  */
 public class DatePickerFragment extends DialogFragment {
-    Calendar cal;
+    private Calendar cal;
     // Multiple constructors so that I can use in Add and Edit
 
     /**
      * Creates the DatePicker from an existing calendar object
-     * @param calendar
+     * @param calendar This is a calendar object holding the time to create the fragment with
      */
     public DatePickerFragment(Calendar calendar) {
         cal = calendar;
