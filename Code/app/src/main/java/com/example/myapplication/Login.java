@@ -10,6 +10,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
+import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -23,6 +24,9 @@ import com.google.firebase.firestore.QuerySnapshot;
 
 import java.util.HashMap;
 
+/**
+ * 
+ */
 public class Login extends AppCompatActivity {
 
     String TAG = "myTag";
@@ -48,11 +52,20 @@ public class Login extends AppCompatActivity {
 
     public void loginButton(View view) {
         String name = ((EditText) findViewById(R.id.userText)).getText().toString();
-        Login(name);
+        if (name.isEmpty()) {
+            Toast.makeText(this,"Username can't be empty",Toast.LENGTH_SHORT).show();
+        } else {
+            LoginFun(name);
+        }
 
     }
 
-    public void Login(String name) {
+    @Override
+    public void onBackPressed() {
+        // Don't allow user to press back
+    }
+
+    public void LoginFun(String name) {
         final String Rname = name;
         users.whereEqualTo("Username", name)
                 .get()
@@ -75,9 +88,13 @@ public class Login extends AppCompatActivity {
                                             }
                                         });
                             } else {
+                                Log.d("myTag","found existing user");
                                 user = queryDocumentSnapshots.getDocuments().get(0).get("Participant", Participant.class);
                             }
+                            Log.d(TAG,"Input name: "+Rname);
                             Log.d(TAG, "User: " + user.getName());
+                            EditText nameText = findViewById(R.id.userText);
+                            nameText.setText("");
                             Intent intent = new Intent(main, MoodHistory.class);
                             intent.putExtra("User", user);
                             startActivity(intent);

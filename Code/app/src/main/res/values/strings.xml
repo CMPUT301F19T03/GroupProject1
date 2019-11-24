@@ -9,10 +9,33 @@
     <string name="follow">Follow</string>
     <string name="requests">Requests</string>
     <string name="view">View</string>
-    <string name="mood_tracker">Mood Tracker</string>    
+    <string name="mood_tracker">Mood Tracker</string>
     <string name="user">User:</string>
     <string name="confirm">confirm</string>
     <string name="username_here">username here</string>
     <string name="return_to_mood_history">Return to Mood History</string>
+    <string name="DateString">Date: %1$4d-%2$02d-%3$02d</string>
+    <string name="TimeString">Time: %1$02d:%2$02d</string>
+    <string name="Great">:D</string>
+    <string name="Good">:)</string>
+    <string name="Neutral">:|</string>
+    <string name="Bad">:(</string>
+    <string name="Worst">>:(</string>
+
+    <string-array name="SocialSituations">
+        <item> </item>
+        <item> ALONE </item>
+        <item> WITH SOMEONE </item>
+        <item> WITH MORE THAN 2 PEOPLE </item>
+        <item> WITH A CROWD </item>
+    </string-array>
+
+    <string-array name="emotes">
+        <item> worst </item>
+        <item> bad </item>
+        <item> neutral </item>
+        <item> good </item>
+        <item> great </item>
+    </string-array>
 
 </resources>

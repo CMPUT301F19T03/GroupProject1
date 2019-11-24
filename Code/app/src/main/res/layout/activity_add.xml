@@ -1,190 +1,221 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:orientation="vertical"
     tools:context=".Add">
-
-    <ToggleButton
-        android:id="@+id/locationToggle"
-        android:layout_width="wrap_content"
+    <LinearLayout
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="132dp"
-        android:text="ToggleButton"
-        android:textOff="No"
-        android:textOn="Yes"
-        app:layout_constraintStart_toEndOf="@+id/locationView"
-        app:layout_constraintTop_toBottomOf="@+id/neutralButton" />
+        android:id="@+id/addHeader">
+        <Button
+            android:id="@+id/returnButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginLeft="16dp"
+            android:layout_marginTop="16dp"
+            android:onClick="ReturnButton"
+            android:text="@string/return_to_mood_history"/>
+    </LinearLayout>
 
-    <TextView
-        android:id="@+id/locationView"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="56dp"
-        android:layout_marginLeft="56dp"
-        android:layout_marginTop="148dp"
-        android:text="Location?"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/neutralButton" />
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:fillViewport="true">
 
-    <Button
-        android:id="@+id/returnButton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
-        android:layout_marginLeft="16dp"
-        android:layout_marginTop="16dp"
-        android:onClick="ReturnButton"
-        android:text="@string/return_to_mood_history"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/Addcontent"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
 
-    <TextView
-        android:id="@+id/timeView"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
-        android:layout_marginLeft="16dp"
-        android:layout_marginTop="64dp"
-        android:text="TIME:"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/returnButton" />
+            <androidx.viewpager.widget.ViewPager
+                android:id="@+id/AddviewPager"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:adjustViewBounds="true"
+                app:layout_constraintEnd_toEndOf="@id/Addguideline"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="@+id/Addcontent"
+                app:layout_constraintDimensionRatio="1:1">
 
-    <TextView
-        android:id="@+id/dateView"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
-        android:layout_marginLeft="16dp"
-        android:layout_marginTop="16dp"
-        android:text="DATE:"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/timeView" />
+            </androidx.viewpager.widget.ViewPager>
 
-    <TextView
-        android:id="@+id/moodView"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
-        android:layout_marginLeft="16dp"
-        android:layout_marginTop="64dp"
-        android:text="MOOD:"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/dateView" />
+            <ToggleButton
+                android:id="@+id/locationToggle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="ToggleButton"
+                android:textOff="No"
+                android:textOn="Yes"
+                app:layout_constraintStart_toEndOf="@+id/locationView"
+                app:layout_constraintTop_toTopOf="@+id/locationView" />
 
-    <EditText
-        android:id="@+id/dateText"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="13dp"
-        android:layout_marginLeft="13dp"
-        android:ems="10"
-        android:hint="YYYY/MM/DD"
-        android:inputType="textPersonName"
-        app:layout_constraintStart_toEndOf="@+id/dateView"
-        app:layout_constraintTop_toBottomOf="@+id/timeText" />
+            <TextView
+                android:id="@+id/locationView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="56dp"
+                android:layout_marginLeft="56dp"
+                android:layout_marginTop="32dp"
+                android:text="Location?"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/photoView" />
 
-    <EditText
-        android:id="@+id/timeText"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
-        android:layout_marginLeft="16dp"
-        android:layout_marginTop="44dp"
-        android:ems="10"
-        android:hint="HOUR:MINUTE"
-        android:inputType="textPersonName"
-        app:layout_constraintStart_toEndOf="@+id/timeView"
-        app:layout_constraintTop_toBottomOf="@+id/returnButton" />
 
-    <ImageButton
-        android:id="@+id/greatButton"
-        style="@style/Widget.AppCompat.ImageButton"
-        android:layout_width="50dp"
-        android:layout_height="50dp"
-        android:layout_marginTop="32dp"
-        android:scaleType="centerCrop"
-        app:layout_constraintStart_toEndOf="@+id/moodView"
-        app:layout_constraintTop_toBottomOf="@+id/dateText"
-        app:srcCompat="@drawable/great" />
+            <TextView
+                android:id="@+id/timeView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                android:layout_marginLeft="16dp"
+                android:text=""
+                app:layout_constraintBottom_toTopOf="@+id/dateButton"
+                app:layout_constraintStart_toEndOf="@+id/timeButton" />
 
-    <ImageButton
-        android:id="@+id/goodButton"
-        android:layout_width="50dp"
-        android:layout_height="50dp"
-        android:layout_marginTop="32dp"
-        android:scaleType="centerCrop"
-        app:layout_constraintStart_toEndOf="@+id/greatButton"
-        app:layout_constraintTop_toBottomOf="@+id/dateText"
-        app:srcCompat="@drawable/good" />
+            <TextView
+                android:id="@+id/dateView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                android:layout_marginLeft="16dp"
+                android:text=""
+                app:layout_constraintBottom_toBottomOf="@+id/dateButton"
+                app:layout_constraintStart_toEndOf="@+id/dateButton" />
 
-    <ImageButton
-        android:id="@+id/bagButton"
-        android:layout_width="50dp"
-        android:layout_height="50dp"
-        android:layout_marginTop="32dp"
-        android:scaleType="centerCrop"
-        app:layout_constraintStart_toEndOf="@+id/neutralButton"
-        app:layout_constraintTop_toBottomOf="@+id/dateText"
-        app:srcCompat="@drawable/bad" />
+            <Button
+                android:id="@+id/ConfirmAdd"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="128dp"
+                android:layout_marginLeft="128dp"
+                android:layout_marginEnd="128dp"
+                android:layout_marginRight="128dp"
+                android:text="@string/confirm"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/spinner1" />
 
-    <ImageButton
-        android:id="@+id/neutralButton"
-        android:layout_width="50dp"
-        android:layout_height="50dp"
-        android:layout_marginTop="32dp"
-        android:scaleType="centerCrop"
-        app:layout_constraintStart_toEndOf="@+id/goodButton"
-        app:layout_constraintTop_toBottomOf="@+id/dateText"
-        app:srcCompat="@drawable/neutral" />
+            <ToggleButton
+                android:id="@+id/photoToggle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="9dp"
+                android:layout_marginLeft="9dp"
+                android:text="ToggleButton"
+                android:textOff="No"
+                android:textOn="Yes"
+                app:layout_constraintStart_toEndOf="@+id/photoView"
+                app:layout_constraintTop_toTopOf="@+id/photoView" />
 
-    <ImageButton
-        android:id="@+id/worstButton"
-        android:layout_width="50dp"
-        android:layout_height="50dp"
-        android:layout_marginTop="32dp"
-        android:scaleType="centerCrop"
-        app:layout_constraintStart_toEndOf="@+id/bagButton"
-        app:layout_constraintTop_toBottomOf="@+id/dateText"
-        app:srcCompat="@drawable/worst" />
+            <TextView
+                android:id="@+id/photoView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="64dp"
+                android:layout_marginLeft="64dp"
+                android:text="Photo?"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/dateButton" />
 
-    <Button
-        android:id="@+id/confirmButton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="128dp"
-        android:layout_marginLeft="128dp"
-        android:layout_marginEnd="128dp"
-        android:layout_marginRight="128dp"
-        android:layout_marginBottom="50dp"
-        android:text="@string/confirm"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
+            <Button
+                android:id="@+id/timeButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                android:layout_marginLeft="16dp"
+                android:layout_marginTop="24dp"
+                android:text="Select a time"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/AddviewPager" />
 
-    <ToggleButton
-        android:id="@+id/photoToggle"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="9dp"
-        android:layout_marginLeft="9dp"
-        android:layout_marginTop="84dp"
-        android:text="ToggleButton"
-        android:textOff="No"
-        android:textOn="Yes"
-        app:layout_constraintStart_toEndOf="@+id/photoView"
-        app:layout_constraintTop_toBottomOf="@+id/neutralButton" />
+            <Button
+                android:id="@+id/dateButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                android:layout_marginLeft="16dp"
+                android:text="Select a date"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/timeButton" />
 
-    <TextView
-        android:id="@+id/photoView"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="64dp"
-        android:layout_marginLeft="64dp"
-        android:layout_marginTop="104dp"
-        android:text="Photo?"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/neutralButton" />
+            <TextView
+                android:id="@+id/reasonView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="64dp"
+                android:layout_marginLeft="64dp"
+                android:layout_marginTop="56dp"
+                android:text="Reason:"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/locationView" />
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+            <TextView
+                android:id="@+id/socialView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="64dp"
+                android:layout_marginLeft="64dp"
+                android:layout_marginTop="20dp"
+                android:text="Social Situation:"
+                android:textSize="18sp"
+                app:layout_constraintStart_toStartOf="@+id/reasonView"
+                app:layout_constraintTop_toBottomOf="@+id/reasonView" />
+
+            <EditText
+                android:id="@+id/addReasonText"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                android:layout_marginLeft="16dp"
+                android:hint="Add reason"
+                android:inputType="text"
+                android:maxLength="20"
+                android:text=""
+                android:textSize="14sp"
+                app:layout_constraintBottom_toBottomOf="@+id/reasonView"
+                app:layout_constraintStart_toEndOf="@+id/reasonView" />
+
+            <Button
+                android:id="@+id/EditLocation"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                android:layout_marginLeft="16dp"
+                android:text="Change Location?"
+                android:visibility="gone"
+                app:layout_constraintStart_toEndOf="@+id/locationToggle"
+                app:layout_constraintTop_toBottomOf="@+id/photoToggle" />
+
+            <Spinner
+                android:id="@+id/spinner1"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.0"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/socialView" />
+
+            <androidx.constraintlayout.widget.Guideline
+                android:id="@+id/Addguideline"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                app:layout_constraintGuide_percent="0.75"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="24dp"
+                app:layout_constraintStart_toEndOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/ConfirmAdd" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+    </ScrollView>
+</LinearLayout>

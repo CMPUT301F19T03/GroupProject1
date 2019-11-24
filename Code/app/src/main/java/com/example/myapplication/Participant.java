@@ -9,7 +9,7 @@ public class Participant implements Serializable {
     ArrayList<String> requests;
     ArrayList<String> following;
 
-    public Participant(){}
+    public Participant(){ }
 
     public Participant(String name) {
         this.name = name;
@@ -20,6 +20,7 @@ public class Participant implements Serializable {
 
     public void addMood(Mood mood) {
         moodHistory.add(mood);
+
     }
     public void addRequest(String request) {
         requests.add(request);

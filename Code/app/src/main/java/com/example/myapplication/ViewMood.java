@@ -4,11 +4,10 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
-import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 /**
  * This class is responsible for the View Mood activity
@@ -30,18 +29,18 @@ public class ViewMood extends AppCompatActivity {
         setContentView(R.layout.activity_view_mood);
         Intent intent = getIntent();
         currentMood = (Mood) intent.getSerializableExtra("Mood");
+
         date = findViewById(R.id.dateView);
-        date.setText(currentMood.getDate().toString());
+        date.setText(currentMood.getStringDate());
         time = findViewById(R.id.timeView);
-        time.setText(currentMood.getTime().toString());
+        time.setText(currentMood.getStringTime());
         reason = findViewById(R.id.reasonView);
         reason.setText(currentMood.getReason());
-        Log.d("myTag",currentMood.getReason());
         social = findViewById(R.id.socialView);
         social.setText(currentMood.getSocialSituation());
         emote = findViewById(R.id.emoticonView);
+        emote.setImageResource(currentMood.getEmoteIcon());
         picture = findViewById(R.id.imageView2);
-
 
     }
     /**
@@ -50,5 +49,16 @@ public class ViewMood extends AppCompatActivity {
      */
     public void ReturnButton(View view){
         finish();
+    }
+
+    public void LocationButton(View view) {
+        if (currentMood.getLatitude()!=null) {
+            Intent intent = new Intent(this, ViewMapActivity.class);
+            intent.putExtra("Lat", currentMood.getLatitude());
+            intent.putExtra("Long", currentMood.getLongitude());
+            startActivity(intent);
+        } else {
+            Toast.makeText(this,"No Location for this mood",Toast.LENGTH_SHORT).show();
+        }
     }
 }

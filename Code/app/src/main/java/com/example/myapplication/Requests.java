@@ -20,7 +20,6 @@ public class Requests extends AppCompatActivity {
      * @param view is the context for this view
      */
     public void ReturnButton(View view) {
-        Intent intent = new Intent(this, MoodHistory.class);
-        startActivity(intent);
+        finish();
     }
 }
