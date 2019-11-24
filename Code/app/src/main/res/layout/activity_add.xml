@@ -1,16 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="#FFFFFF"
     android:orientation="vertical"
     tools:context=".Add">
+
     <LinearLayout
+        android:id="@+id/addHeader"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:id="@+id/addHeader">
+        android:layout_height="wrap_content">
+
         <Button
             android:id="@+id/returnButton"
             android:layout_width="wrap_content"
@@ -19,7 +21,7 @@
             android:layout_marginLeft="16dp"
             android:layout_marginTop="16dp"
             android:onClick="ReturnButton"
-            android:text="@string/return_to_mood_history"/>
+            android:text="@string/return_to_mood_history" />
     </LinearLayout>
 
     <ScrollView
@@ -37,34 +39,38 @@
                 android:layout_width="0dp"
                 android:layout_height="0dp"
                 android:adjustViewBounds="true"
+                app:layout_constraintDimensionRatio="1:1"
                 app:layout_constraintEnd_toEndOf="@id/Addguideline"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="@+id/Addcontent"
-                app:layout_constraintDimensionRatio="1:1">
+                app:layout_constraintTop_toTopOf="@+id/Addcontent">
 
             </androidx.viewpager.widget.ViewPager>
+
 
             <ToggleButton
                 android:id="@+id/locationToggle"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_marginStart="10dp"
+                android:layout_marginLeft="10dp"
+                android:layout_marginTop="8dp"
                 android:text="ToggleButton"
                 android:textOff="No"
                 android:textOn="Yes"
                 app:layout_constraintStart_toEndOf="@+id/locationView"
-                app:layout_constraintTop_toTopOf="@+id/locationView" />
+                app:layout_constraintTop_toBottomOf="@+id/photoToggle" />
 
             <TextView
                 android:id="@+id/locationView"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="56dp"
-                android:layout_marginLeft="56dp"
-                android:layout_marginTop="32dp"
+                android:layout_marginStart="44dp"
+                android:layout_marginLeft="44dp"
+                android:layout_marginTop="36dp"
                 android:text="Location?"
+                android:textColor="#000000"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/photoView" />
-
 
             <TextView
                 android:id="@+id/timeView"
@@ -72,7 +78,9 @@
                 android:layout_height="wrap_content"
                 android:layout_marginStart="16dp"
                 android:layout_marginLeft="16dp"
+                android:layout_marginBottom="16dp"
                 android:text=""
+                android:textColor="#000000"
                 app:layout_constraintBottom_toTopOf="@+id/dateButton"
                 app:layout_constraintStart_toEndOf="@+id/timeButton" />
 
@@ -80,9 +88,11 @@
                 android:id="@+id/dateView"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="16dp"
-                android:layout_marginLeft="16dp"
+                android:layout_marginStart="12dp"
+                android:layout_marginLeft="12dp"
+                android:layout_marginBottom="16dp"
                 android:text=""
+                android:textColor="#000000"
                 app:layout_constraintBottom_toBottomOf="@+id/dateButton"
                 app:layout_constraintStart_toEndOf="@+id/dateButton" />
 
@@ -103,13 +113,14 @@
                 android:id="@+id/photoToggle"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="9dp"
-                android:layout_marginLeft="9dp"
+                android:layout_marginStart="8dp"
+                android:layout_marginLeft="8dp"
+                android:layout_marginTop="120dp"
                 android:text="ToggleButton"
                 android:textOff="No"
                 android:textOn="Yes"
                 app:layout_constraintStart_toEndOf="@+id/photoView"
-                app:layout_constraintTop_toTopOf="@+id/photoView" />
+                app:layout_constraintTop_toBottomOf="@+id/AddviewPager" />
 
             <TextView
                 android:id="@+id/photoView"
@@ -117,7 +128,10 @@
                 android:layout_height="wrap_content"
                 android:layout_marginStart="64dp"
                 android:layout_marginLeft="64dp"
+                android:layout_marginTop="12dp"
                 android:text="Photo?"
+                android:textColor="#000000"
+                android:textSize="14sp"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/dateButton" />
 
@@ -150,6 +164,7 @@
                 android:layout_marginLeft="64dp"
                 android:layout_marginTop="56dp"
                 android:text="Reason:"
+                android:textColor="#000000"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/locationView" />
 
@@ -161,6 +176,7 @@
                 android:layout_marginLeft="64dp"
                 android:layout_marginTop="20dp"
                 android:text="Social Situation:"
+                android:textColor="#00000000"
                 android:textSize="18sp"
                 app:layout_constraintStart_toStartOf="@+id/reasonView"
                 app:layout_constraintTop_toBottomOf="@+id/reasonView" />
@@ -169,15 +185,14 @@
                 android:id="@+id/addReasonText"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="16dp"
-                android:layout_marginLeft="16dp"
+                android:layout_marginTop="32dp"
                 android:hint="Add reason"
                 android:inputType="text"
                 android:maxLength="20"
                 android:text=""
                 android:textSize="14sp"
-                app:layout_constraintBottom_toBottomOf="@+id/reasonView"
-                app:layout_constraintStart_toEndOf="@+id/reasonView" />
+                app:layout_constraintStart_toEndOf="@+id/reasonView"
+                app:layout_constraintTop_toBottomOf="@+id/locationToggle" />
 
             <Button
                 android:id="@+id/EditLocation"
@@ -205,8 +220,8 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
-                app:layout_constraintGuide_percent="0.75"
                 app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintGuide_percent="0.75"
                 app:layout_constraintStart_toStartOf="parent" />
 
             <TextView
