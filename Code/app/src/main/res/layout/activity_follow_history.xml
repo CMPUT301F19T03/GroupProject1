@@ -28,4 +28,13 @@
         android:text="@string/return_to_mood_history"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/viewfollow"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="                       "
+        tools:layout_editor_absoluteX="153dp"
+        tools:layout_editor_absoluteY="180dp" />
+
 </androidx.constraintlayout.widget.ConstraintLayout>

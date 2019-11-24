@@ -94,6 +94,7 @@ public class MoodHistory extends AppCompatActivity {
      */
     public void viewFollowButton(View view) {
         Intent intent = new Intent(this, FollowHistory.class);
+        intent.putExtra("User", user);
         startActivity(intent);
     }
     /**
@@ -102,6 +103,7 @@ public class MoodHistory extends AppCompatActivity {
      */
     public void requestButton(View view) {
         Intent intent = new Intent(this, Requests.class);
+        intent.putExtra("User", user);
         startActivity(intent);
     }
 
