@@ -21,6 +21,8 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QuerySnapshot;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -96,6 +98,7 @@ public class CustomList extends ArrayAdapter<Mood> {
         deleteButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                Mood temp = moods.get(position);
                 moods.remove(position);
                 list.notifyDataSetChanged();
                 final HashMap<String, Object> userUpdate = new HashMap<>();
@@ -114,7 +117,6 @@ public class CustomList extends ArrayAdapter<Mood> {
                                             .addOnSuccessListener(new OnSuccessListener<Void>() {
                                                 @Override
                                                 public void onSuccess(Void aVoid) {
-
                                                     Log.d("myTag","deleted successfully");
                                                 }
                                             });
@@ -122,6 +124,15 @@ public class CustomList extends ArrayAdapter<Mood> {
                                 }
                             }
                         });
+                if (temp.getPicture()!=null) {
+                    FirebaseStorage.getInstance().getReference().child(temp.getPicture()).delete()
+                            .addOnSuccessListener(new OnSuccessListener<Void>() {
+                                @Override
+                                public void onSuccess(Void aVoid) {
+                                    Log.d("myTag","Deleted image successfully");
+                                }
+                            });
+                }
             }
         });
         return view;

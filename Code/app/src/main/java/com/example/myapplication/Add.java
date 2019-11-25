@@ -3,18 +3,24 @@ package com.example.myapplication;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
+import androidx.core.content.FileProvider;
 import androidx.fragment.app.DialogFragment;
 import androidx.viewpager.widget.ViewPager;
 
+import android.Manifest;
 import android.app.Activity;
 import android.app.DatePickerDialog;
 import android.app.TimePickerDialog;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Environment;
 import android.provider.MediaStore;
 import android.util.Log;
 import android.view.View;
@@ -38,6 +44,9 @@ import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 
 import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.IOException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
@@ -74,6 +83,9 @@ public class Add extends AppCompatActivity implements TimePickerDialog.OnTimeSet
     String social;
     Date datetime;
     String emoticon;
+
+    private static final int PERMISSIONS_REQUEST_ACCESS_CAMERA = 2;
+    private boolean mCameraPermissionGranted;
 
     /**
      * This is run when the activity is created. It sets up listeners and initial values
@@ -168,10 +180,14 @@ public class Add extends AppCompatActivity implements TimePickerDialog.OnTimeSet
             @Override
             public void onCheckedChanged(CompoundButton compoundButton, boolean isChecked) {
                 if (isChecked) {
-                    Intent photoIntent = new Intent();
-                    photoIntent.setType("image/*");
-                    photoIntent.setAction(Intent.ACTION_GET_CONTENT);
-                    startActivityForResult(Intent.createChooser(photoIntent,"Select Picture"),3);
+//                    Intent photoIntent = new Intent();
+//                    photoIntent.setType("image/*");
+//                    photoIntent.setAction(Intent.ACTION_GET_CONTENT);
+//                    startActivityForResult(Intent.createChooser(photoIntent,"Select Picture"),3);
+                    getCameraPermission();
+                    if (mCameraPermissionGranted) {
+                        startCameraIntent();
+                    }
                 } else {
                     temp.setImageBitmap(null);
                 }
@@ -295,8 +311,15 @@ public class Add extends AppCompatActivity implements TimePickerDialog.OnTimeSet
             }
         } else if (requestCode==3) {
             if (resultCode==RESULT_OK) {
-                 Uri imageURI = data.getData();
-                 temp.setImageURI(imageURI);
+                Uri imageURI;
+                if (data.getData()!=null) {
+                    imageURI = data.getData();
+                } else {
+                    Log.d("myTag","Path: "+currentPhotoPath);
+                    imageURI = Uri.parse("file://"+currentPhotoPath);
+                }
+                temp.setImageURI(imageURI);
+
             } else {
                 photoToggle.setChecked(false);
             }
@@ -324,5 +347,74 @@ public class Add extends AppCompatActivity implements TimePickerDialog.OnTimeSet
             }
         });
     }
+
+    private void getCameraPermission() {
+        if (ContextCompat.checkSelfPermission(this.getApplicationContext(), Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED) {
+            mCameraPermissionGranted = true;
+        } else {
+            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.CAMERA}, PERMISSIONS_REQUEST_ACCESS_CAMERA);
+        }
+    }
+
+    /**
+     * when the user decides if the app can access their current location
+     * either set the bool to true or exit the activity
+     * @param requestCode the request code sent in getLocationPermission
+     * @param permissions which permissions were requested
+     * @param grantResults array for which permissions were granted
+     */
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        mCameraPermissionGranted = false;
+        switch (requestCode) {
+            case PERMISSIONS_REQUEST_ACCESS_CAMERA: {
+                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    mCameraPermissionGranted = true;
+                    startCameraIntent();
+                } else {
+                    Toast.makeText(this,"App must have permissions for your camera if you want to use the camera",Toast.LENGTH_LONG).show();
+                    setResult(RESULT_CANCELED);
+                    finish();
+                }
+            }
+        }
+    }
+    String currentPhotoPath;
+    private File createImageFile() throws IOException {
+        // Create an image file name
+        String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
+        String imageFileName = "JPEG_" + timeStamp + "_";
+        File storageDir = getExternalFilesDir(Environment.DIRECTORY_PICTURES);
+        File image = File.createTempFile(
+                imageFileName,  /* prefix */
+                ".jpg",         /* suffix */
+                storageDir      /* directory */
+        );
+
+        // Save a file: path for use with ACTION_VIEW intents
+        currentPhotoPath = image.getAbsolutePath();
+        return image;
+    }
+
+    private void startCameraIntent() {
+        Intent cameraIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+        if (cameraIntent.resolveActivity(getPackageManager())!=null) {
+            File photoFile = null;
+            try {
+                photoFile = createImageFile();
+            } catch (IOException e) {
+                Log.e("myTag","Exception found while creating file: "+e);
+            }
+            if (photoFile!=null) {
+                Uri photoURI = FileProvider.getUriForFile(context,"com.example.android.fileprovider",
+                        photoFile);
+                cameraIntent.putExtra(MediaStore.EXTRA_OUTPUT, photoURI);
+                startActivityForResult(cameraIntent, 3);
+            }
+        } else {
+            Log.d("myTag","Could not resolve camera activity");
+        }
+    }
+
 }
 
