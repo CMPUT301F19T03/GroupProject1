@@ -131,7 +131,6 @@ public class AddMapActivity extends AppCompatActivity implements OnMapReadyCallb
     public void SubmitLocation(View view) {
         if (latLng!=null) {
             Intent data = new Intent();
-            Log.d("myTag","sendlat: "+latLng.latitude);
             data.putExtra("location",latLng);
             setResult(RESULT_OK,data);
             finish();

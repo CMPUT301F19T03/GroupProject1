@@ -1,13 +1,22 @@
 package com.example.myapplication;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
+import android.graphics.BitmapFactory;
 import android.os.Bundle;
+import android.util.Base64;
+import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
 
 /**
  * This class is responsible for the View Mood activity
@@ -22,11 +31,14 @@ public class ViewMood extends AppCompatActivity {
     ImageView emote;
     ImageView picture;
 
+    StorageReference storageRef;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_view_mood);
+        storageRef = FirebaseStorage.getInstance().getReference();
         Intent intent = getIntent();
         currentMood = (Mood) intent.getSerializableExtra("Mood");
 
@@ -41,6 +53,20 @@ public class ViewMood extends AppCompatActivity {
         emote = findViewById(R.id.emoticonView);
         emote.setImageResource(currentMood.getEmoteIcon());
         picture = findViewById(R.id.imageView2);
+        if (currentMood.getPicture()!=null) {
+            StorageReference imRef = storageRef.child(currentMood.getPicture());
+            imRef.getBytes(Long.MAX_VALUE).addOnSuccessListener(new OnSuccessListener<byte[]>() {
+                @Override
+                public void onSuccess(byte[] bytes) {
+                    picture.setImageBitmap(BitmapFactory.decodeByteArray(bytes,0,bytes.length));
+                }
+            }).addOnFailureListener(new OnFailureListener() {
+                @Override
+                public void onFailure(@NonNull Exception e) {
+                    Log.d("myTag","Failed to getBytes: "+e);
+                }
+            });
+        }
 
     }
     /**

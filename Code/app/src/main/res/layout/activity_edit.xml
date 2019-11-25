@@ -41,8 +41,20 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="@+id/Editcontent"
                 app:layout_constraintDimensionRatio="1:1">
-
             </androidx.viewpager.widget.ViewPager>
+
+            <ImageView
+                android:id="@+id/tempImageView"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:adjustViewBounds="true"
+                app:layout_constraintStart_toEndOf="@id/Editguideline"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="@+id/Editcontent"
+                app:layout_constraintDimensionRatio="1:1">
+            </ImageView>
+
+
 
             <ToggleButton
                 android:id="@+id/editLocationToggle"
@@ -207,7 +219,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
-                app:layout_constraintGuide_percent="0.75"
+                app:layout_constraintGuide_percent="0.5"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent" />
 

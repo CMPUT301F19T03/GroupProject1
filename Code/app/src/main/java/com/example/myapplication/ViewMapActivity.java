@@ -49,7 +49,6 @@ public class ViewMapActivity extends AppCompatActivity implements OnMapReadyCall
     public void onMapReady(GoogleMap googleMap) {
         getLocationPermission();
         if (mLocationPermissionGranted) {
-            googleMap.setMyLocationEnabled(true);
             googleMap.moveCamera( CameraUpdateFactory.newLatLngZoom(latLng , 16.0f) );
 
             googleMap.setMapType(GoogleMap.MAP_TYPE_HYBRID);

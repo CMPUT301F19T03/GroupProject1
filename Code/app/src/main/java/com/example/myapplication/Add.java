@@ -1,5 +1,6 @@
 package com.example.myapplication;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.DialogFragment;
@@ -10,13 +11,19 @@ import android.app.DatePickerDialog;
 import android.app.TimePickerDialog;
 import android.content.Intent;
 import android.content.res.Resources;
+import android.graphics.Bitmap;
+import android.graphics.drawable.BitmapDrawable;
+import android.net.Uri;
 import android.os.Bundle;
+import android.provider.MediaStore;
+import android.util.Log;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.CompoundButton;
 import android.widget.DatePicker;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.TimePicker;
@@ -24,7 +31,13 @@ import android.widget.Toast;
 import android.widget.ToggleButton;
 
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
+import com.google.firebase.storage.UploadTask;
 
+import java.io.ByteArrayOutputStream;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
@@ -43,6 +56,7 @@ public class Add extends AppCompatActivity implements TimePickerDialog.OnTimeSet
     TextView dateText;
     EditText ReasonText;
     ToggleButton locationToggle;
+    ToggleButton photoToggle;
     String dateString;
     String timeString;
     Resources res;
@@ -51,6 +65,15 @@ public class Add extends AppCompatActivity implements TimePickerDialog.OnTimeSet
     Activity context;
 
     ViewPager viewPager;
+
+    ImageView temp;
+    FirebaseStorage mStorage;
+    Participant user;
+
+    String reason;
+    String social;
+    Date datetime;
+    String emoticon;
 
     /**
      * This is run when the activity is created. It sets up listeners and initial values
@@ -61,9 +84,12 @@ public class Add extends AppCompatActivity implements TimePickerDialog.OnTimeSet
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add);
         context = this;
+        mStorage = FirebaseStorage.getInstance();
         // Get the List of Moods from moodHistory
         final Intent intent = getIntent();
-        final ArrayList<Mood> moodList = (ArrayList<Mood>) intent.getSerializableExtra("moodList");
+        user = (Participant) intent.getSerializableExtra("user");
+
+        final ArrayList<Mood> moodList = user.getMoodHistory();
         // Get a reference to current time/date
         cal = Calendar.getInstance();
         // Get a reference to the resources
@@ -87,6 +113,8 @@ public class Add extends AppCompatActivity implements TimePickerDialog.OnTimeSet
         ImagePagerAdapter adapter = new ImagePagerAdapter(context);
         viewPager.setAdapter(adapter);
         viewPager.setCurrentItem(2);
+
+        temp = findViewById(R.id.tempImageView);
 
         // Set up a button to start the time Picker
         Button timePick = findViewById(R.id.timeButton);
@@ -135,40 +163,71 @@ public class Add extends AppCompatActivity implements TimePickerDialog.OnTimeSet
             }
         });
 
+        photoToggle = findViewById(R.id.photoToggle);
+        photoToggle.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton compoundButton, boolean isChecked) {
+                if (isChecked) {
+                    Intent photoIntent = new Intent();
+                    photoIntent.setType("image/*");
+                    photoIntent.setAction(Intent.ACTION_GET_CONTENT);
+                    startActivityForResult(Intent.createChooser(photoIntent,"Select Picture"),3);
+                } else {
+                    temp.setImageBitmap(null);
+                }
+            }
+        });
+
         final Button confirm = findViewById(R.id.ConfirmAdd);
         confirm.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 //Get the date from the Calendar object that can be set from the Pickers
-                Date date = cal.getTime();
-                Mood mood;
+                datetime = cal.getTime();
                 //Get the reason and social situation of the mood
-                String reason = ReasonText.getText().toString();
+                reason = ReasonText.getText().toString();
                 if (reason.split(" ").length>3) {
                     Toast.makeText(context,"Reason can only be 3 words",Toast.LENGTH_SHORT).show();
                     return;
                 }
-                String social = add_situation.getSelectedItem().toString();
+                social = add_situation.getSelectedItem().toString();
                 // Get the name of the emoticon for future safe storage in the firebase
                 int pos = viewPager.getCurrentItem();
-                String emoticon = res.getStringArray(R.array.emotes)[pos];
-                // If the user added a location include it in the Mood
-                if (locationToggle.isChecked()) {
-                    mood = new Mood(date, userLocation.latitude, userLocation.longitude, reason, social, emoticon);
+                emoticon = res.getStringArray(R.array.emotes)[pos];
+                if (photoToggle.isChecked()) {
+                    encodeBitmapAndSave();
                 } else {
-                    mood = new Mood(date, reason, social, emoticon);
+                    createMood(null, datetime, reason, social, emoticon);
                 }
-                //Add the mood to the list and send the list back to moodHistory to update the firebase
-                moodList.add(mood);
-                Intent data = new Intent();
-                data.putExtra("Addmood", moodList);
-                setResult(RESULT_OK, data);
-                finish();
 
             }
         });
 
         Toast.makeText(this,"Swipe emote to select other moods",Toast.LENGTH_SHORT).show();
+    }
+
+    public void createMood(UploadTask task,Date date,String reason,String social,String emoticon) {
+        Mood mood;
+        ArrayList<Mood> moodList = user.getMoodHistory();
+        String image;
+        if (task==null) {
+            image = null;
+        } else {
+            image = user.getUID()+"/"+cal.getTime();
+        }
+
+        // If the user added a location include it in the Mood
+        if (locationToggle.isChecked()) {
+            mood = new Mood(date, userLocation.latitude, userLocation.longitude, reason, social, emoticon, image);
+        } else {
+            mood = new Mood(date, reason, social, emoticon, image);
+        }
+        //Add the mood to the list and send the list back to moodHistory to update the firebase
+        moodList.add(mood);
+        Intent data = new Intent();
+        data.putExtra("Addmood", moodList);
+        setResult(RESULT_OK, data);
+        finish();
     }
 
     /**
@@ -234,7 +293,36 @@ public class Add extends AppCompatActivity implements TimePickerDialog.OnTimeSet
             if (resultCode==RESULT_OK) {
                 userLocation = data.getExtras().getParcelable("location");
             }
+        } else if (requestCode==3) {
+            if (resultCode==RESULT_OK) {
+                 Uri imageURI = data.getData();
+                 temp.setImageURI(imageURI);
+            } else {
+                photoToggle.setChecked(false);
+            }
         }
+    }
+
+    public void encodeBitmapAndSave() {
+        Bitmap bitmap = ((BitmapDrawable) temp.getDrawable()).getBitmap();
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        bitmap.compress(Bitmap.CompressFormat.PNG,100,baos);
+        byte[] data = baos.toByteArray();
+        StorageReference ref = mStorage.getReference().child(user.getUID()+"/"+cal.getTime());
+        final UploadTask uploadTask = ref.putBytes(data);
+        uploadTask.addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+                Log.d("myTag","Upload Failed: "+e);
+            }
+        });
+        uploadTask.addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+            @Override
+            public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                Log.d("myTag", "Upload Succeeded");
+                createMood(uploadTask,datetime,reason,social,emoticon);
+            }
+        });
     }
 }
 

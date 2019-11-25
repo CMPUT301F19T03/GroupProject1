@@ -1,10 +1,13 @@
 package com.example.myapplication;
 
+import com.google.firebase.firestore.Exclude;
+
 import java.io.Serializable;
 import java.util.ArrayList;
 
 public class Participant implements Serializable {
     String name;
+    String UID;
     ArrayList<Mood> moodHistory;
     ArrayList<String> requests;
     ArrayList<String> following;
@@ -59,5 +62,14 @@ public class Participant implements Serializable {
 
     public void setFollowing(ArrayList<String> following) {
         this.following = following;
+    }
+
+    @Exclude
+    public String getUID() {
+        return this.UID;
+    }
+    @Exclude
+    public void setUID(String uid) {
+        this.UID=uid;
     }
 }

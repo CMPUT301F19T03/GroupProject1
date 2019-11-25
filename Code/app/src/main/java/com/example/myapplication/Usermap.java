@@ -57,11 +57,9 @@ public class Usermap extends AppCompatActivity implements OnMapReadyCallback {
         getLocationPermission();
         // If we have been given permissions to access Location proceed
         if (mLocationPermissionGranted) {
-            googleMap.setMyLocationEnabled(true);
             // Otherwise go to the University Campus
             googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(53.5232, -113.5263), 14.0f));
             googleMap.setMapType(GoogleMap.MAP_TYPE_HYBRID);
-            googleMap.getUiSettings().setMapToolbarEnabled(false);
             googleMap.getUiSettings().setZoomControlsEnabled(true);
             //place markers on map
             ArrayList<Mood> moods = user.getMoodHistory();

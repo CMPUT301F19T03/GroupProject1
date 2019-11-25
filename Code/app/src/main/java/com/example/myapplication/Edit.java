@@ -1,5 +1,6 @@
 package com.example.myapplication;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.DialogFragment;
@@ -10,7 +11,12 @@ import android.app.DatePickerDialog;
 import android.app.TimePickerDialog;
 import android.content.Intent;
 import android.content.res.Resources;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.drawable.BitmapDrawable;
+import android.net.Uri;
 import android.os.Bundle;
+import android.provider.MediaStore;
 import android.util.Log;
 import android.view.View;
 import android.widget.ArrayAdapter;
@@ -18,6 +24,7 @@ import android.widget.Button;
 import android.widget.CompoundButton;
 import android.widget.DatePicker;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.TimePicker;
@@ -25,7 +32,13 @@ import android.widget.Toast;
 import android.widget.ToggleButton;
 
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
+import com.google.firebase.storage.UploadTask;
 
+import java.io.ByteArrayOutputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
@@ -36,10 +49,12 @@ import java.util.Date;
  */
 public class Edit extends AppCompatActivity implements TimePickerDialog.OnTimeSetListener, DatePickerDialog.OnDateSetListener {
     Calendar cal;
+    Calendar startTime;
     TextView timeText;
     TextView dateText;
     EditText ReasonText;
     ToggleButton locationToggle;
+    ToggleButton photoToggle;
     String dateString;
     String timeString;
     Resources res;
@@ -50,6 +65,11 @@ public class Edit extends AppCompatActivity implements TimePickerDialog.OnTimeSe
     Activity context;
 
     ViewPager viewpager;
+
+    Uri imageURI;
+    ImageView temp;
+    FirebaseStorage mStorage;
+    Participant user;
 
 
     /**
@@ -62,6 +82,7 @@ public class Edit extends AppCompatActivity implements TimePickerDialog.OnTimeSe
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_edit);
         context = this;
+        mStorage = FirebaseStorage.getInstance();
         res = getResources();
         // Get the mood array from moodHistory
         final Intent intent = getIntent();
@@ -74,6 +95,8 @@ public class Edit extends AppCompatActivity implements TimePickerDialog.OnTimeSe
         // Initialize with values from editMood
         cal = Calendar.getInstance();
         cal.setTime(editMood.getDatetime());
+        startTime = Calendar.getInstance();
+        startTime.setTime(editMood.getDatetime());
         reason = editMood.getReason();
         social = editMood.getSocialSituation();
 
@@ -165,6 +188,37 @@ public class Edit extends AppCompatActivity implements TimePickerDialog.OnTimeSe
             }
         });
 
+        temp = findViewById(R.id.tempImageView);
+        if (editMood.getPicture()!=null) {
+            StorageReference imRef = mStorage.getReference().child(editMood.getPicture());
+            imRef.getBytes(Long.MAX_VALUE).addOnSuccessListener(new OnSuccessListener<byte[]>() {
+                @Override
+                public void onSuccess(byte[] bytes) {
+                    temp.setImageBitmap(BitmapFactory.decodeByteArray(bytes,0,bytes.length));
+                }
+            }).addOnFailureListener(new OnFailureListener() {
+                @Override
+                public void onFailure(@NonNull Exception e) {
+                    Log.d("myTag","Failed to getBytes: "+e);
+                }
+            });
+        }
+        photoToggle = findViewById(R.id.photoToggle);
+        photoToggle.setChecked(editMood.getPicture()!=null);
+        photoToggle.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton compoundButton, boolean isChecked) {
+                if (isChecked) {
+                    Intent photoIntent = new Intent();
+                    photoIntent.setType("image/*");
+                    photoIntent.setAction(Intent.ACTION_GET_CONTENT);
+                    startActivityForResult(Intent.createChooser(photoIntent,"Select Picture"),3);
+                } else {
+                    temp.setImageBitmap(null);
+                }
+            }
+        });
+
         // Set the behaviour for when the user tries to submit a Edited mood
         final Button confirm = findViewById(R.id.ConfirmEdit);
         confirm.setOnClickListener(new View.OnClickListener() {
@@ -188,16 +242,12 @@ public class Edit extends AppCompatActivity implements TimePickerDialog.OnTimeSe
                     //Do not include location
                     editMood.setLongitude(null);
                     editMood.setLatitude(null);
-
                 }
                 editMood.setDatetime(date);
                 editMood.setReason(reason);
                 editMood.setSocialSituation(social);
                 editMood.setEmoticon(emote);
-                Intent data = new Intent();
-                data.putExtra("Addmood", moodList);
-                setResult(RESULT_OK, data);
-                finish();
+                editImage(editMood,moodList,imageURI);
             }
         });
 
@@ -271,7 +321,81 @@ public class Edit extends AppCompatActivity implements TimePickerDialog.OnTimeSe
             if (resultCode==RESULT_OK) {
                 userLocation = data.getExtras().getParcelable("location");
             }
+        } else if (requestCode==3) {
+            if (resultCode == RESULT_OK) {
+                imageURI = data.getData();
+                try {
+                    temp.setImageURI(imageURI);
+                } catch (Exception e) {
+                    Log.d("myTag", "Exception found: " + e);
+                }
+            } else {
+                photoToggle.setChecked(false);
+            }
         }
     }
+
+    public void editImage(final Mood editmood, final ArrayList<Mood> moodList, final Uri imageURI) {
+        UploadTask uploadTask = null;
+        if (photoToggle.isChecked()) {
+            if (editmood.getPicture()==null) {
+                Log.d("myTag","Bitmap is null");
+            } else {
+                try {
+                    Bitmap bitmap = ((BitmapDrawable) temp.getDrawable()).getBitmap();
+                    uploadTask = encodeBitmapAndSave(bitmap);
+                } catch (Exception e) {
+                    Log.d("myTag", "Exception found: " + e);
+                }
+            }
+        }
+        if (uploadTask!=null) {
+            final UploadTask finalUploadTask = uploadTask;
+            uploadTask.addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+                @Override
+                public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                    Log.d("myTag", "Upload Succeeded");
+                    mStorage.getReference().child(user.getUID()+"/"+startTime.getTime()).delete()
+                    .addOnSuccessListener(new OnSuccessListener<Void>() {
+                        @Override
+                        public void onSuccess(Void aVoid) {
+                            Log.d("myTag","Removed old Image");
+                        }
+                    })
+                    .addOnFailureListener(new OnFailureListener() {
+                        @Override
+                        public void onFailure(@NonNull Exception e) {
+                            Log.d("myTag","Failed to remove old image");
+                        }
+                    });
+                    editmood.setPicture(user.getUID()+"/"+editmood.getDatetime());
+                    Intent data = new Intent();
+                    data.putExtra("Addmood", moodList);
+                    setResult(RESULT_OK, data);
+                    finish();
+                }
+            });
+        } else {
+            Intent data = new Intent();
+            data.putExtra("Addmood", moodList);
+            setResult(RESULT_OK, data);
+            finish();
+        }
+    }
+    public UploadTask encodeBitmapAndSave(Bitmap bitmap) {
+            ByteArrayOutputStream baos = new ByteArrayOutputStream();
+            bitmap.compress(Bitmap.CompressFormat.PNG,100,baos);
+            byte[] data = baos.toByteArray();
+            StorageReference ref = mStorage.getReference().child(user.getUID()+"/"+cal.getTime());
+            UploadTask uploadTask = ref.putBytes(data);
+            uploadTask.addOnFailureListener(new OnFailureListener() {
+                @Override
+                public void onFailure(@NonNull Exception e) {
+                    Log.d("myTag","Upload Failed: "+e);
+                }
+            });
+            return uploadTask;
+
+        }
 
 }
