@@ -30,7 +30,7 @@ public class Participant implements Serializable {
     }
 
     public String getName() {
-        return name;
+        return this.name;
     }
 
     public ArrayList<Mood> getMoodHistory() {

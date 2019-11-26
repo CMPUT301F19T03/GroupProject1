@@ -112,7 +112,7 @@ public class MoodHistory extends AppCompatActivity {
      * @param view is the view context for this class
      */
     public void requestButton(View view) {
-        Intent intent = new Intent(this, Requests.class);
+        Intent intent = new Intent(MoodHistory.this, RequestActivity.class);
         intent.putExtra("User", user);
         startActivity(intent);
     }

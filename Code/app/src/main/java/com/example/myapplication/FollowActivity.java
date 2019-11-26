@@ -35,7 +35,7 @@ public class FollowActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_follow);
-        final EditText Username =  findViewById(R.id.Username);
+        final EditText Username =  findViewById(R.id.add_request);
         final Button add = findViewById(R.id.Add_button);
         final TextView error = findViewById(R.id.ErrorM);
         db = FirebaseFirestore.getInstance();
@@ -63,7 +63,7 @@ public class FollowActivity extends AppCompatActivity {
                             }
                             else{
                                 user = queryDocumentSnapshots.getDocuments().get(0).get("Participant", Participant.class);
-                                user.addFollowing("Request sent from " + user1.getName());
+                                user.addRequest(user1.getName());
                                 final HashMap<String, Object> userUpdate = new HashMap<>();
                                 userUpdate.put("Participant", user);
                                 users.whereEqualTo("Username",user.getName())
@@ -90,7 +90,7 @@ public class FollowActivity extends AppCompatActivity {
 
                                 finish();
                             }
-                            }
+                        }
                     }
                 });
                 //finish();
