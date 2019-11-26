@@ -54,9 +54,8 @@ import java.util.Date;
 /**
  * This class is responsible for the Add activity
  * which creates a new Mood object based on the user's choices
- *
- *  Issues:
- *  Does not have any images
+ * Portions of this page are modifications based on work created and shared by Google and used according to terms described in the Creative Commons 4.0 Attribution License.
+ * https://developer.android.com/training/camera/photobasics
  */
 
 public class Add extends AppCompatActivity implements TimePickerDialog.OnTimeSetListener, DatePickerDialog.OnDateSetListener {
@@ -83,6 +82,7 @@ public class Add extends AppCompatActivity implements TimePickerDialog.OnTimeSet
     String social;
     Date datetime;
     String emoticon;
+    String imagePath;
 
     private static final int PERMISSIONS_REQUEST_ACCESS_CAMERA = 2;
     private boolean mCameraPermissionGranted;
@@ -190,6 +190,7 @@ public class Add extends AppCompatActivity implements TimePickerDialog.OnTimeSet
                     }
                 } else {
                     temp.setImageBitmap(null);
+                    destroySavedImage();
                 }
             }
         });
@@ -229,8 +230,9 @@ public class Add extends AppCompatActivity implements TimePickerDialog.OnTimeSet
         if (task==null) {
             image = null;
         } else {
-            image = user.getUID()+"/"+cal.getTime();
+            image = imagePath;
         }
+        destroySavedImage();
 
         // If the user added a location include it in the Mood
         if (locationToggle.isChecked()) {
@@ -315,7 +317,6 @@ public class Add extends AppCompatActivity implements TimePickerDialog.OnTimeSet
                 if (data.getData()!=null) {
                     imageURI = data.getData();
                 } else {
-                    Log.d("myTag","Path: "+currentPhotoPath);
                     imageURI = Uri.parse("file://"+currentPhotoPath);
                 }
                 temp.setImageURI(imageURI);
@@ -331,7 +332,8 @@ public class Add extends AppCompatActivity implements TimePickerDialog.OnTimeSet
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         bitmap.compress(Bitmap.CompressFormat.PNG,100,baos);
         byte[] data = baos.toByteArray();
-        StorageReference ref = mStorage.getReference().child(user.getUID()+"/"+cal.getTime());
+        imagePath = user.getUID()+"/"+Calendar.getInstance().getTime();
+        StorageReference ref = mStorage.getReference().child(imagePath);
         final UploadTask uploadTask = ref.putBytes(data);
         uploadTask.addOnFailureListener(new OnFailureListener() {
             @Override
@@ -413,6 +415,17 @@ public class Add extends AppCompatActivity implements TimePickerDialog.OnTimeSet
             }
         } else {
             Log.d("myTag","Could not resolve camera activity");
+        }
+    }
+
+    public void destroySavedImage() {
+        File fdelete = new File(currentPhotoPath);
+        if (fdelete.exists()) {
+            if (fdelete.delete()) {
+                Log.d("myTag","Deleted image: "+currentPhotoPath);
+            } else {
+                Log.d("myTag","COuld not delete: "+currentPhotoPath);
+            }
         }
     }
 

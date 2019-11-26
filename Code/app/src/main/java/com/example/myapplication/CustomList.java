@@ -88,7 +88,7 @@ public class CustomList extends ArrayAdapter<Mood> {
             @Override
             public void onClick(View view) {
                 Intent intent = new Intent(context, Edit.class);
-                intent.putExtra("moodList", MoodHistory.moodArrayList);
+                intent.putExtra("user", user);
                 int pos = MoodHistory.moodArrayList.indexOf(mood);
                 intent.putExtra("pos", pos);
                 ((Activity)context).startActivityForResult(intent,1);

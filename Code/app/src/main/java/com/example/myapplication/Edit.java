@@ -39,17 +39,21 @@ import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 
 import java.io.ByteArrayOutputStream;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.Locale;
 
 /**
  * This class is responsible for the Edit activity
  */
 public class Edit extends AppCompatActivity implements TimePickerDialog.OnTimeSetListener, DatePickerDialog.OnDateSetListener {
+    Mood editMood;
+    ArrayList<Mood> moodList;
     Calendar cal;
-    Calendar startTime;
     TextView timeText;
     TextView dateText;
     EditText ReasonText;
@@ -66,10 +70,11 @@ public class Edit extends AppCompatActivity implements TimePickerDialog.OnTimeSe
 
     ViewPager viewpager;
 
-    Uri imageURI;
     ImageView temp;
     FirebaseStorage mStorage;
     Participant user;
+    String imagePath;
+    boolean imageChanged;
 
 
     /**
@@ -81,22 +86,22 @@ public class Edit extends AppCompatActivity implements TimePickerDialog.OnTimeSe
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_edit);
+        imageChanged = false;
         context = this;
         mStorage = FirebaseStorage.getInstance();
         res = getResources();
         // Get the mood array from moodHistory
         final Intent intent = getIntent();
-        final ArrayList<Mood> moodList = (ArrayList<Mood>) intent.getSerializableExtra("moodList");
+        user = (Participant) intent.getSerializableExtra("user");
+        moodList = user.getMoodHistory();
         //Get the position of the item to be changed
         final int pos = intent.getIntExtra("pos", 0);
         // Get the mood that is being edited
-        final Mood editMood = moodList.get(pos);
+        editMood = moodList.get(pos);
 
         // Initialize with values from editMood
         cal = Calendar.getInstance();
         cal.setTime(editMood.getDatetime());
-        startTime = Calendar.getInstance();
-        startTime.setTime(editMood.getDatetime());
         reason = editMood.getReason();
         social = editMood.getSocialSituation();
 
@@ -208,6 +213,7 @@ public class Edit extends AppCompatActivity implements TimePickerDialog.OnTimeSe
         photoToggle.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton compoundButton, boolean isChecked) {
+                imageChanged = true;
                 if (isChecked) {
                     Intent photoIntent = new Intent();
                     photoIntent.setType("image/*");
@@ -247,7 +253,7 @@ public class Edit extends AppCompatActivity implements TimePickerDialog.OnTimeSe
                 editMood.setReason(reason);
                 editMood.setSocialSituation(social);
                 editMood.setEmoticon(emote);
-                editImage(editMood,moodList,imageURI);
+                editImage();
             }
         });
 
@@ -323,78 +329,98 @@ public class Edit extends AppCompatActivity implements TimePickerDialog.OnTimeSe
             }
         } else if (requestCode==3) {
             if (resultCode == RESULT_OK) {
-                imageURI = data.getData();
-                try {
-                    temp.setImageURI(imageURI);
-                } catch (Exception e) {
-                    Log.d("myTag", "Exception found: " + e);
-                }
+                Uri imageURI = data.getData();
+                temp.setImageURI(imageURI);
             } else {
                 photoToggle.setChecked(false);
             }
         }
     }
 
-    public void editImage(final Mood editmood, final ArrayList<Mood> moodList, final Uri imageURI) {
-        UploadTask uploadTask = null;
-        if (photoToggle.isChecked()) {
-            if (editmood.getPicture()==null) {
-                Log.d("myTag","Bitmap is null");
+    public void editImage() {
+        if (photoToggle.isChecked() && imageChanged) {
+            Log.d("myTag","case 1");
+            encodeBitmapAndSave();
+        } else if (!photoToggle.isChecked() && imageChanged){
+            Log.d("myTag","case 2");
+            if (editMood.getPicture()!=null) {
+                Log.d("myTag","case 2.1");
+                mStorage.getReference().child(editMood.getPicture()).delete()
+                        .addOnFailureListener(new OnFailureListener() {
+                            @Override
+                            public void onFailure(@NonNull Exception e) {
+                                Log.d("myTag", "Failed to delete old image: " + e);
+                            }
+                        })
+                        .addOnSuccessListener(new OnSuccessListener<Void>() {
+                            @Override
+                            public void onSuccess(Void aVoid) {
+                                Log.d("myTag", "Removed old image successfully");
+                                editMood.setPicture(null);
+                                Intent data = new Intent();
+                                data.putExtra("Addmood", moodList);
+                                setResult(RESULT_OK, data);
+                                finish();
+                            }
+                        });
             } else {
-                try {
-                    Bitmap bitmap = ((BitmapDrawable) temp.getDrawable()).getBitmap();
-                    uploadTask = encodeBitmapAndSave(bitmap);
-                } catch (Exception e) {
-                    Log.d("myTag", "Exception found: " + e);
-                }
+                Log.d("myTag","case 2.2");
+                editMood.setPicture(null);
+                Intent data = new Intent();
+                data.putExtra("Addmood", moodList);
+                setResult(RESULT_OK, data);
+                finish();
             }
-        }
-        if (uploadTask!=null) {
-            final UploadTask finalUploadTask = uploadTask;
-            uploadTask.addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
-                @Override
-                public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-                    Log.d("myTag", "Upload Succeeded");
-                    mStorage.getReference().child(user.getUID()+"/"+startTime.getTime()).delete()
-                    .addOnSuccessListener(new OnSuccessListener<Void>() {
-                        @Override
-                        public void onSuccess(Void aVoid) {
-                            Log.d("myTag","Removed old Image");
-                        }
-                    })
-                    .addOnFailureListener(new OnFailureListener() {
-                        @Override
-                        public void onFailure(@NonNull Exception e) {
-                            Log.d("myTag","Failed to remove old image");
-                        }
-                    });
-                    editmood.setPicture(user.getUID()+"/"+editmood.getDatetime());
-                    Intent data = new Intent();
-                    data.putExtra("Addmood", moodList);
-                    setResult(RESULT_OK, data);
-                    finish();
-                }
-            });
         } else {
+            Log.d("myTag", "case 3");
             Intent data = new Intent();
             data.putExtra("Addmood", moodList);
             setResult(RESULT_OK, data);
             finish();
         }
+
     }
-    public UploadTask encodeBitmapAndSave(Bitmap bitmap) {
-            ByteArrayOutputStream baos = new ByteArrayOutputStream();
-            bitmap.compress(Bitmap.CompressFormat.PNG,100,baos);
-            byte[] data = baos.toByteArray();
-            StorageReference ref = mStorage.getReference().child(user.getUID()+"/"+cal.getTime());
-            UploadTask uploadTask = ref.putBytes(data);
-            uploadTask.addOnFailureListener(new OnFailureListener() {
-                @Override
-                public void onFailure(@NonNull Exception e) {
-                    Log.d("myTag","Upload Failed: "+e);
-                }
-            });
-            return uploadTask;
+    public void encodeBitmapAndSave() {
+        Bitmap bitmap = ((BitmapDrawable) temp.getDrawable()).getBitmap();
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        bitmap.compress(Bitmap.CompressFormat.PNG,100,baos);
+        final byte[] data = baos.toByteArray();
+        imagePath = user.getUID()+"/"+Calendar.getInstance().getTime();
+        if (editMood.getPicture()!=null) {
+            mStorage.getReference().child(editMood.getPicture()).delete()
+                    .addOnFailureListener(new OnFailureListener() {
+                        @Override
+                        public void onFailure(@NonNull Exception e) {
+                            Log.d("myTag", "Failed to delete old image: " + e);
+                        }
+                    })
+                    .addOnSuccessListener(new OnSuccessListener<Void>() {
+                        @Override
+                        public void onSuccess(Void aVoid) {
+                            Log.d("myTag", "Removed old image successfully");
+
+                        }
+                    });
+        }
+        StorageReference ref = mStorage.getReference().child(imagePath);
+        UploadTask uploadTask = ref.putBytes(data);
+        uploadTask.addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+                Log.d("myTag","Upload Failed: "+e);
+            }
+        });
+        uploadTask.addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+        @Override
+        public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+            Log.d("myTag", "Upload Succeeded");
+            editMood.setPicture(imagePath);
+            Intent data = new Intent();
+            data.putExtra("Addmood", moodList);
+            setResult(RESULT_OK, data);
+            finish();
+            }
+        });
 
         }
 

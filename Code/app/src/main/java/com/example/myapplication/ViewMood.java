@@ -64,6 +64,7 @@ public class ViewMood extends AppCompatActivity {
                 @Override
                 public void onFailure(@NonNull Exception e) {
                     Log.d("myTag","Failed to getBytes: "+e);
+                    Log.d("myTag","Path: "+currentMood.getPicture());
                 }
             });
         }
