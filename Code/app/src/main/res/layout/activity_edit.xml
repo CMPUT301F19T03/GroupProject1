@@ -1,16 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="#FFFFFF"
     android:orientation="vertical"
     tools:context=".Edit">
+
     <LinearLayout
+        android:id="@+id/editHeader"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:id="@+id/editHeader">
+        android:layout_height="wrap_content">
+
         <Button
             android:id="@+id/returnButton"
             android:layout_width="wrap_content"
@@ -28,19 +30,19 @@
         android:fillViewport="true">
 
         <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/Editcontent"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:id="@+id/Editcontent">
+            android:layout_height="wrap_content">
 
             <androidx.viewpager.widget.ViewPager
                 android:id="@+id/EditviewPager"
                 android:layout_width="0dp"
                 android:layout_height="0dp"
                 android:adjustViewBounds="true"
+                app:layout_constraintDimensionRatio="1:1"
                 app:layout_constraintEnd_toEndOf="@id/Editguideline"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="@+id/Editcontent"
-                app:layout_constraintDimensionRatio="1:1">
+                app:layout_constraintTop_toTopOf="@+id/Editcontent">
 
             </androidx.viewpager.widget.ViewPager>
 
@@ -53,20 +55,20 @@
                 android:textOff="No"
                 android:textOn="Yes"
                 app:layout_constraintStart_toEndOf="@+id/locationView"
-                app:layout_constraintTop_toTopOf="@+id/locationView" />
+                app:layout_constraintTop_toBottomOf="@+id/photoToggle" />
+
 
             <TextView
                 android:id="@+id/locationView"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="56dp"
-                android:layout_marginLeft="56dp"
-                android:layout_marginTop="32dp"
+                android:layout_marginStart="47dp"
+                android:layout_marginLeft="47dp"
+                android:layout_marginTop="28dp"
                 android:text="Location?"
+                android:textColor="#000000"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/photoView" />
-
-
 
             <TextView
                 android:id="@+id/timeView"
@@ -74,7 +76,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginStart="16dp"
                 android:layout_marginLeft="16dp"
-                android:layout_marginTop="52dp"
+                android:layout_marginBottom="16dp"
                 android:text=""
                 app:layout_constraintBottom_toTopOf="@id/dateButton"
                 app:layout_constraintStart_toEndOf="@id/timeButton" />
@@ -85,11 +87,10 @@
                 android:layout_height="wrap_content"
                 android:layout_marginStart="16dp"
                 android:layout_marginLeft="16dp"
-                android:layout_marginTop="24dp"
+                android:layout_marginBottom="16dp"
                 android:text=""
-                app:layout_constraintStart_toEndOf="@+id/dateButton"
-                app:layout_constraintBottom_toBottomOf="@+id/dateButton" />
-
+                app:layout_constraintBottom_toBottomOf="@+id/dateButton"
+                app:layout_constraintStart_toEndOf="@+id/dateButton" />
 
             <Button
                 android:id="@+id/ConfirmEdit"
@@ -108,13 +109,12 @@
                 android:id="@+id/photoToggle"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="9dp"
-                android:layout_marginLeft="9dp"
+                android:layout_marginTop="120dp"
                 android:text="ToggleButton"
                 android:textOff="No"
                 android:textOn="Yes"
                 app:layout_constraintStart_toEndOf="@+id/photoView"
-                app:layout_constraintTop_toTopOf="@+id/photoView" />
+                app:layout_constraintTop_toBottomOf="@+id/EditviewPager" />
 
             <TextView
                 android:id="@+id/photoView"
@@ -122,7 +122,9 @@
                 android:layout_height="wrap_content"
                 android:layout_marginStart="64dp"
                 android:layout_marginLeft="64dp"
+                android:layout_marginTop="16dp"
                 android:text="Photo?"
+                android:textColor="#000000"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/dateButton" />
 
@@ -155,6 +157,7 @@
                 android:layout_marginLeft="64dp"
                 android:layout_marginTop="56dp"
                 android:text="Reason:"
+                android:textColor="#000000"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/locationView" />
 
@@ -164,6 +167,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="20dp"
                 android:text="Social Situation:"
+                android:textColor="#000000"
                 android:textSize="18sp"
                 app:layout_constraintStart_toStartOf="@+id/reasonView"
                 app:layout_constraintTop_toBottomOf="@+id/reasonView" />
@@ -172,15 +176,14 @@
                 android:id="@+id/addReasonText"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="16dp"
-                android:layout_marginLeft="16dp"
+                android:layout_marginTop="28dp"
                 android:hint="Add reason"
                 android:inputType="text"
                 android:maxLength="20"
                 android:text=""
                 android:textSize="14sp"
-                app:layout_constraintBottom_toBottomOf="@+id/reasonView"
-                app:layout_constraintStart_toEndOf="@+id/reasonView" />
+                app:layout_constraintStart_toEndOf="@+id/reasonView"
+                app:layout_constraintTop_toBottomOf="@+id/editLocationToggle" />
 
             <Button
                 android:id="@+id/EditLocation"
@@ -207,8 +210,8 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
-                app:layout_constraintGuide_percent="0.75"
                 app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintGuide_percent="0.75"
                 app:layout_constraintStart_toStartOf="parent" />
 
             <TextView
