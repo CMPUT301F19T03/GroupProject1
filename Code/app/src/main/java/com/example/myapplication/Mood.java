@@ -2,6 +2,7 @@ package com.example.myapplication;
 
 import android.content.res.Resources;
 import android.location.Location;
+import android.util.Log;
 
 import com.google.firebase.firestore.Exclude;
 
@@ -123,17 +124,6 @@ public class Mood implements Serializable {
 
     public void setEmoticon(String emoticon) {
         this.emoticon = emoticon;
-    }
-
-    @Exclude
-    public int getEmoteIcon() {
-        Resources res = MainActivity.RESOURCES;
-        return res.getIdentifier(this.emoticon,"drawable",MainActivity.PACKAGE_NAME);
-    }
-    @Exclude
-    public void setEmoteIcon(int emoteIcon) {
-        Resources res = MainActivity.RESOURCES;
-        this.emoticon = res.getResourceEntryName(emoteIcon);
     }
 
     public String getPicture() {

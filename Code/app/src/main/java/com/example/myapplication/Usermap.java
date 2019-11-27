@@ -62,12 +62,18 @@ public class Usermap extends AppCompatActivity implements OnMapReadyCallback {
             googleMap.setMapType(GoogleMap.MAP_TYPE_HYBRID);
             googleMap.getUiSettings().setZoomControlsEnabled(true);
             //place markers on map
+            boolean cameraSet = false;
             ArrayList<Mood> moods = user.getMoodHistory();
             for (Mood mood : moods) {
                 if (mood.getLatitude()!=null) {
+                    if (!cameraSet) {
+                        cameraSet = true;
+                        googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(mood.getLatitude(), mood.getLongitude()), 14.0f));
+                    }
                     LatLng point = new LatLng(mood.getLatitude(), mood.getLongitude());
+                    int emoteIcon = getResources().getIdentifier(mood.getEmoticon(),"drawable",getPackageName());
                     googleMap.addMarker(new MarkerOptions().position(point)
-                            .icon(BitmapDescriptorFactory.fromBitmap(resizeIcon(mood.getEmoteIcon()))));
+                            .icon(BitmapDescriptorFactory.fromBitmap(resizeIcon(emoteIcon))));
                 }
             }
         }

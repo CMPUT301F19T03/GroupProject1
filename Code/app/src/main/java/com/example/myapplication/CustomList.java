@@ -3,6 +3,7 @@ package com.example.myapplication;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.drawable.Drawable;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -38,8 +39,9 @@ public class CustomList extends ArrayAdapter<Mood> {
     private CollectionReference users;
     Participant user;
     private CustomList list;
+    private String emote;
 
-    public CustomList(Context context,ArrayList<Mood> moods,Participant user){
+    public CustomList(Context context,ArrayList<Mood> moods,Participant user,String emote){
         super(context,0,moods);
         FirebaseFirestore db = FirebaseFirestore.getInstance();
         users = db.collection("Users");
@@ -47,6 +49,7 @@ public class CustomList extends ArrayAdapter<Mood> {
         this.context = context;
         this.user = user;
         this.list = this;
+        this.emote = emote;
     }
 
     /**
@@ -70,7 +73,10 @@ public class CustomList extends ArrayAdapter<Mood> {
         ImageView emoticon = view.findViewById(R.id.emoticon_image);
         TextView time = view.findViewById(R.id.time_text);
         TextView date = view.findViewById(R.id.date_text);
-        emoticon.setImageResource(mood.getEmoteIcon());
+
+        int id = context.getResources().getIdentifier(mood.getEmoticon(),"drawable",context.getPackageName());
+        emoticon.setImageResource(id);
+
         time.setText(mood.getStringTime());
         date.setText(mood.getStringDate());
         ImageButton editButton = view.findViewById(R.id.ListEdit);
@@ -136,5 +142,9 @@ public class CustomList extends ArrayAdapter<Mood> {
             }
         });
         return view;
+    }
+
+    public String getEmote() {
+        return emote;
     }
 }

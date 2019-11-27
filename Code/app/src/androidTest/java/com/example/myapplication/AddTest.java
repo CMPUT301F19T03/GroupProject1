@@ -48,7 +48,7 @@ public class AddTest {
         solo.assertCurrentActivity("Wrong Activity", MoodHistory.class);
         solo.clickOnButton("Add");
         solo.assertCurrentActivity("Wrong Activity", Add.class);
-        solo.clickOnImageButton(2);
+        solo.scrollViewToSide(solo.getView(R.id.AddviewPager),Solo.RIGHT);
         solo.enterText((EditText) solo.getView(R.id.addReasonText), "test 1");
         solo.clickOnButton("confirm");
     }
@@ -64,13 +64,13 @@ public class AddTest {
         solo.assertCurrentActivity("Wrong Activity", MoodHistory.class);
         solo.clickOnButton("Add");
         solo.assertCurrentActivity("Wrong Activity", Add.class);
-        solo.clickOnImageButton(2);
+        solo.scrollViewToSide(solo.getView(R.id.AddviewPager),Solo.RIGHT);
         solo.enterText((EditText) solo.getView(R.id.addReasonText), "test 2");
 
         solo.clickOnButton("confirm");
         solo.clickOnButton("Add");
         solo.assertCurrentActivity("Wrong Activity", Add.class);
-        solo.clickOnImageButton(3);
+//        solo.clickOnImageButton(3);
         solo.enterText((EditText) solo.getView(R.id.addReasonText), "test 3");
         solo.clickOnButton("confirm");
     }

@@ -10,7 +10,6 @@ import androidx.annotation.NonNull;
 import androidx.viewpager.widget.PagerAdapter;
 
 public class ImagePagerAdapter extends PagerAdapter {
-    private static String[] mImages = MainActivity.RESOURCES.getStringArray(R.array.emotes);
     private Context context;
 
 
@@ -21,7 +20,7 @@ public class ImagePagerAdapter extends PagerAdapter {
 
     @Override
     public int getCount() {
-        return mImages.length;
+        return context.getResources().getStringArray(R.array.emotes).length;
     }
 
     @Override
@@ -33,11 +32,12 @@ public class ImagePagerAdapter extends PagerAdapter {
     @Override
     public Object instantiateItem(@NonNull ViewGroup container, int position) {
         Resources res = context.getResources();
+        String image = res.getStringArray(R.array.emotes)[position];
         ImageView imageView = new ImageView(context);
         int padding = res.getDimensionPixelSize(R.dimen.padding_medium);
         imageView.setPadding(padding,padding,padding,padding);
         imageView.setScaleType(ImageView.ScaleType.FIT_CENTER);
-        int id = res.getIdentifier(mImages[position],"drawable",context.getPackageName());
+        int id = res.getIdentifier(image,"drawable",context.getPackageName());
         imageView.setImageResource(id);
         container.addView(imageView,0);
         return imageView;

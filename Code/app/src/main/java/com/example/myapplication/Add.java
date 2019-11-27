@@ -17,6 +17,7 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
+import android.graphics.Color;
 import android.graphics.drawable.BitmapDrawable;
 import android.net.Uri;
 import android.os.Bundle;
@@ -50,6 +51,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.Locale;
 
 /**
  * This class is responsible for the Add activity
@@ -101,7 +103,6 @@ public class Add extends AppCompatActivity implements TimePickerDialog.OnTimeSet
         final Intent intent = getIntent();
         user = (Participant) intent.getSerializableExtra("user");
 
-        final ArrayList<Mood> moodList = user.getMoodHistory();
         // Get a reference to current time/date
         cal = Calendar.getInstance();
         // Get a reference to the resources
@@ -232,7 +233,9 @@ public class Add extends AppCompatActivity implements TimePickerDialog.OnTimeSet
         } else {
             image = imagePath;
         }
-        destroySavedImage();
+        if (currentPhotoPath!=null) {
+            destroySavedImage();
+        }
 
         // If the user added a location include it in the Mood
         if (locationToggle.isChecked()) {
@@ -368,23 +371,21 @@ public class Add extends AppCompatActivity implements TimePickerDialog.OnTimeSet
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         mCameraPermissionGranted = false;
-        switch (requestCode) {
-            case PERMISSIONS_REQUEST_ACCESS_CAMERA: {
-                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                    mCameraPermissionGranted = true;
-                    startCameraIntent();
-                } else {
-                    Toast.makeText(this,"App must have permissions for your camera if you want to use the camera",Toast.LENGTH_LONG).show();
-                    setResult(RESULT_CANCELED);
-                    finish();
-                }
+        if (requestCode == PERMISSIONS_REQUEST_ACCESS_CAMERA) {
+            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                mCameraPermissionGranted = true;
+                startCameraIntent();
+            } else {
+                Toast.makeText(this, "App must have permissions for your camera if you want to use the camera", Toast.LENGTH_LONG).show();
+                setResult(RESULT_CANCELED);
+                finish();
             }
         }
     }
     String currentPhotoPath;
     private File createImageFile() throws IOException {
         // Create an image file name
-        String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
+        String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss", Locale.ENGLISH).format(new Date());
         String imageFileName = "JPEG_" + timeStamp + "_";
         File storageDir = getExternalFilesDir(Environment.DIRECTORY_PICTURES);
         File image = File.createTempFile(

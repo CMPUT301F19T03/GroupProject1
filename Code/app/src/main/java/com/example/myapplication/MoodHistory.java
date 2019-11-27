@@ -20,10 +20,10 @@ import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.CollectionReference;
+import com.google.firebase.firestore.DocumentChange;
 import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.FirebaseFirestoreException;
-import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 
 import java.util.ArrayList;
@@ -37,7 +37,7 @@ public class MoodHistory extends AppCompatActivity {
     ListView moodHistory;
     ArrayAdapter<Mood> moodArrayAdapter;
     static ArrayList<Mood> moodArrayList;
-    ArrayAdapter<Mood> filterAdapter;
+    CustomList filterAdapter;
     ArrayList<Mood> filterList;
     Participant user;
     FirebaseFirestore db;
@@ -66,10 +66,12 @@ public class MoodHistory extends AppCompatActivity {
             public void onEvent(@Nullable QuerySnapshot queryDocumentSnapshots, @Nullable FirebaseFirestoreException e) {
                 Log.d(TAG, "Something changed");
                 if (queryDocumentSnapshots != null) {
-                    for (QueryDocumentSnapshot doc : queryDocumentSnapshots) {
-                        if (doc.get("Username").equals(user.getName())) {
-                            user = doc.get("Participant", Participant.class);
-                            user.setUID(doc.getId());
+                    for (DocumentChange doc : queryDocumentSnapshots.getDocumentChanges()) {
+                        if (doc.getDocument().get("Username").equals(user.getName())) {
+                            user = doc.getDocument().get("Participant", Participant.class);
+                            user.setUID(doc.getDocument().getId());
+                            moodArrayAdapter.clear();
+                            moodArrayAdapter.addAll(user.getMoodHistory());
                         }
                     }
                 }
@@ -78,7 +80,7 @@ public class MoodHistory extends AppCompatActivity {
         Intent intent = getIntent();
         user = (Participant) intent.getSerializableExtra("User");
         moodArrayList = user.getMoodHistory();
-        moodArrayAdapter = new CustomList(this,moodArrayList,user);
+        moodArrayAdapter = new CustomList(this,moodArrayList,user,null);
 
         moodHistory = findViewById(R.id.mood_history);
         moodHistory.setAdapter(moodArrayAdapter);
@@ -131,6 +133,7 @@ public class MoodHistory extends AppCompatActivity {
     public  void clearFilterButton(View view) {
         unSetFilterColors();
         moodHistory.setAdapter(moodArrayAdapter);
+        filterAdapter = null;
     }
 
     public void filterButton(View view) {
@@ -149,7 +152,7 @@ public class MoodHistory extends AppCompatActivity {
                 filterList.add(mood);
             }
         }
-        filterAdapter = new CustomList(this,filterList,user);
+        filterAdapter = new CustomList(this,filterList,user,"great");
         moodHistory.setAdapter(filterAdapter);
     }
 
@@ -162,7 +165,7 @@ public class MoodHistory extends AppCompatActivity {
                 filterList.add(mood);
             }
         }
-        filterAdapter = new CustomList(this,filterList,user);
+        filterAdapter = new CustomList(this,filterList,user,"good");
         moodHistory.setAdapter(filterAdapter);
     }
     public void neutralFilterButton(View view) {
@@ -174,7 +177,7 @@ public class MoodHistory extends AppCompatActivity {
                 filterList.add(mood);
             }
         }
-        filterAdapter = new CustomList(this,filterList,user);
+        filterAdapter = new CustomList(this,filterList,user,"neutral");
         moodHistory.setAdapter(filterAdapter);
     }
     public void badFilterButton(View view) {
@@ -186,7 +189,7 @@ public class MoodHistory extends AppCompatActivity {
                 filterList.add(mood);
             }
         }
-        filterAdapter = new CustomList(this,filterList,user);
+        filterAdapter = new CustomList(this,filterList,user,"bad");
         moodHistory.setAdapter(filterAdapter);
     }
     public void worstFilterButton(View view) {
@@ -198,7 +201,7 @@ public class MoodHistory extends AppCompatActivity {
                 filterList.add(mood);
             }
         }
-        filterAdapter = new CustomList(this,filterList,user);
+        filterAdapter = new CustomList(this,filterList,user,"worst");
         moodHistory.setAdapter(filterAdapter);
     }
 
@@ -211,8 +214,7 @@ public class MoodHistory extends AppCompatActivity {
             if (resultCode==RESULT_OK) {
                 Log.d(TAG,"Return from add");
                 moodArrayList = (ArrayList<Mood>) data.getSerializableExtra("Addmood");
-                moodArrayAdapter = new CustomList(this,moodArrayList,user);
-                moodHistory.setAdapter(moodArrayAdapter);
+                recoverFilter();
                 user.setMoodHistory(moodArrayList);
                 final HashMap<String, Object> userUpdate = new HashMap<>();
                 userUpdate.put("Participant", user);
@@ -247,8 +249,7 @@ public class MoodHistory extends AppCompatActivity {
         }
     }
     public void unSetFilterColors() {
-        float scale = getResources().getDisplayMetrics().density;
-        int padding = (int) (10*scale+0.5f);
+        int padding = getResources().getDimensionPixelSize(R.dimen.padding_medium);
         greatFilter.setBackground(buttonBackground);
         greatFilter.setPadding(padding,padding,padding,padding);
         goodFilter.setBackground(buttonBackground);
@@ -259,5 +260,31 @@ public class MoodHistory extends AppCompatActivity {
         badFilter.setPadding(padding,padding,padding,padding);
         worstFilter.setBackground(buttonBackground);
         worstFilter.setPadding(padding,padding,padding,padding);
+    }
+
+    public void recoverFilter() {
+        if (filterAdapter!=null) {
+            switch (filterAdapter.getEmote()) {
+                case "great":
+                    greatFilterButton(findViewById(R.id.GreatFilterButton));
+                    break;
+                case "good":
+                    goodFilterButton(findViewById(R.id.GoodFilterButton));
+                    break;
+                case "neutral":
+                    neutralFilterButton(findViewById(R.id.NeutralFilterButton));
+                    break;
+                case "bad":
+                    badFilterButton(findViewById(R.id.BadFilterButton));
+                    break;
+                case "worst":
+                    worstFilterButton(findViewById(R.id.WorstFilterButton));
+                    break;
+                default:
+                    clearFilterButton(findViewById(R.id.ClearFilterButton));
+            }
+        } else {
+            clearFilterButton(findViewById(R.id.ClearFilterButton));
+        }
     }
 }

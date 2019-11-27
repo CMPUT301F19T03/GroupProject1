@@ -23,7 +23,6 @@ public class Participant implements Serializable {
 
     public void addMood(Mood mood) {
         moodHistory.add(mood);
-
     }
     public void addRequest(String request) {
         requests.add(request);
