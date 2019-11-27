@@ -68,7 +68,8 @@ public class CustomList extends ArrayAdapter<Mood> {
         ImageView emoticon = view.findViewById(R.id.emoticon_image);
         TextView time = view.findViewById(R.id.time_text);
         TextView date = view.findViewById(R.id.date_text);
-        emoticon.setImageResource(mood.getEmoteIcon());
+        int id = context.getResources().getIdentifier(mood.getEmoticon(),"drawable", context.getPackageName());
+        emoticon.setImageResource(id);
         time.setText(mood.getStringTime());
         date.setText(mood.getStringDate());
         ImageButton editButton = view.findViewById(R.id.ListEdit);

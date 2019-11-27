@@ -39,7 +39,8 @@ public class ViewMood extends AppCompatActivity {
         social = findViewById(R.id.socialView);
         social.setText(currentMood.getSocialSituation());
         emote = findViewById(R.id.emoticonView);
-        emote.setImageResource(currentMood.getEmoteIcon());
+        int id = getResources().getIdentifier(currentMood.getEmoticon(), "drawable",getPackageName());
+        emote.setImageResource(id);
         picture = findViewById(R.id.imageView2);
 
     }
