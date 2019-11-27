@@ -1,8 +1,6 @@
 package com.example.myapplication;
 
-import android.content.res.Resources;
 import android.location.Location;
-import android.util.Log;
 
 import com.google.firebase.firestore.Exclude;
 

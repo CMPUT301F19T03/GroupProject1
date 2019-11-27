@@ -36,7 +36,7 @@ public class MoodHistory extends AppCompatActivity {
     String TAG = "myTag";
     ListView moodHistory;
     ArrayAdapter<Mood> moodArrayAdapter;
-    static ArrayList<Mood> moodArrayList;
+    ArrayList<Mood> moodArrayList;
     CustomList filterAdapter;
     ArrayList<Mood> filterList;
     Participant user;
@@ -209,12 +209,13 @@ public class MoodHistory extends AppCompatActivity {
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         unSetFilterColors();
+        recoverFilter();
         filterScroll.setVisibility(View.GONE);
         if (requestCode==1) {
             if (resultCode==RESULT_OK) {
                 Log.d(TAG,"Return from add");
                 moodArrayList = (ArrayList<Mood>) data.getSerializableExtra("Addmood");
-                recoverFilter();
+                Log.d("myTag","mood image: "+moodArrayList.get(0).getPicture());
                 user.setMoodHistory(moodArrayList);
                 final HashMap<String, Object> userUpdate = new HashMap<>();
                 userUpdate.put("Participant", user);
@@ -249,7 +250,7 @@ public class MoodHistory extends AppCompatActivity {
         }
     }
     public void unSetFilterColors() {
-        int padding = getResources().getDimensionPixelSize(R.dimen.padding_medium);
+        int padding = getResources().getDimensionPixelSize(R.dimen.padding_large);
         greatFilter.setBackground(buttonBackground);
         greatFilter.setPadding(padding,padding,padding,padding);
         goodFilter.setBackground(buttonBackground);

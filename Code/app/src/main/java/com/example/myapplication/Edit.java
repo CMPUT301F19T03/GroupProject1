@@ -3,19 +3,25 @@ package com.example.myapplication;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
+import androidx.core.content.FileProvider;
 import androidx.fragment.app.DialogFragment;
 import androidx.viewpager.widget.ViewPager;
 
+import android.Manifest;
 import android.app.Activity;
 import android.app.DatePickerDialog;
 import android.app.TimePickerDialog;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.drawable.BitmapDrawable;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Environment;
 import android.provider.MediaStore;
 import android.util.Log;
 import android.view.View;
@@ -39,7 +45,8 @@ import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 
 import java.io.ByteArrayOutputStream;
-import java.text.ParseException;
+import java.io.File;
+import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -50,7 +57,7 @@ import java.util.Locale;
 /**
  * This class is responsible for the Edit activity
  */
-public class Edit extends AppCompatActivity implements TimePickerDialog.OnTimeSetListener, DatePickerDialog.OnDateSetListener {
+public class Edit extends AppCompatActivity implements TimePickerDialog.OnTimeSetListener, DatePickerDialog.OnDateSetListener, imageChooserFragment.OnFragmentInteractionListener {
     Mood editMood;
     ArrayList<Mood> moodList;
     Calendar cal;
@@ -76,6 +83,9 @@ public class Edit extends AppCompatActivity implements TimePickerDialog.OnTimeSe
     String imagePath;
     boolean imageChanged;
 
+
+    private static final int PERMISSIONS_REQUEST_ACCESS_CAMERA = 2;
+    private boolean mCameraPermissionGranted;
 
     /**
      * This is run when the Acitivity is created it sets initial values and finds layout objects
@@ -215,12 +225,12 @@ public class Edit extends AppCompatActivity implements TimePickerDialog.OnTimeSe
             public void onCheckedChanged(CompoundButton compoundButton, boolean isChecked) {
                 imageChanged = true;
                 if (isChecked) {
-                    Intent photoIntent = new Intent();
-                    photoIntent.setType("image/*");
-                    photoIntent.setAction(Intent.ACTION_GET_CONTENT);
-                    startActivityForResult(Intent.createChooser(photoIntent,"Select Picture"),3);
+                    new imageChooserFragment().show(getSupportFragmentManager(),"AddImage");
                 } else {
                     temp.setImageBitmap(null);
+                    if (currentPhotoPath!=null) {
+                        destroySavedImage();
+                    }
                 }
             }
         });
@@ -266,6 +276,7 @@ public class Edit extends AppCompatActivity implements TimePickerDialog.OnTimeSe
      * @param view is the context for this view
      */
     public void ReturnButton(View view) {
+        destroySavedImage();
         finish();
     }
 
@@ -329,7 +340,12 @@ public class Edit extends AppCompatActivity implements TimePickerDialog.OnTimeSe
             }
         } else if (requestCode==3) {
             if (resultCode == RESULT_OK) {
-                Uri imageURI = data.getData();
+                Uri imageURI;
+                if (data.getData()!=null) {
+                    imageURI = data.getData();
+                } else {
+                    imageURI = Uri.parse("file://"+currentPhotoPath);
+                }
                 temp.setImageURI(imageURI);
             } else {
                 photoToggle.setChecked(false);
@@ -339,12 +355,12 @@ public class Edit extends AppCompatActivity implements TimePickerDialog.OnTimeSe
 
     public void editImage() {
         if (photoToggle.isChecked() && imageChanged) {
-            Log.d("myTag","case 1");
+            Log.d("myTag","New image added");
             encodeBitmapAndSave();
         } else if (!photoToggle.isChecked() && imageChanged){
-            Log.d("myTag","case 2");
+            Log.d("myTag","image removed");
             if (editMood.getPicture()!=null) {
-                Log.d("myTag","case 2.1");
+                Log.d("myTag","Remove Image from storage");
                 mStorage.getReference().child(editMood.getPicture()).delete()
                         .addOnFailureListener(new OnFailureListener() {
                             @Override
@@ -360,22 +376,25 @@ public class Edit extends AppCompatActivity implements TimePickerDialog.OnTimeSe
                                 Intent data = new Intent();
                                 data.putExtra("Addmood", moodList);
                                 setResult(RESULT_OK, data);
+                                destroySavedImage();
                                 finish();
                             }
                         });
             } else {
-                Log.d("myTag","case 2.2");
+                Log.d("myTag","No image in storage");
                 editMood.setPicture(null);
                 Intent data = new Intent();
                 data.putExtra("Addmood", moodList);
                 setResult(RESULT_OK, data);
+                destroySavedImage();
                 finish();
             }
         } else {
-            Log.d("myTag", "case 3");
+            Log.d("myTag", "image unchanged");
             Intent data = new Intent();
             data.putExtra("Addmood", moodList);
             setResult(RESULT_OK, data);
+            destroySavedImage();
             finish();
         }
 
@@ -418,10 +437,109 @@ public class Edit extends AppCompatActivity implements TimePickerDialog.OnTimeSe
             Intent data = new Intent();
             data.putExtra("Addmood", moodList);
             setResult(RESULT_OK, data);
+            destroySavedImage();
             finish();
             }
         });
 
+    }
+    private void getCameraPermission() {
+        if (ContextCompat.checkSelfPermission(this.getApplicationContext(), Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED) {
+            mCameraPermissionGranted = true;
+        } else {
+            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.CAMERA}, PERMISSIONS_REQUEST_ACCESS_CAMERA);
         }
+    }
+
+    /**
+     * when the user decides if the app can access their current location
+     * either set the bool to true or exit the activity
+     * @param requestCode the request code sent in getLocationPermission
+     * @param permissions which permissions were requested
+     * @param grantResults array for which permissions were granted
+     */
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        mCameraPermissionGranted = false;
+        if (requestCode == PERMISSIONS_REQUEST_ACCESS_CAMERA) {
+            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                mCameraPermissionGranted = true;
+                startCameraIntent();
+            } else {
+                Toast.makeText(this, "App must have permissions for your camera if you want to use the camera", Toast.LENGTH_LONG).show();
+                setResult(RESULT_CANCELED);
+                destroySavedImage();
+                finish();
+            }
+        }
+    }
+    String currentPhotoPath;
+    private File createImageFile() throws IOException {
+        // Create an image file name
+        String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss", Locale.ENGLISH).format(new Date());
+        String imageFileName = "JPEG_" + timeStamp + "_";
+        File storageDir = getExternalFilesDir(Environment.DIRECTORY_PICTURES);
+        File image = File.createTempFile(
+                imageFileName,  /* prefix */
+                ".jpg",         /* suffix */
+                storageDir      /* directory */
+        );
+
+        // Save a file: path for use with ACTION_VIEW intents
+        currentPhotoPath = image.getAbsolutePath();
+        return image;
+    }
+
+    private void startCameraIntent() {
+        Intent cameraIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+        if (cameraIntent.resolveActivity(getPackageManager())!=null) {
+            File photoFile = null;
+            try {
+                photoFile = createImageFile();
+            } catch (IOException e) {
+                Log.e("myTag","Exception found while creating file: "+e);
+            }
+            if (photoFile!=null) {
+                Uri photoURI = FileProvider.getUriForFile(context,"com.example.android.fileprovider",
+                        photoFile);
+                cameraIntent.putExtra(MediaStore.EXTRA_OUTPUT, photoURI);
+                startActivityForResult(cameraIntent, 3);
+            }
+        } else {
+            Log.d("myTag","Could not resolve camera activity");
+        }
+    }
+
+    public void destroySavedImage() {
+        if (currentPhotoPath!=null) {
+            File fdelete = new File(currentPhotoPath);
+            if (fdelete.exists()) {
+                if (fdelete.delete()) {
+                    Log.d("myTag", "Deleted image: " + currentPhotoPath);
+                } else {
+                    Log.d("myTag", "COuld not delete: " + currentPhotoPath);
+                }
+            }
+        }
+    }
+
+    @Override
+    public void onButtonPressed(int button) {
+        switch (button) {
+            case 1:
+                Log.d("myTag","Camera Selected");
+                getCameraPermission();
+                if (mCameraPermissionGranted) {
+                    startCameraIntent();
+                }
+                break;
+            case 2:
+                Log.d("myTag","Gallery Selected");
+                Intent photoIntent = new Intent();
+                photoIntent.setType("image/*");
+                photoIntent.setAction(Intent.ACTION_GET_CONTENT);
+                startActivityForResult(Intent.createChooser(photoIntent,"Select Picture"),3);
+        }
+    }
 
 }

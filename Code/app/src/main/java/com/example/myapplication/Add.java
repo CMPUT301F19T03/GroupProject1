@@ -17,7 +17,6 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
-import android.graphics.Color;
 import android.graphics.drawable.BitmapDrawable;
 import android.net.Uri;
 import android.os.Bundle;
@@ -60,7 +59,7 @@ import java.util.Locale;
  * https://developer.android.com/training/camera/photobasics
  */
 
-public class Add extends AppCompatActivity implements TimePickerDialog.OnTimeSetListener, DatePickerDialog.OnDateSetListener {
+public class Add extends AppCompatActivity implements TimePickerDialog.OnTimeSetListener, DatePickerDialog.OnDateSetListener, imageChooserFragment.OnFragmentInteractionListener {
     Calendar cal;
     TextView timeText;
     TextView dateText;
@@ -181,17 +180,12 @@ public class Add extends AppCompatActivity implements TimePickerDialog.OnTimeSet
             @Override
             public void onCheckedChanged(CompoundButton compoundButton, boolean isChecked) {
                 if (isChecked) {
-//                    Intent photoIntent = new Intent();
-//                    photoIntent.setType("image/*");
-//                    photoIntent.setAction(Intent.ACTION_GET_CONTENT);
-//                    startActivityForResult(Intent.createChooser(photoIntent,"Select Picture"),3);
-                    getCameraPermission();
-                    if (mCameraPermissionGranted) {
-                        startCameraIntent();
-                    }
+                    new imageChooserFragment().show(getSupportFragmentManager(),"AddImage");
                 } else {
                     temp.setImageBitmap(null);
-                    destroySavedImage();
+                    if (currentPhotoPath!=null) {
+                        destroySavedImage();
+                    }
                 }
             }
         });
@@ -430,5 +424,23 @@ public class Add extends AppCompatActivity implements TimePickerDialog.OnTimeSet
         }
     }
 
+    @Override
+    public void onButtonPressed(int button) {
+        switch (button) {
+            case 1:
+                Log.d("myTag","Camera Selected");
+                getCameraPermission();
+                if (mCameraPermissionGranted) {
+                    startCameraIntent();
+                }
+                break;
+            case 2:
+                Log.d("myTag","Gallery Selected");
+                Intent photoIntent = new Intent();
+                photoIntent.setType("image/*");
+                photoIntent.setAction(Intent.ACTION_GET_CONTENT);
+                startActivityForResult(Intent.createChooser(photoIntent,"Select Picture"),3);
+        }
+    }
 }
 

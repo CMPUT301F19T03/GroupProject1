@@ -59,7 +59,7 @@ public class CustomList extends ArrayAdapter<Mood> {
      * @param parent This is the parent of this view
      * @return returns a view for a Mood object within a ListView
      */
-    public View getView(final int position, @Nullable View convertView, @NonNull final ViewGroup
+    public View getView(final int position, @Nullable final View convertView, @NonNull final ViewGroup
             parent) {
         //Sort the array whenever it needs to be drawn
         Collections.sort(moods, new MoodComparator());
@@ -89,13 +89,12 @@ public class CustomList extends ArrayAdapter<Mood> {
                 context.startActivity(intent);
             }
         });
-
         editButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 Intent intent = new Intent(context, Edit.class);
                 intent.putExtra("user", user);
-                int pos = MoodHistory.moodArrayList.indexOf(mood);
+                int pos = user.getMoodHistory().indexOf(mood);
                 intent.putExtra("pos", pos);
                 ((Activity)context).startActivityForResult(intent,1);
             }
