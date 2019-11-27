@@ -63,7 +63,7 @@ public class FollowActivity extends AppCompatActivity {
                             }
                             else{
                                 user = queryDocumentSnapshots.getDocuments().get(0).get("Participant", Participant.class);
-                                user.addFollowing("Request sent from " + user1.getName());
+                                user.addRequest(user1.getName());
                                 final HashMap<String, Object> userUpdate = new HashMap<>();
                                 userUpdate.put("Participant", user);
                                 users.whereEqualTo("Username",user.getName())
