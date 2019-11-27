@@ -55,9 +55,13 @@ public class MoodHistory extends AppCompatActivity {
             @Override
             public void onEvent(@Nullable QuerySnapshot queryDocumentSnapshots, @Nullable FirebaseFirestoreException e) {
                 Log.d(TAG, "Something changed");
-                for (QueryDocumentSnapshot doc : queryDocumentSnapshots) {
-                    if (doc.get("Username")==user.getName()) {
-                        user = queryDocumentSnapshots.getDocuments().get(0).get("Participant", Participant.class);
+                if (queryDocumentSnapshots != null) {
+                    for (QueryDocumentSnapshot doc : queryDocumentSnapshots) {
+                        Log.d("MY TAG",(String)doc.get("Username"));
+                        if (doc.get("Username").equals(user.getName())) {
+                            user = doc.get("Participant", Participant.class);
+                            Log.d("MY TAG","My name: "+user.getName());
+                        }
                     }
                 }
             }

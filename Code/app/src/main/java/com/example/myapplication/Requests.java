@@ -49,12 +49,6 @@ public class Requests extends AppCompatActivity {
         requests = findViewById(R.id.request_list);
         db = FirebaseFirestore.getInstance();
         users = db.collection("Users");
-        users.addSnapshotListener(new EventListener<QuerySnapshot>() {
-            @Override
-            public void onEvent(@Nullable QuerySnapshot queryDocumentSnapshots, @Nullable FirebaseFirestoreException e) {
-                Log.d(TAG, "Something changed");
-            }
-        });
         final Button accept = findViewById(R.id.Accept);
         final Button reject = findViewById(R.id.Reject);
         users.addSnapshotListener(new EventListener<QuerySnapshot>() {
@@ -70,7 +64,7 @@ public class Requests extends AppCompatActivity {
         });
         all_requests = user.getRequests();
 
-        final ArrayAdapter requestsAdapter = new ArrayAdapter(this, android.R.layout.simple_list_item_1, all_requests);
+        final ArrayAdapter <String> requestsAdapter = new ArrayAdapter(this, android.R.layout.simple_list_item_1, all_requests);
         requests.setAdapter(requestsAdapter);
         requests.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
