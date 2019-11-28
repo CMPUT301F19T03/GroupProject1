@@ -31,44 +31,30 @@ public class EditTest {
     @Before
     public void setUp() throws Exception {
         solo = new Solo(InstrumentationRegistry.getInstrumentation(), rule.getActivity());
-        //initialize the ShowActivity environment before testing
         solo.assertCurrentActivity("Wrong Activity", Login.class);
         solo.enterText((EditText) solo.getView(R.id.userText), "test_user");
         solo.clickOnButton("confirm");
         solo.assertCurrentActivity("Wrong Activity", MoodHistory.class);
         solo.clickOnButton("Add");
         solo.assertCurrentActivity("Wrong Activity", Add.class);
-        solo.clickOnImageButton(2);
-        solo.enterText((EditText) solo.getView(R.id.addReasonText), "test 1 to edit");
         solo.clickOnButton("confirm");
-
     }
 
     @Test
-    public void start() throws Exception {
+    public void start() throws Exception{
         Activity activity = rule.getActivity();
     }
 
-    /**
-     * Add a mood to the user history and edits the mood and Reason
-     */
     @Test
-    public void EditList() {
-        // Asserts that the current activity is the MainActivity. Otherwise, show “Wrong Activity”
-        solo.clickInList(1);
-        solo.clickOnButton("Edit");
+    public void openEdit() {
+        solo.assertCurrentActivity("Wrong Activity",MoodHistory.class);
+        solo.clickInList(0,4);
         solo.assertCurrentActivity("Wrong Activity", Edit.class);
-        solo.clickOnImageButton(1);
-        solo.clearEditText((EditText) solo.getView(R.id.addReasonText));
-        solo.enterText((EditText) solo.getView(R.id.addReasonText), "test 1 edited");
-        solo.clickOnButton("confirm");
-        solo.assertCurrentActivity("Wrong Activity", MoodHistory.class);
 
     }
-
-
     @After
     public void tearDown() throws Exception{
         solo.finishOpenedActivities();
     }
+
 }

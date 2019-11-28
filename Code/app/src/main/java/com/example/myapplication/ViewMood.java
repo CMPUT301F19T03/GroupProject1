@@ -4,9 +4,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
-import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -41,7 +39,8 @@ public class ViewMood extends AppCompatActivity {
         social = findViewById(R.id.socialView);
         social.setText(currentMood.getSocialSituation());
         emote = findViewById(R.id.emoticonView);
-        emote.setImageResource(currentMood.getEmoteIcon());
+        int id = getResources().getIdentifier(currentMood.getEmoticon(), "drawable",getPackageName());
+        emote.setImageResource(id);
         picture = findViewById(R.id.imageView2);
 
     }
@@ -54,7 +53,6 @@ public class ViewMood extends AppCompatActivity {
     }
 
     public void LocationButton(View view) {
-        Log.d("myTag","Lat value: "+currentMood.getLatitude());
         if (currentMood.getLatitude()!=null) {
             Intent intent = new Intent(this, ViewMapActivity.class);
             intent.putExtra("Lat", currentMood.getLatitude());
