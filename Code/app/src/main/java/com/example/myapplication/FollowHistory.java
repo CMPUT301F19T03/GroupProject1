@@ -78,12 +78,16 @@ public class FollowHistory extends AppCompatActivity {
                             if (task.isSuccessful()) {
                                 QuerySnapshot queryDocumentSnapshots = task.getResult();
                                     Log.d(TAG,"FOUND");
-                                    user1 = queryDocumentSnapshots.getDocuments().get(0).get("Participant", Participant.class);
-                                    Mood mood1 = user1.getMoodHistory().get(0);
-                                    mood1.setUser(user1.getName());
-                                    follow_moodList.add(mood1);
-                                    follow_moodAdapter.notifyDataSetChanged();
-                    }
+                                    try{
+                                        user1 = queryDocumentSnapshots.getDocuments().get(0).get("Participant", Participant.class);
+                                        Mood mood1 = user1.getMoodHistory().get(0);
+                                        mood1.setUser(user1.getName());
+                                        follow_moodList.add(mood1);
+                                        follow_moodAdapter.notifyDataSetChanged();
+                    }catch(Exception e){
+                                        Log.d(TAG,"No MoodHistory done");;
+                                }
+                            }
                             Log.d(TAG,"Exiting loop1");
                             }
                     });
