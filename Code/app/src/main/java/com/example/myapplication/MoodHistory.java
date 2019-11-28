@@ -11,6 +11,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.HorizontalScrollView;
 import android.widget.ListView;
 
@@ -46,6 +47,7 @@ public class MoodHistory extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_mood_history);
+        Button followButton = findViewById(R.id.followButton);
         historyActivity = this;
         db = FirebaseFirestore.getInstance();
         users = db.collection("Users");
@@ -53,9 +55,13 @@ public class MoodHistory extends AppCompatActivity {
             @Override
             public void onEvent(@Nullable QuerySnapshot queryDocumentSnapshots, @Nullable FirebaseFirestoreException e) {
                 Log.d(TAG, "Something changed");
-                for (QueryDocumentSnapshot doc : queryDocumentSnapshots) {
-                    if (doc.get("Username")==user.getName()) {
-                        user = queryDocumentSnapshots.getDocuments().get(0).get("Participant", Participant.class);
+                if (queryDocumentSnapshots != null) {
+                    for (QueryDocumentSnapshot doc : queryDocumentSnapshots) {
+                        Log.d("MY TAG",(String)doc.get("Username"));
+                        if (doc.get("Username").equals(user.getName())) {
+                            user = doc.get("Participant", Participant.class);
+                            Log.d("MY TAG","My name: "+user.getName());
+                        }
                     }
                 }
             }
@@ -67,7 +73,14 @@ public class MoodHistory extends AppCompatActivity {
 
         moodHistory = findViewById(R.id.mood_history);
         moodHistory.setAdapter(moodArrayAdapter);
-
+        followButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(MoodHistory.this , FollowActivity.class);
+                intent.putExtra("User", user);
+                startActivity(intent);
+            }
+        });
     }
 
     /**
@@ -92,8 +105,11 @@ public class MoodHistory extends AppCompatActivity {
      * this button sends the user to the Followed mood history activity
      * @param view is the view context for this class
      */
+
+
     public void viewFollowButton(View view) {
         Intent intent = new Intent(this, FollowHistory.class);
+        intent.putExtra("User",user);
         startActivity(intent);
     }
     /**
@@ -102,6 +118,7 @@ public class MoodHistory extends AppCompatActivity {
      */
     public void requestButton(View view) {
         Intent intent = new Intent(this, Requests.class);
+        intent.putExtra("User", user);
         startActivity(intent);
     }
 
