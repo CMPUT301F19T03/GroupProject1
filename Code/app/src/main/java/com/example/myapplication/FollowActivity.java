@@ -96,4 +96,11 @@ public class FollowActivity extends AppCompatActivity {
                 //finish();
             }
         });
-    }}
+
+
+    }
+
+
+
+
+}
