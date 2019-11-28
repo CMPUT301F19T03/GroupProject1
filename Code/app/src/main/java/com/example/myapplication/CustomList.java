@@ -87,7 +87,7 @@ public class CustomList extends ArrayAdapter<Mood> {
         date.setText(mood.getStringDate());
         ImageButton editButton = view.findViewById(R.id.ListEdit);
         ImageButton deleteButton = view.findViewById(R.id.ListDelete);
-        // When teh user clicks on the mood go to ViewMood with that mood
+        // When the user clicks on the mood go to ViewMood with that mood
         view.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -96,6 +96,7 @@ public class CustomList extends ArrayAdapter<Mood> {
                 context.startActivity(intent);
             }
         });
+
         editButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {

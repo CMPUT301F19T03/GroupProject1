@@ -119,7 +119,7 @@ public class MoodHistory extends AppCompatActivity {
      */
     public void communityButton(View view) {
         Intent intent = new Intent(this, Community.class);
-        intent.putExtra("user",user);
+        intent.putExtra("User",user);
         startActivityForResult(intent,2);
     }
     /**

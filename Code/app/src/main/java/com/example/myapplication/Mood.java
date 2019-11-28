@@ -17,6 +17,7 @@ public class Mood implements Serializable {
     private String socialSituation;
     private String emoticon;
     private String picture = null;
+    private String user;
 
     public Mood(){}
 
@@ -130,6 +131,7 @@ public class Mood implements Serializable {
     public void setPicture(String image) {
         this.picture = image;
     }
+
     public Double getLongitude() {
         return longitude;
     }
@@ -144,5 +146,14 @@ public class Mood implements Serializable {
 
     public void setLatitude(Double latitude) {
         this.latitude = latitude;
+    }
+
+    @Exclude
+    public void setUser(String user) {
+        this.user = user;
+    }
+    @Exclude
+    public String getUser(){
+        return this.user;
     }
 }
