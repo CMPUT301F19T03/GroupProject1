@@ -176,7 +176,7 @@
                 android:layout_marginLeft="64dp"
                 android:layout_marginTop="20dp"
                 android:text="Social Situation:"
-                android:textColor="#00000000"
+                android:textColor="#000000"
                 android:textSize="18sp"
                 app:layout_constraintStart_toStartOf="@+id/reasonView"
                 app:layout_constraintTop_toBottomOf="@+id/reasonView" />
