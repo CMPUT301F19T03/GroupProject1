@@ -68,9 +68,8 @@ public class Usermap extends AppCompatActivity implements OnMapReadyCallback {
             for (Mood mood : moods) {
                 if (mood.getLatitude()!=null) {
                     LatLng point = new LatLng(mood.getLatitude(), mood.getLongitude());
-                    int emoteIcon = getResources().getIdentifier(mood.getEmoticon(),"drawable",getPackageName());
                     googleMap.addMarker(new MarkerOptions().position(point)
-                            .icon(BitmapDescriptorFactory.fromBitmap(resizeIcon(emoteIcon))));
+                            .icon(BitmapDescriptorFactory.fromBitmap(resizeIcon(mood.getEmoteIcon()))));
                 }
             }
         }
