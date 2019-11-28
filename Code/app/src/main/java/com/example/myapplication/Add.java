@@ -121,6 +121,7 @@ public class Add extends AppCompatActivity implements TimePickerDialog.OnTimeSet
         myAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         add_situation.setAdapter(myAdapter);
 
+        // Create the viewPager for selecting a mood
         viewPager = findViewById(R.id.AddviewPager);
         ImagePagerAdapter adapter = new ImagePagerAdapter(context);
         viewPager.setAdapter(adapter);
@@ -218,15 +219,25 @@ public class Add extends AppCompatActivity implements TimePickerDialog.OnTimeSet
         Toast.makeText(this,"Swipe emote to select other moods",Toast.LENGTH_SHORT).show();
     }
 
+    /**
+     * Creates the mood object and add it to the moodList
+     * @param task UploadTask for putting the image the user got from the camera or the gallery to the firebase
+     * @param date the date and time to set the mood at
+     * @param reason The reason the user supplied for the mood
+     * @param social The social situation the user supplied
+     * @param emoticon the emoticon the user chose from the viewPager
+     */
     public void createMood(UploadTask task,Date date,String reason,String social,String emoticon) {
         Mood mood;
         ArrayList<Mood> moodList = user.getMoodHistory();
         String image;
+        // If the user didn't add an image then set to null otherwise set to the path it was uploaded to
         if (task==null) {
             image = null;
         } else {
             image = imagePath;
         }
+        // If the user got an image from the camera delete it from the phone's memory
         if (currentPhotoPath!=null) {
             destroySavedImage();
         }
@@ -288,16 +299,18 @@ public class Add extends AppCompatActivity implements TimePickerDialog.OnTimeSet
     }
 
     /**
-     * This detects the return from the Location selecting activity (addMapActivity)
-     * It unchecks the include location box if the user cancels
-     * or puts the user's chosen location into an object for the end Mood object
+     * This detects the return from the Location selecting activity,
+     * the Location changing activity,
+     * adding an image from the gallery,
+     * and adding an image from the camera
      * @param requestCode this is the request code for the activity when it was created
      * @param resultCode this is the return value from the activity to tell if the user cancelled
-     * @param data holds the LatLng object being returned from the addMapActivity
+     * @param data holds the data that is returned from the other activity
      */
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
+        // If the user
         if (requestCode==1) {
             if (resultCode==RESULT_CANCELED) {
                 locationToggle.setChecked(false);

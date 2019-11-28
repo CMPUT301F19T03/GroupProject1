@@ -3,9 +3,17 @@ import android.app.Activity;
 import androidx.test.ext.junit.runners.AndroidJUnit4;
 import androidx.test.platform.app.InstrumentationRegistry;
 import androidx.test.rule.ActivityTestRule;
+
+import android.util.Log;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.ListView;
+import android.widget.TextView;
+
 import com.robotium.solo.Solo;
+
+import junit.framework.TestCase;
+
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Rule;
@@ -30,7 +38,7 @@ public class AddTest {
         solo.assertCurrentActivity("Wrong Activity", Login.class);
         solo.enterText((EditText) solo.getView(R.id.userText), "test_user");
         solo.clickOnButton("confirm");
-
+        solo.sleep(500);
     }
 
     @Test
@@ -70,9 +78,13 @@ public class AddTest {
         solo.clickOnButton("confirm");
         solo.clickOnButton("Add");
         solo.assertCurrentActivity("Wrong Activity", Add.class);
-//        solo.clickOnImageButton(3);
         solo.enterText((EditText) solo.getView(R.id.addReasonText), "test 3");
         solo.clickOnButton("confirm");
+        solo.sleep(500);
+        ListView moodHistory = (ListView)solo.getView(R.id.mood_history);
+        ImageButton delete = moodHistory.getChildAt(0).findViewById(R.id.ListDelete);
+        solo.clickOnView(delete);
+        solo.sleep(200);
     }
 
     @After

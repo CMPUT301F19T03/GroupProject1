@@ -3,7 +3,6 @@ package com.example.myapplication;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
-import android.graphics.drawable.Drawable;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -41,6 +40,13 @@ public class CustomList extends ArrayAdapter<Mood> {
     private CustomList list;
     private String emote;
 
+    /**
+     *
+     * @param context this is the Activity that created teh CustomList
+     * @param moods This is the array to build the CustomList from
+     * @param user This is the user that owns the array
+     * @param emote This is the emote to filter by if it exists
+     */
     public CustomList(Context context,ArrayList<Mood> moods,Participant user,String emote){
         super(context,0,moods);
         FirebaseFirestore db = FirebaseFirestore.getInstance();
@@ -81,6 +87,7 @@ public class CustomList extends ArrayAdapter<Mood> {
         date.setText(mood.getStringDate());
         ImageButton editButton = view.findViewById(R.id.ListEdit);
         ImageButton deleteButton = view.findViewById(R.id.ListDelete);
+        // When teh user clicks on the mood go to ViewMood with that mood
         view.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
