@@ -68,15 +68,15 @@ public class FollowCustomList extends ArrayAdapter<Mood> {
             view = LayoutInflater.from(context).inflate(R.layout.follow_content, parent,false);
         }
         final Mood mood = moods.get(position);
+
         ImageView emoticon = view.findViewById(R.id.emoticon_image1);
         TextView time = view.findViewById(R.id.time_text1);
         TextView date = view.findViewById(R.id.date_text1);
         TextView user = view.findViewById(R.id.user_text);
-        user.setText(mood.getStringDate());
         emoticon.setImageResource(mood.getEmoteIcon());
         time.setText(mood.getStringTime());
         date.setText(mood.getStringDate());
-
+        user.setText(mood.getUser());
 
 
 

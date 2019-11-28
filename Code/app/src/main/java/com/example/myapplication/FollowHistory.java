@@ -9,7 +9,9 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.ArrayAdapter;
+import android.widget.LinearLayout;
 import android.widget.ListView;
+import android.widget.TextView;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -25,6 +27,8 @@ import com.google.firebase.firestore.QuerySnapshot;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+import static java.lang.Thread.sleep;
+
 /**
  * Allows the user to see the moods of the people they are following
  * Issues:
@@ -38,8 +42,8 @@ public class FollowHistory extends AppCompatActivity {
     Participant user1;
     ListView follow_activity;
 
-    private ArrayAdapter<Mood> follow_moodAdapter;
-    private ArrayList<Mood> follow_moodList;
+    ArrayAdapter<Mood> follow_moodAdapter;
+    ArrayList<Mood> follow_moodList;
 
     private ArrayList<Mood> followCustomList;
 
@@ -54,12 +58,9 @@ public class FollowHistory extends AppCompatActivity {
         user = (Participant) intent.getSerializableExtra("User");
         db = FirebaseFirestore.getInstance();
         users = db.collection("Users");
-
-
-
-
-
-
+        follow_moodList = new ArrayList<>();
+        follow_moodAdapter = new FollowCustomList(this,follow_moodList,user);
+        follow_activity.setAdapter(follow_moodAdapter);
 
 
         all_follows = user.getFollowing();
@@ -79,13 +80,16 @@ public class FollowHistory extends AppCompatActivity {
                                     Log.d(TAG,"FOUND");
                                     user1 = queryDocumentSnapshots.getDocuments().get(0).get("Participant", Participant.class);
                                     Mood mood1 = user1.getMoodHistory().get(0);
+                                    mood1.setUser(user1.getName());
                                     follow_moodList.add(mood1);
+                                    follow_moodAdapter.notifyDataSetChanged();
                     }
-                            }});
+                            Log.d(TAG,"Exiting loop1");
+                            }
+                    });
             Log.d(TAG,"Exiting loop");
 
-    }follow_moodAdapter = new CustomList(this,follow_moodList,user);
-        follow_activity.setAdapter(follow_moodAdapter);
+    }
 
     }
 
