@@ -15,6 +15,7 @@
         android:roundIcon="@mipmap/glo_icon_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
+        <activity android:name=".MyAppBase"/>
         <activity android:name=".Login" />
         <activity android:name=".MoodHistory" />
         <activity android:name=".Add" />
@@ -50,7 +51,7 @@
             android:grantUriPermissions="true">
             <meta-data
                 android:name="android.support.FILE_PROVIDER_PATHS"
-                android:resource="@xml/file_paths"></meta-data>
+                android:resource="@xml/file_paths" />
         </provider>
     </application>
 

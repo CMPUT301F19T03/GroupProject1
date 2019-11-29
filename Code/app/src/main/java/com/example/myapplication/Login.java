@@ -51,7 +51,7 @@ public class Login extends AppCompatActivity {
         if (name.isEmpty()) {
             Toast.makeText(this,"Username can't be empty",Toast.LENGTH_SHORT).show();
         } else {
-            LoginFun(name);
+            LoginFunc(name);
         }
 
     }
@@ -61,7 +61,7 @@ public class Login extends AppCompatActivity {
         // Don't allow user to press back
     }
 
-    public void LoginFun(String name) {
+    public void LoginFunc(String name) {
         final String Rname = name;
         users.whereEqualTo("Username", name)
                 .get()

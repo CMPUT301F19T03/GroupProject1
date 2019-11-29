@@ -25,10 +25,8 @@ import com.google.firebase.firestore.QuerySnapshot;
 
 import java.util.HashMap;
 
-public class FollowActivity extends AppCompatActivity {
-    String TAG = "MY TAG";
-    FirebaseFirestore db;
-    CollectionReference users;
+public class FollowActivity extends MyAppBase {
+//    CollectionReference users;
     Participant user;
     Participant user1;
 
@@ -39,23 +37,9 @@ public class FollowActivity extends AppCompatActivity {
         final EditText Username =  findViewById(R.id.Username);
         final Button add = findViewById(R.id.Add_button);
         final TextView error = findViewById(R.id.ErrorM);
-        db = FirebaseFirestore.getInstance();
-        users = db.collection("Users");
-        users.addSnapshotListener(new EventListener<QuerySnapshot>() {
-            @Override
-            public void onEvent(@Nullable QuerySnapshot queryDocumentSnapshots, @Nullable FirebaseFirestoreException e) {
-                Log.d(TAG, "Something changed");
-                if (queryDocumentSnapshots != null) {
-                    for (QueryDocumentSnapshot doc : queryDocumentSnapshots) {
-                        if (doc.get("Username").equals(user1.getName())) {
-                            user1 = doc.get("Participant", Participant.class);
-                        }
-                    }
-                }
-            }
-        });
         Intent intent = getIntent();
         user1 = (Participant) intent.getSerializableExtra("User");
+//        users = FirebaseFirestore.getInstance().collection("Users");
         add.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -81,29 +65,7 @@ public class FollowActivity extends AppCompatActivity {
                                     return;
                                 }
                                 user.addRequest(user1.getName());
-                                final HashMap<String, Object> userUpdate = new HashMap<>();
-                                userUpdate.put("Participant", user);
-                                users.whereEqualTo("Username",user.getName())
-                                        .get()
-                                        .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-                                            @Override
-                                            public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                                                if (task.isSuccessful()) {
-                                                    QuerySnapshot queryDocumentSnapshots = task.getResult();
-                                                    Participant updated = queryDocumentSnapshots.getDocuments().get(0).get("Participant", Participant.class);
-                                                    Log.d(TAG,"Updating user: "+updated.getName());
-                                                    users.document(queryDocumentSnapshots.getDocuments().get(0).getId())
-                                                            .update(userUpdate)
-                                                            .addOnSuccessListener(new OnSuccessListener<Void>() {
-                                                                @Override
-                                                                public void onSuccess(Void aVoid) {
-
-                                                                    Log.d(TAG,"Updated user");
-                                                                }
-                                                            });
-                                                }
-                                            }
-                                        });
+                                uploadUser(user);
                                 finish();
                             }
                         }
@@ -111,5 +73,10 @@ public class FollowActivity extends AppCompatActivity {
                 });
             }
         });
+    }
+
+    @Override
+    public void setUser(Participant user) {
+        this.user1 = user;
     }
 }

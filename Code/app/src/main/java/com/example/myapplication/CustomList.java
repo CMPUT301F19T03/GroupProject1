@@ -93,6 +93,7 @@ public class CustomList extends ArrayAdapter<Mood> {
             public void onClick(View view) {
                 Intent intent = new Intent(context, ViewMood.class);
                 intent.putExtra("Mood",moods.get(position));
+                intent.putExtra("MoodHistory","");
                 context.startActivity(intent);
             }
         });
@@ -101,7 +102,7 @@ public class CustomList extends ArrayAdapter<Mood> {
             @Override
             public void onClick(View view) {
                 Intent intent = new Intent(context, Edit.class);
-                intent.putExtra("user", user);
+                intent.putExtra("User", user);
                 int pos = user.getMoodHistory().indexOf(mood);
                 intent.putExtra("pos", pos);
                 ((Activity)context).startActivityForResult(intent,1);

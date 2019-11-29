@@ -8,6 +8,7 @@ import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -41,6 +42,10 @@ public class ViewMood extends AppCompatActivity {
         Intent intent = getIntent();
         currentMood = (Mood) intent.getSerializableExtra("Mood");
 
+        if (intent.hasExtra("MoodHistory")) {
+            Button button = findViewById(R.id.returnButton);
+            button.setText(R.string.return_to_mood_history);
+        }
         date = findViewById(R.id.dateView);
         date.setText(currentMood.getStringDate());
         time = findViewById(R.id.timeView);

@@ -22,7 +22,7 @@ import java.util.ArrayList;
  * Issues:
  * Needs to be implemented at all
  */
-public class Community extends AppCompatActivity {
+public class Community extends MyAppBase {
     ArrayList<String> all_follows;
     Participant user;
     Participant user1;
@@ -38,12 +38,36 @@ public class Community extends AppCompatActivity {
         follow_activity = findViewById(R.id.followactivity_list);
         Intent intent = getIntent();
         user = (Participant) intent.getSerializableExtra("User");
-        CollectionReference users = FirebaseFirestore.getInstance().collection("Users");
+
+    }
+
+    @Override
+    public void setUser(Participant user) {
+        this.user = user;
+        buildList();
+    }
+
+    public void RequestButton(View view) {
+        Intent requestIntent = new Intent(this,Requests.class);
+        requestIntent.putExtra("User",user);
+        startActivity(requestIntent);
+    }
+
+    public void FollowButton(View view) {
+        Intent requestIntent = new Intent(this,FollowActivity.class);
+        requestIntent.putExtra("User",user);
+        startActivity(requestIntent);
+
+    }
+
+    public void ReturnButton(View view) {
+        finish();
+    }
+
+    public void buildList() {
         follow_moodList = new ArrayList<>();
         follow_moodAdapter = new FollowCustomList(this,follow_moodList,user);
         follow_activity.setAdapter(follow_moodAdapter);
-
-
         all_follows = user.getFollowing();
         for (int i = 0; i < all_follows.size(); i++) {
             String name1 =  all_follows.get(i);
@@ -67,28 +91,11 @@ public class Community extends AppCompatActivity {
                                     follow_moodList.add(mood1);
                                     follow_moodAdapter.notifyDataSetChanged();
                                 }
-                    }
                             }
+                        }
                     });
         }
 
-    }
-
-    public void RequestButton(View view) {
-        Intent requestIntent = new Intent(this,Requests.class);
-        requestIntent.putExtra("User",user);
-        startActivity(requestIntent);
-    }
-
-    public void FollowButton(View view) {
-        Intent requestIntent = new Intent(this,FollowActivity.class);
-        requestIntent.putExtra("User",user);
-        startActivity(requestIntent);
-
-    }
-
-    public void ReturnButton(View view) {
-        finish();
     }
 
 }
