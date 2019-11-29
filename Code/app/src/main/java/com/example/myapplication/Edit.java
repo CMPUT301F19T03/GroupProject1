@@ -270,6 +270,10 @@ public class Edit extends MyAppBase implements TimePickerDialog.OnTimeSetListene
         Toast.makeText(this,"Swipe emote to select other moods",Toast.LENGTH_SHORT).show();
     }
 
+    /**
+     * get the new user object from MyAppBase when it receives updates from the fireBase
+     * @param user the new user object
+     */
     @Override
     public void setUser(Participant user) {
         this.user = user;
@@ -358,6 +362,10 @@ public class Edit extends MyAppBase implements TimePickerDialog.OnTimeSetListene
         }
     }
 
+    /**
+     * Determines if it needs to upload a new image to the FireBase
+     * or delete an existing one
+     */
     public void editImage() {
         if (photoToggle.isChecked() && imageChanged) {
             Log.d("myTag","New image added");
@@ -401,6 +409,10 @@ public class Edit extends MyAppBase implements TimePickerDialog.OnTimeSetListene
         }
 
     }
+
+    /**
+     * Encode the bitmap to a bytearray and save it to the firebase
+     */
     public void encodeBitmapAndSave() {
         Bitmap bitmap = ((BitmapDrawable) temp.getDrawable()).getBitmap();
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
@@ -443,6 +455,10 @@ public class Edit extends MyAppBase implements TimePickerDialog.OnTimeSetListene
         });
 
     }
+
+    /**
+     * Get permission from teh user to access the camera
+     */
     private void getCameraPermission() {
         if (ContextCompat.checkSelfPermission(this.getApplicationContext(), Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED) {
             mCameraPermissionGranted = true;
@@ -474,6 +490,12 @@ public class Edit extends MyAppBase implements TimePickerDialog.OnTimeSetListene
         }
     }
     String currentPhotoPath;
+
+    /**
+     * creates a file for the camera to save into
+     * @return the file that was created
+     * @throws IOException when it can't create the file
+     */
     private File createImageFile() throws IOException {
         // Create an image file name
         String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss", Locale.ENGLISH).format(new Date());
@@ -490,6 +512,9 @@ public class Edit extends MyAppBase implements TimePickerDialog.OnTimeSetListene
         return image;
     }
 
+    /**
+     * create a file to save the picture in then start the camera intent
+     */
     private void startCameraIntent() {
         Intent cameraIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
         if (cameraIntent.resolveActivity(getPackageManager())!=null) {
@@ -509,6 +534,9 @@ public class Edit extends MyAppBase implements TimePickerDialog.OnTimeSetListene
         }
     }
 
+    /**
+     * remove the image from the device's memory after it has been uploaded
+     */
     public void destroySavedImage() {
         if (currentPhotoPath!=null) {
             File fdelete = new File(currentPhotoPath);
@@ -522,6 +550,10 @@ public class Edit extends MyAppBase implements TimePickerDialog.OnTimeSetListene
         }
     }
 
+    /**
+     * decides whether to start the camera or gallery intents
+     * @param button which button was pressed
+     */
     @Override
     public void onButtonPressed(int button) {
         switch (button) {

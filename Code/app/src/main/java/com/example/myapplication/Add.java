@@ -210,7 +210,7 @@ public class Add extends MyAppBase implements TimePickerDialog.OnTimeSetListener
                 if (photoToggle.isChecked()) {
                     encodeBitmapAndSave();
                 } else {
-                    createMood(null, datetime, reason, social, emoticon);
+                    createMood(null);
                 }
 
             }
@@ -219,6 +219,10 @@ public class Add extends MyAppBase implements TimePickerDialog.OnTimeSetListener
         Toast.makeText(this,"Swipe emote to select other moods",Toast.LENGTH_SHORT).show();
     }
 
+    /**
+     * get the new user object from MyAppBase when it receives updates from the fireBase
+     * @param user the new user object
+     */
     @Override
     public void setUser(Participant user) {
         this.user = user;
@@ -227,14 +231,9 @@ public class Add extends MyAppBase implements TimePickerDialog.OnTimeSetListener
     /**
      * Creates the mood object and add it to the moodList
      * @param task UploadTask for putting the image the user got from the camera or the gallery to the firebase
-     * @param date the date and time to set the mood at
-     * @param reason The reason the user supplied for the mood
-     * @param social The social situation the user supplied
-     * @param emoticon the emoticon the user chose from the viewPager
      */
-    public void createMood(UploadTask task,Date date,String reason,String social,String emoticon) {
+    public void createMood(UploadTask task) {
         Mood mood;
-        ArrayList<Mood> moodList = user.getMoodHistory();
         String image;
         // If the user didn't add an image then set to null otherwise set to the path it was uploaded to
         if (task==null) {
@@ -249,9 +248,9 @@ public class Add extends MyAppBase implements TimePickerDialog.OnTimeSetListener
 
         // If the user added a location include it in the Mood
         if (locationToggle.isChecked()) {
-            mood = new Mood(date, userLocation.latitude, userLocation.longitude, reason, social, emoticon, image);
+            mood = new Mood(datetime, userLocation.latitude, userLocation.longitude, reason, social, emoticon, image);
         } else {
-            mood = new Mood(date, reason, social, emoticon, image);
+            mood = new Mood(datetime, reason, social, emoticon, image);
         }
         //Add the mood to the list and send the list back to moodHistory to update the firebase
         uploadMood(mood);
@@ -356,7 +355,7 @@ public class Add extends MyAppBase implements TimePickerDialog.OnTimeSetListener
             @Override
             public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
                 Log.d("myTag", "Upload Succeeded");
-                createMood(uploadTask,datetime,reason,social,emoticon);
+                createMood(uploadTask);
             }
         });
     }
@@ -391,6 +390,12 @@ public class Add extends MyAppBase implements TimePickerDialog.OnTimeSetListener
         }
     }
     String currentPhotoPath;
+
+    /**
+     * Creates an image file for the camera to save into
+     * @return the file that was created
+     * @throws IOException when a file can't be created
+     */
     private File createImageFile() throws IOException {
         // Create an image file name
         String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss", Locale.ENGLISH).format(new Date());
@@ -407,6 +412,10 @@ public class Add extends MyAppBase implements TimePickerDialog.OnTimeSetListener
         return image;
     }
 
+    /**
+     * Creates a file for a photo to be saved into
+     * then starts teh camera intent to take a picture
+     */
     private void startCameraIntent() {
         Intent cameraIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
         if (cameraIntent.resolveActivity(getPackageManager())!=null) {
@@ -427,6 +436,9 @@ public class Add extends MyAppBase implements TimePickerDialog.OnTimeSetListener
         }
     }
 
+    /**
+     * destroy the file that was saved into the devices memory from taking a picture
+     */
     public void destroySavedImage() {
         File fdelete = new File(currentPhotoPath);
         if (fdelete.exists()) {
@@ -438,6 +450,11 @@ public class Add extends MyAppBase implements TimePickerDialog.OnTimeSetListener
         }
     }
 
+    /**
+     * gets the buttoon that was pressed in the imageChooserFragment
+     * and decides whether to start the camera or open the gallery
+     * @param button the button that was pressed
+     */
     @Override
     public void onButtonPressed(int button) {
         switch (button) {
@@ -457,6 +474,10 @@ public class Add extends MyAppBase implements TimePickerDialog.OnTimeSetListener
         }
     }
 
+    /**
+     * uses the superclass to upload the new mood object to the FireBase
+     * @param mood the mood to be uploaded
+     */
     public void uploadMood(Mood mood) {
         user.addMood(mood);
         uploadUser(user);

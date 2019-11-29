@@ -32,14 +32,11 @@ import java.util.HashMap;
  * This class is dedicated to the activity_mood_history view and will handle that view's needs
  */
 public class MoodHistory extends MyAppBase {
-    String TAG = "myTag";
     ListView moodHistory;
     ArrayAdapter<Mood> moodArrayAdapter;
-    ArrayList<Mood> moodArrayList;
     CustomList filterAdapter;
 
     Participant user;
-    CollectionReference users;
 
     Drawable buttonBackground;
     int filterPressed;
@@ -103,12 +100,20 @@ public class MoodHistory extends MyAppBase {
         finish();
     }
 
+    /**
+     * clear the filter and show all moods for the user
+     * @param view the button that was pressed
+     */
     public  void clearFilterButton(View view) {
         unSetFilterColors();
         moodHistory.setAdapter(moodArrayAdapter);
         filterAdapter = null;
     }
 
+    /**
+     * show or hide the linearlayout that holds the filter buttons
+     * @param view the button that was clicked
+     */
     public void filterButton(View view) {
         HorizontalScrollView filterScroll = findViewById(R.id.FilterScroll);
         if (filterScroll.getVisibility()==View.GONE) {
@@ -118,6 +123,10 @@ public class MoodHistory extends MyAppBase {
         }
     }
 
+    /**
+     * create the filtered view with all matching moods in it
+     * @param view the button that was clicked to select a view
+     */
     public void createFilter(View view) {
         unSetFilterColors();
         view.setBackgroundColor(filterPressed);
@@ -131,6 +140,12 @@ public class MoodHistory extends MyAppBase {
         moodHistory.setAdapter(filterAdapter);
     }
 
+    /**
+     * called when an activity that was called by this finishes
+     * @param requestCode code that was sent when the activity was started
+     * @param resultCode code that the activity returns
+     * @param data any data the activity sends back
+     */
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
@@ -138,6 +153,10 @@ public class MoodHistory extends MyAppBase {
         findViewById(R.id.FilterScroll).setVisibility(View.GONE);
         recoverFilter();
     }
+
+    /**
+     * Clear the backgrounds of all filter buttons back to default
+     */
     public void unSetFilterColors() {
         int padding = getResources().getDimensionPixelSize(R.dimen.padding_large);
 
@@ -162,6 +181,9 @@ public class MoodHistory extends MyAppBase {
         worstFilter.setPadding(padding,padding,padding,padding);
     }
 
+    /**
+     * if the filter exists recreate it
+     */
     public void recoverFilter() {
         if (filterAdapter!=null) {
             ImageButton filter = null;
