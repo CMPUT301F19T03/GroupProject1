@@ -57,7 +57,7 @@ import java.util.Locale;
 /**
  * This class is responsible for the Edit activity
  */
-public class Edit extends AppCompatActivity implements TimePickerDialog.OnTimeSetListener, DatePickerDialog.OnDateSetListener, imageChooserFragment.OnFragmentInteractionListener {
+public class Edit extends MyAppBase implements TimePickerDialog.OnTimeSetListener, DatePickerDialog.OnDateSetListener, imageChooserFragment.OnFragmentInteractionListener {
     Mood editMood;
     ArrayList<Mood> moodList;
     Calendar cal;
@@ -102,7 +102,7 @@ public class Edit extends AppCompatActivity implements TimePickerDialog.OnTimeSe
         res = getResources();
         // Get the mood array from moodHistory
         final Intent intent = getIntent();
-        user = (Participant) intent.getSerializableExtra("user");
+        user = (Participant) intent.getSerializableExtra("User");
         moodList = user.getMoodHistory();
         //Get the position of the item to be changed
         final int pos = intent.getIntExtra("pos", 0);
@@ -270,6 +270,11 @@ public class Edit extends AppCompatActivity implements TimePickerDialog.OnTimeSe
         Toast.makeText(this,"Swipe emote to select other moods",Toast.LENGTH_SHORT).show();
     }
 
+    @Override
+    public void setUser(Participant user) {
+        this.user = user;
+    }
+
     /**
      * This button returns the user to the Moodhistory view
      *
@@ -373,9 +378,8 @@ public class Edit extends AppCompatActivity implements TimePickerDialog.OnTimeSe
                             public void onSuccess(Void aVoid) {
                                 Log.d("myTag", "Removed old image successfully");
                                 editMood.setPicture(null);
-                                Intent data = new Intent();
-                                data.putExtra("Addmood", moodList);
-                                setResult(RESULT_OK, data);
+                                user.setMoodHistory(moodList);
+                                uploadUser(user);
                                 destroySavedImage();
                                 finish();
                             }
@@ -383,17 +387,15 @@ public class Edit extends AppCompatActivity implements TimePickerDialog.OnTimeSe
             } else {
                 Log.d("myTag","No image in storage");
                 editMood.setPicture(null);
-                Intent data = new Intent();
-                data.putExtra("Addmood", moodList);
-                setResult(RESULT_OK, data);
+                user.setMoodHistory(moodList);
+                uploadUser(user);
                 destroySavedImage();
                 finish();
             }
         } else {
             Log.d("myTag", "image unchanged");
-            Intent data = new Intent();
-            data.putExtra("Addmood", moodList);
-            setResult(RESULT_OK, data);
+            user.setMoodHistory(moodList);
+            uploadUser(user);
             destroySavedImage();
             finish();
         }
@@ -417,7 +419,6 @@ public class Edit extends AppCompatActivity implements TimePickerDialog.OnTimeSe
                         @Override
                         public void onSuccess(Void aVoid) {
                             Log.d("myTag", "Removed old image successfully");
-
                         }
                     });
         }
@@ -434,9 +435,8 @@ public class Edit extends AppCompatActivity implements TimePickerDialog.OnTimeSe
         public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
             Log.d("myTag", "Upload Succeeded");
             editMood.setPicture(imagePath);
-            Intent data = new Intent();
-            data.putExtra("Addmood", moodList);
-            setResult(RESULT_OK, data);
+            user.setMoodHistory(moodList);
+            uploadUser(user);
             destroySavedImage();
             finish();
             }
@@ -500,8 +500,7 @@ public class Edit extends AppCompatActivity implements TimePickerDialog.OnTimeSe
                 Log.e("myTag","Exception found while creating file: "+e);
             }
             if (photoFile!=null) {
-                Uri photoURI = FileProvider.getUriForFile(context,"com.example.android.fileprovider",
-                        photoFile);
+                Uri photoURI = FileProvider.getUriForFile(context,"com.example.android.fileprovider", photoFile);
                 cameraIntent.putExtra(MediaStore.EXTRA_OUTPUT, photoURI);
                 startActivityForResult(cameraIntent, 3);
             }

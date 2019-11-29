@@ -4,7 +4,6 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
-import android.app.Activity;
 import android.content.Intent;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
@@ -32,68 +31,41 @@ import java.util.HashMap;
 /**
  * This class is dedicated to the activity_mood_history view and will handle that view's needs
  */
-public class MoodHistory extends AppCompatActivity {
+public class MoodHistory extends MyAppBase {
     String TAG = "myTag";
     ListView moodHistory;
     ArrayAdapter<Mood> moodArrayAdapter;
     ArrayList<Mood> moodArrayList;
     CustomList filterAdapter;
-    ArrayList<Mood> filterList;
-    Participant user;
-    FirebaseFirestore db;
-    CollectionReference users;
-    Activity historyActivity;
 
-    HorizontalScrollView filterScroll;
-    static Drawable buttonBackground;
-    static int filterPressed;
-    ImageButton greatFilter;
-    ImageButton goodFilter;
-    ImageButton neutralFilter;
-    ImageButton badFilter;
-    ImageButton worstFilter;
+    Participant user;
+    CollectionReference users;
+
+    Drawable buttonBackground;
+    int filterPressed;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_mood_history);
-        historyActivity = this;
-        filterPressed = getResources().getColor(android.R.color.darker_gray);
-        db = FirebaseFirestore.getInstance();
-        users = db.collection("Users");
-        users.addSnapshotListener(new EventListener<QuerySnapshot>() {
-            @Override
-            public void onEvent(@Nullable QuerySnapshot queryDocumentSnapshots, @Nullable FirebaseFirestoreException e) {
-                Log.d(TAG, "Something changed");
-                if (queryDocumentSnapshots != null) {
-                    for (DocumentChange doc : queryDocumentSnapshots.getDocumentChanges()) {
-                        if (doc.getDocument().get("Username").equals(user.getName())) {
-                            user = doc.getDocument().get("Participant", Participant.class);
-                            user.setUID(doc.getDocument().getId());
-                            moodArrayList = user.getMoodHistory();
-                            moodArrayAdapter.clear();
-                            moodArrayAdapter.addAll(user.getMoodHistory());
-                        }
-                    }
-                }
-            }
-        });
         Intent intent = getIntent();
         user = (Participant) intent.getSerializableExtra("User");
-        moodArrayList = user.getMoodHistory();
-        moodArrayAdapter = new CustomList(this,moodArrayList,user,null);
+        moodArrayAdapter = new CustomList(this,user.getMoodHistory(),user,null);
 
         moodHistory = findViewById(R.id.mood_history);
         moodHistory.setAdapter(moodArrayAdapter);
-        filterScroll = findViewById(R.id.FilterScroll);
 
-        greatFilter = findViewById(R.id.GreatFilterButton);
-        goodFilter = findViewById(R.id.GoodFilterButton);
-        neutralFilter = findViewById(R.id.NeutralFilterButton);
-        badFilter = findViewById(R.id.BadFilterButton);
-        worstFilter = findViewById(R.id.WorstFilterButton);
-        buttonBackground = worstFilter.getBackground();
+        buttonBackground = findViewById(R.id.WorstFilterButton).getBackground();
+        filterPressed = getResources().getColor(android.R.color.darker_gray);
 
+    }
+
+    @Override
+    public void setUser(Participant user) {
+        this.user = user;
+        moodArrayAdapter.clear();
+        moodArrayAdapter.addAll(user.getMoodHistory());
+        recoverFilter();
     }
 
     /**
@@ -102,7 +74,7 @@ public class MoodHistory extends AppCompatActivity {
      */
     public void addButton(View view) {
         Intent intent = new Intent(this, Add.class);
-        intent.putExtra("user",user);
+        intent.putExtra("User",user);
         startActivityForResult(intent,1);
     }
     /**
@@ -138,71 +110,24 @@ public class MoodHistory extends AppCompatActivity {
     }
 
     public void filterButton(View view) {
+        HorizontalScrollView filterScroll = findViewById(R.id.FilterScroll);
         if (filterScroll.getVisibility()==View.GONE) {
             filterScroll.setVisibility(View.VISIBLE);
         } else {
             filterScroll.setVisibility(View.GONE);
         }
     }
-    public void greatFilterButton(View view) {
-        unSetFilterColors();
-        greatFilter.setBackgroundColor(filterPressed);
-        filterList = new ArrayList<>();
-        for (Mood mood : moodArrayList) {
-            if (mood.getEmoticon().equals("great")) {
-                filterList.add(mood);
-            }
-        }
-        filterAdapter = new CustomList(this,filterList,user,"great");
-        moodHistory.setAdapter(filterAdapter);
-    }
 
-    public void goodFilterButton(View view) {
+    public void createFilter(View view) {
         unSetFilterColors();
-        goodFilter.setBackgroundColor(filterPressed);
-        filterList = new ArrayList<>();
-        for (Mood mood : moodArrayList) {
-            if (mood.getEmoticon().equals("good")) {
+        view.setBackgroundColor(filterPressed);
+        ArrayList<Mood> filterList = new ArrayList<>();
+        for (Mood mood : user.getMoodHistory()) {
+            if (mood.getEmoticon().equals(view.getTag().toString())) {
                 filterList.add(mood);
             }
         }
-        filterAdapter = new CustomList(this,filterList,user,"good");
-        moodHistory.setAdapter(filterAdapter);
-    }
-    public void neutralFilterButton(View view) {
-        unSetFilterColors();
-        neutralFilter.setBackgroundColor(filterPressed);
-        filterList = new ArrayList<>();
-        for (Mood mood : moodArrayList) {
-            if (mood.getEmoticon().equals("neutral")) {
-                filterList.add(mood);
-            }
-        }
-        filterAdapter = new CustomList(this,filterList,user,"neutral");
-        moodHistory.setAdapter(filterAdapter);
-    }
-    public void badFilterButton(View view) {
-        unSetFilterColors();
-        badFilter.setBackgroundColor(filterPressed);
-        filterList = new ArrayList<>();
-        for (Mood mood : moodArrayList) {
-            if (mood.getEmoticon().equals("bad")) {
-                filterList.add(mood);
-            }
-        }
-        filterAdapter = new CustomList(this,filterList,user,"bad");
-        moodHistory.setAdapter(filterAdapter);
-    }
-    public void worstFilterButton(View view) {
-        unSetFilterColors();
-        worstFilter.setBackgroundColor(filterPressed);
-        filterList = new ArrayList<>();
-        for (Mood mood : moodArrayList) {
-            if (mood.getEmoticon().equals("worst")) {
-                filterList.add(mood);
-            }
-        }
-        filterAdapter = new CustomList(this,filterList,user,"worst");
+        filterAdapter = new CustomList(this,filterList,user,view.getTag().toString());
         moodHistory.setAdapter(filterAdapter);
     }
 
@@ -210,81 +135,55 @@ public class MoodHistory extends AppCompatActivity {
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         unSetFilterColors();
+        findViewById(R.id.FilterScroll).setVisibility(View.GONE);
         recoverFilter();
-        filterScroll.setVisibility(View.GONE);
-        if (requestCode==1) {
-            if (resultCode==RESULT_OK) {
-                Log.d(TAG,"Return from add");
-                moodArrayList = (ArrayList<Mood>) data.getSerializableExtra("Addmood");
-                Log.d("myTag","mood image: "+moodArrayList.get(0).getPicture());
-                user.setMoodHistory(moodArrayList);
-                final HashMap<String, Object> userUpdate = new HashMap<>();
-                userUpdate.put("Participant", user);
-                users.whereEqualTo("Username",user.getName())
-                        .get()
-                        .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-                            @Override
-                            public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                                if (task.isSuccessful()) {
-                                    QuerySnapshot queryDocumentSnapshots = task.getResult();
-                                    Participant updated = queryDocumentSnapshots.getDocuments().get(0).get("Participant", Participant.class);
-                                    Log.d(TAG,"Updating user: "+updated.getName());
-                                    users.document(queryDocumentSnapshots.getDocuments().get(0).getId())
-                                            .update(userUpdate)
-                                            .addOnFailureListener(new OnFailureListener() {
-                                                @Override
-                                                public void onFailure(@NonNull Exception e) {
-                                                    Log.d(TAG, "Update Failed: "+e);
-                                                }
-                                            })
-                                            .addOnSuccessListener(new OnSuccessListener<Void>() {
-                                                @Override
-                                                public void onSuccess(Void aVoid) {
-                                                    Log.d(TAG,"Updated user Successfully");
-                                                }
-                                            });
-
-                                }
-                            }
-                        });
-            }
-        }
     }
     public void unSetFilterColors() {
         int padding = getResources().getDimensionPixelSize(R.dimen.padding_large);
+
+        ImageButton greatFilter = findViewById(R.id.GreatFilterButton);
         greatFilter.setBackground(buttonBackground);
         greatFilter.setPadding(padding,padding,padding,padding);
+
+        ImageButton goodFilter = findViewById(R.id.GoodFilterButton);
         goodFilter.setBackground(buttonBackground);
         goodFilter.setPadding(padding,padding,padding,padding);
+
+        ImageButton neutralFilter = findViewById(R.id.NeutralFilterButton);
         neutralFilter.setBackground(buttonBackground);
         neutralFilter.setPadding(padding,padding,padding,padding);
+
+        ImageButton badFilter = findViewById(R.id.BadFilterButton);
         badFilter.setBackground(buttonBackground);
         badFilter.setPadding(padding,padding,padding,padding);
+
+        ImageButton worstFilter = findViewById(R.id.WorstFilterButton);
         worstFilter.setBackground(buttonBackground);
         worstFilter.setPadding(padding,padding,padding,padding);
     }
 
     public void recoverFilter() {
         if (filterAdapter!=null) {
+            ImageButton filter = null;
             switch (filterAdapter.getEmote()) {
                 case "great":
-                    greatFilterButton(findViewById(R.id.GreatFilterButton));
+                    filter = findViewById(R.id.GreatFilterButton);
                     break;
                 case "good":
-                    goodFilterButton(findViewById(R.id.GoodFilterButton));
+                    filter = findViewById(R.id.GoodFilterButton);
                     break;
                 case "neutral":
-                    neutralFilterButton(findViewById(R.id.NeutralFilterButton));
+                    filter = findViewById(R.id.NeutralFilterButton);
                     break;
                 case "bad":
-                    badFilterButton(findViewById(R.id.BadFilterButton));
+                    filter = findViewById(R.id.BadFilterButton);
                     break;
                 case "worst":
-                    worstFilterButton(findViewById(R.id.WorstFilterButton));
+                    filter = findViewById(R.id.WorstFilterButton);
                     break;
-                default:
-                    clearFilterButton(findViewById(R.id.ClearFilterButton));
             }
+            findViewById(R.id.FilterScroll).setVisibility(View.VISIBLE);
+            createFilter(filter);
         } else {
             clearFilterButton(findViewById(R.id.ClearFilterButton));
         }

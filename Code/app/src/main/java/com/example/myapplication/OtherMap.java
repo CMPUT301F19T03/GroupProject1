@@ -84,7 +84,7 @@ public class OtherMap extends AppCompatActivity implements OnMapReadyCallback {
                                         LatLng point = new LatLng(mood1.getLatitude(),mood1.getLongitude());
                                         int emoteIcon = getResources().getIdentifier(mood1.getEmoticon(),"drawable",getPackageName());
                                         googleMap.addMarker(new MarkerOptions().position(point).title(user1.getName())
-                                        .icon(BitmapDescriptorFactory.fromBitmap(resizeIcon(emoteIcon))));
+                                            .icon(BitmapDescriptorFactory.fromBitmap(resizeIcon(emoteIcon))));
                                     }
                                 }
                             }

@@ -59,7 +59,7 @@ import java.util.Locale;
  * https://developer.android.com/training/camera/photobasics
  */
 
-public class Add extends AppCompatActivity implements TimePickerDialog.OnTimeSetListener, DatePickerDialog.OnDateSetListener, imageChooserFragment.OnFragmentInteractionListener {
+public class Add extends MyAppBase implements TimePickerDialog.OnTimeSetListener, DatePickerDialog.OnDateSetListener, imageChooserFragment.OnFragmentInteractionListener {
     Calendar cal;
     TextView timeText;
     TextView dateText;
@@ -100,7 +100,7 @@ public class Add extends AppCompatActivity implements TimePickerDialog.OnTimeSet
         mStorage = FirebaseStorage.getInstance();
         // Get the List of Moods from moodHistory
         final Intent intent = getIntent();
-        user = (Participant) intent.getSerializableExtra("user");
+        user = (Participant) intent.getSerializableExtra("User");
 
         // Get a reference to current time/date
         cal = Calendar.getInstance();
@@ -219,6 +219,11 @@ public class Add extends AppCompatActivity implements TimePickerDialog.OnTimeSet
         Toast.makeText(this,"Swipe emote to select other moods",Toast.LENGTH_SHORT).show();
     }
 
+    @Override
+    public void setUser(Participant user) {
+        this.user = user;
+    }
+
     /**
      * Creates the mood object and add it to the moodList
      * @param task UploadTask for putting the image the user got from the camera or the gallery to the firebase
@@ -249,11 +254,7 @@ public class Add extends AppCompatActivity implements TimePickerDialog.OnTimeSet
             mood = new Mood(date, reason, social, emoticon, image);
         }
         //Add the mood to the list and send the list back to moodHistory to update the firebase
-        moodList.add(mood);
-        Intent data = new Intent();
-        data.putExtra("Addmood", moodList);
-        setResult(RESULT_OK, data);
-        finish();
+        uploadMood(mood);
     }
 
     /**
@@ -454,6 +455,13 @@ public class Add extends AppCompatActivity implements TimePickerDialog.OnTimeSet
                 photoIntent.setAction(Intent.ACTION_GET_CONTENT);
                 startActivityForResult(Intent.createChooser(photoIntent,"Select Picture"),3);
         }
+    }
+
+    public void uploadMood(Mood mood) {
+        user.addMood(mood);
+        uploadUser(user);
+        finish();
+
     }
 }
 

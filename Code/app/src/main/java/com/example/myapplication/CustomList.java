@@ -38,16 +38,16 @@ public class CustomList extends ArrayAdapter<Mood> {
     private CollectionReference users;
     Participant user;
     private CustomList list;
-    private String emote;
+    private String filter;
 
     /**
      *
      * @param context this is the Activity that created teh CustomList
      * @param moods This is the array to build the CustomList from
      * @param user This is the user that owns the array
-     * @param emote This is the emote to filter by if it exists
+     * @param filter This is the emote to filter by if it exists
      */
-    public CustomList(Context context,ArrayList<Mood> moods,Participant user,String emote){
+    public CustomList(Context context,ArrayList<Mood> moods,Participant user,String filter){
         super(context,0,moods);
         FirebaseFirestore db = FirebaseFirestore.getInstance();
         users = db.collection("Users");
@@ -55,7 +55,7 @@ public class CustomList extends ArrayAdapter<Mood> {
         this.context = context;
         this.user = user;
         this.list = this;
-        this.emote = emote;
+        this.filter = filter;
     }
 
     /**
@@ -93,6 +93,7 @@ public class CustomList extends ArrayAdapter<Mood> {
             public void onClick(View view) {
                 Intent intent = new Intent(context, ViewMood.class);
                 intent.putExtra("Mood",moods.get(position));
+                intent.putExtra("MoodHistory","");
                 context.startActivity(intent);
             }
         });
@@ -101,7 +102,7 @@ public class CustomList extends ArrayAdapter<Mood> {
             @Override
             public void onClick(View view) {
                 Intent intent = new Intent(context, Edit.class);
-                intent.putExtra("user", user);
+                intent.putExtra("User", user);
                 int pos = user.getMoodHistory().indexOf(mood);
                 intent.putExtra("pos", pos);
                 ((Activity)context).startActivityForResult(intent,1);
@@ -152,6 +153,6 @@ public class CustomList extends ArrayAdapter<Mood> {
     }
 
     public String getEmote() {
-        return emote;
+        return filter;
     }
 }
