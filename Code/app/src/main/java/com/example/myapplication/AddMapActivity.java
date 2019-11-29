@@ -67,6 +67,7 @@ public class AddMapActivity extends AppCompatActivity implements OnMapReadyCallb
         getLocationPermission();
         // If we have been given permissions to access Location proceed
         if (mLocationPermissionGranted) {
+            //Try to get the user's location
             fusedLocationClient.getLastLocation()
                     .addOnSuccessListener(new OnSuccessListener<Location>() {
                         @Override

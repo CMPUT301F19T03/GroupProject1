@@ -32,20 +32,25 @@ import java.util.HashMap;
 public class Login extends AppCompatActivity {
 
     String TAG = "myTag";
-    FirebaseFirestore db;
     CollectionReference users;
     Participant user;
     Activity main = this;
 
+    /**
+     * create the view and get a reference to the database
+     * @param savedInstanceState values saved by previous instances of this class
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
-        db = FirebaseFirestore.getInstance();
-        users = db.collection("Users");
+        users = FirebaseFirestore.getInstance().collection("Users");
     }
 
-
+    /**
+     * if the user has entreed a name login with that name
+     * @param view the button that was clicked
+     */
     public void loginButton(View view) {
         String name = ((EditText) findViewById(R.id.userText)).getText().toString();
         if (name.isEmpty()) {
@@ -61,6 +66,10 @@ public class Login extends AppCompatActivity {
         // Don't allow user to press back
     }
 
+    /**
+     * creates the user profile from the firebase and logs them in
+     * @param name the name to log in with
+     */
     public void LoginFunc(String name) {
         final String Rname = name;
         users.whereEqualTo("Username", name)
