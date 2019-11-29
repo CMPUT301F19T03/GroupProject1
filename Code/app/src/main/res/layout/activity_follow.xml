@@ -9,20 +9,29 @@
         android:id="@+id/Username"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginLeft="32dp"
+        android:layout_marginTop="32dp"
+        android:layout_marginRight="32dp"
         android:ems="10"
-        android:inputType="textPersonName"
-        android:text="Username" />
+        android:hint="Username"
+        android:inputType="textPersonName" />
 
     <Button
         android:id="@+id/Add_button"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginLeft="32dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginRight="32dp"
         android:text="Add" />
 
     <TextView
         android:id="@+id/ErrorM"
         android:layout_width="match_parent"
         android:layout_height="43dp"
+        android:layout_marginLeft="32dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginRight="32dp"
         android:text="                           "
         android:textColor="#DA0C0C" />
 </LinearLayout>
