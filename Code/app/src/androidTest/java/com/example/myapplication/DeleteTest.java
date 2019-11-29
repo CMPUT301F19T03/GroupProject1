@@ -85,6 +85,7 @@ public class DeleteTest {
 
         solo.clickOnButton("Add");
         solo.scrollViewToSide(solo.getView(R.id.AddviewPager), solo.LEFT);
+        solo.sleep(2000);
         solo.scrollViewToSide(solo.getView(R.id.AddviewPager), solo.LEFT);
         solo.clickOnButton("confirm");
 
@@ -133,11 +134,13 @@ public class DeleteTest {
 
         solo.clickOnButton("Add");
         solo.scrollViewToSide(solo.getView(R.id.AddviewPager), solo.LEFT);
+        solo.sleep(2000);
         solo.scrollViewToSide(solo.getView(R.id.AddviewPager), solo.LEFT);
         solo.clickOnButton("confirm");
 
         solo.clickOnButton("Add");
         solo.clickOnButton("confirm");
+        solo.sleep(2000);
 
         // Asserts that the current activity is the MainActivity. Otherwise, show “Wrong Activity”
         ListView moodHistory = (ListView)solo.getView(R.id.mood_history);
@@ -181,6 +184,7 @@ public class DeleteTest {
             solo.clickOnView(delete);
             solo.sleep(500);
         }
+
         solo.finishOpenedActivities();
     }
 }
