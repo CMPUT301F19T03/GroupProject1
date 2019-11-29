@@ -1,6 +1,8 @@
 package com.example.myapplication;
 
+import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -41,7 +43,7 @@ public class FollowCustomList extends ArrayAdapter<Mood> {
      * @param parent This is the parent of this view
      * @return returns a view for a Mood object within a ListView
      */
-    public View getView(final int position, @Nullable View convertView, @NonNull final ViewGroup
+    public View getView(final int position, @Nullable final View convertView, @NonNull final ViewGroup
             parent) {
         //Sort the array whenever it needs to be drawn
         Collections.sort(moods, new MoodComparator());
@@ -52,6 +54,15 @@ public class FollowCustomList extends ArrayAdapter<Mood> {
             view = LayoutInflater.from(context).inflate(R.layout.follow_content, parent,false);
         }
         final Mood mood = moods.get(position);
+
+        view.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent viewIntent = new Intent(context,ViewMood.class);
+                viewIntent.putExtra("Mood",mood);
+                context.startActivity(viewIntent);
+            }
+        });
 
         ImageView emoticon = view.findViewById(R.id.emoticon_image1);
         TextView time = view.findViewById(R.id.time_text1);

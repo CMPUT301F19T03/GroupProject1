@@ -4,7 +4,6 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
-import android.app.Activity;
 import android.content.Intent;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
@@ -42,9 +41,7 @@ public class MoodHistory extends AppCompatActivity {
     Participant user;
     FirebaseFirestore db;
     CollectionReference users;
-    Activity historyActivity;
 
-    HorizontalScrollView filterScroll;
     static Drawable buttonBackground;
     static int filterPressed;
     ImageButton greatFilter;
@@ -57,8 +54,6 @@ public class MoodHistory extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_mood_history);
-        historyActivity = this;
-        filterPressed = getResources().getColor(android.R.color.darker_gray);
         db = FirebaseFirestore.getInstance();
         users = db.collection("Users");
         users.addSnapshotListener(new EventListener<QuerySnapshot>() {
@@ -85,7 +80,6 @@ public class MoodHistory extends AppCompatActivity {
 
         moodHistory = findViewById(R.id.mood_history);
         moodHistory.setAdapter(moodArrayAdapter);
-        filterScroll = findViewById(R.id.FilterScroll);
 
         greatFilter = findViewById(R.id.GreatFilterButton);
         goodFilter = findViewById(R.id.GoodFilterButton);
@@ -93,6 +87,7 @@ public class MoodHistory extends AppCompatActivity {
         badFilter = findViewById(R.id.BadFilterButton);
         worstFilter = findViewById(R.id.WorstFilterButton);
         buttonBackground = worstFilter.getBackground();
+        filterPressed = getResources().getColor(android.R.color.darker_gray);
 
     }
 
@@ -138,71 +133,24 @@ public class MoodHistory extends AppCompatActivity {
     }
 
     public void filterButton(View view) {
+        HorizontalScrollView filterScroll = findViewById(R.id.FilterScroll);
         if (filterScroll.getVisibility()==View.GONE) {
             filterScroll.setVisibility(View.VISIBLE);
         } else {
             filterScroll.setVisibility(View.GONE);
         }
     }
-    public void greatFilterButton(View view) {
-        unSetFilterColors();
-        greatFilter.setBackgroundColor(filterPressed);
-        filterList = new ArrayList<>();
-        for (Mood mood : moodArrayList) {
-            if (mood.getEmoticon().equals("great")) {
-                filterList.add(mood);
-            }
-        }
-        filterAdapter = new CustomList(this,filterList,user,"great");
-        moodHistory.setAdapter(filterAdapter);
-    }
 
-    public void goodFilterButton(View view) {
+    public void createFilter(View view) {
         unSetFilterColors();
-        goodFilter.setBackgroundColor(filterPressed);
-        filterList = new ArrayList<>();
-        for (Mood mood : moodArrayList) {
-            if (mood.getEmoticon().equals("good")) {
+        view.setBackgroundColor(filterPressed);
+        ArrayList<Mood> filterList = new ArrayList<>();
+        for (Mood mood : user.getMoodHistory()) {
+            if (mood.getEmoticon().equals(view.getTag().toString())) {
                 filterList.add(mood);
             }
         }
-        filterAdapter = new CustomList(this,filterList,user,"good");
-        moodHistory.setAdapter(filterAdapter);
-    }
-    public void neutralFilterButton(View view) {
-        unSetFilterColors();
-        neutralFilter.setBackgroundColor(filterPressed);
-        filterList = new ArrayList<>();
-        for (Mood mood : moodArrayList) {
-            if (mood.getEmoticon().equals("neutral")) {
-                filterList.add(mood);
-            }
-        }
-        filterAdapter = new CustomList(this,filterList,user,"neutral");
-        moodHistory.setAdapter(filterAdapter);
-    }
-    public void badFilterButton(View view) {
-        unSetFilterColors();
-        badFilter.setBackgroundColor(filterPressed);
-        filterList = new ArrayList<>();
-        for (Mood mood : moodArrayList) {
-            if (mood.getEmoticon().equals("bad")) {
-                filterList.add(mood);
-            }
-        }
-        filterAdapter = new CustomList(this,filterList,user,"bad");
-        moodHistory.setAdapter(filterAdapter);
-    }
-    public void worstFilterButton(View view) {
-        unSetFilterColors();
-        worstFilter.setBackgroundColor(filterPressed);
-        filterList = new ArrayList<>();
-        for (Mood mood : moodArrayList) {
-            if (mood.getEmoticon().equals("worst")) {
-                filterList.add(mood);
-            }
-        }
-        filterAdapter = new CustomList(this,filterList,user,"worst");
+        filterAdapter = new CustomList(this,filterList,user,view.getTag().toString());
         moodHistory.setAdapter(filterAdapter);
     }
 
@@ -211,12 +159,11 @@ public class MoodHistory extends AppCompatActivity {
         super.onActivityResult(requestCode, resultCode, data);
         unSetFilterColors();
         recoverFilter();
-        filterScroll.setVisibility(View.GONE);
+        findViewById(R.id.FilterScroll).setVisibility(View.GONE);
         if (requestCode==1) {
             if (resultCode==RESULT_OK) {
                 Log.d(TAG,"Return from add");
                 moodArrayList = (ArrayList<Mood>) data.getSerializableExtra("Addmood");
-                Log.d("myTag","mood image: "+moodArrayList.get(0).getPicture());
                 user.setMoodHistory(moodArrayList);
                 final HashMap<String, Object> userUpdate = new HashMap<>();
                 userUpdate.put("Participant", user);
@@ -266,25 +213,25 @@ public class MoodHistory extends AppCompatActivity {
 
     public void recoverFilter() {
         if (filterAdapter!=null) {
+            ImageButton filter = null;
             switch (filterAdapter.getEmote()) {
                 case "great":
-                    greatFilterButton(findViewById(R.id.GreatFilterButton));
+                    filter = findViewById(R.id.GreatFilterButton);
                     break;
                 case "good":
-                    goodFilterButton(findViewById(R.id.GoodFilterButton));
+                    filter = findViewById(R.id.GoodFilterButton);
                     break;
                 case "neutral":
-                    neutralFilterButton(findViewById(R.id.NeutralFilterButton));
+                    filter = findViewById(R.id.NeutralFilterButton);
                     break;
                 case "bad":
-                    badFilterButton(findViewById(R.id.BadFilterButton));
+                    filter = findViewById(R.id.BadFilterButton);
                     break;
                 case "worst":
-                    worstFilterButton(findViewById(R.id.WorstFilterButton));
+                    filter = findViewById(R.id.WorstFilterButton);
                     break;
-                default:
-                    clearFilterButton(findViewById(R.id.ClearFilterButton));
             }
+            createFilter(filter);
         } else {
             clearFilterButton(findViewById(R.id.ClearFilterButton));
         }

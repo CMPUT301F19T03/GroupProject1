@@ -35,7 +35,8 @@
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
                 android:adjustViewBounds="true"
-                android:onClick="greatFilterButton"
+                android:onClick="createFilter"
+                android:tag="great"
                 android:padding="10dp"
                 android:scaleType="fitCenter"
                 android:src="@drawable/great">
@@ -46,7 +47,8 @@
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
                 android:adjustViewBounds="true"
-                android:onClick="goodFilterButton"
+                android:onClick="createFilter"
+                android:tag="good"
                 android:padding="10dp"
                 android:scaleType="fitCenter"
                 android:src="@drawable/good">
@@ -57,7 +59,8 @@
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
                 android:adjustViewBounds="true"
-                android:onClick="neutralFilterButton"
+                android:onClick="createFilter"
+                android:tag="neutral"
                 android:padding="10dp"
                 android:scaleType="fitCenter"
                 android:src="@drawable/neutral">
@@ -68,7 +71,8 @@
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
                 android:adjustViewBounds="true"
-                android:onClick="badFilterButton"
+                android:onClick="createFilter"
+                android:tag="bad"
                 android:padding="10dp"
                 android:scaleType="fitCenter"
                 android:src="@drawable/bad">
@@ -79,7 +83,8 @@
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
                 android:adjustViewBounds="true"
-                android:onClick="worstFilterButton"
+                android:onClick="createFilter"
+                android:tag="worst"
                 android:padding="10dp"
                 android:scaleType="fitCenter"
                 android:src="@drawable/worst">
