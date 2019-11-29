@@ -20,7 +20,7 @@
             android:layout_height="40dp"
             android:layout_marginStart="16dp"
             android:layout_marginLeft="8dp"
-            android:layout_marginTop="4dp"
+            android:layout_marginTop="8dp"
             android:layout_marginBottom="8dp"
             android:onClick="ReturnButton"
             android:text="@string/return_to_mood_history" />
@@ -76,7 +76,7 @@
                 android:textOff="No"
                 android:textOn="Yes"
                 app:layout_constraintStart_toEndOf="@+id/locationView"
-                app:layout_constraintTop_toBottomOf="@+id/photoToggle" />
+                app:layout_constraintTop_toBottomOf="@id/photoToggle" />
 
             <TextView
                 android:id="@+id/locationView"
@@ -88,7 +88,7 @@
                 android:text="Location?"
                 android:textColor="#000000"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/photoView" />
+                app:layout_constraintTop_toBottomOf="@id/photoView" />
 
             <TextView
                 android:id="@+id/timeView"
@@ -154,6 +154,24 @@
                 android:textSize="14sp"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/dateButton" />
+
+            <ImageView
+                android:id="@+id/tempImageView"
+                android:layout_width="80dp"
+                android:layout_height="0dp"
+                android:layout_marginStart="4dp"
+                android:layout_marginLeft="4dp"
+                android:layout_marginTop="8dp"
+                android:layout_marginEnd="4dp"
+                android:layout_marginRight="4dp"
+                android:layout_marginBottom="8dp"
+                android:scaleType="fitCenter"
+                android:visibility="visible"
+                app:layout_constraintBottom_toTopOf="@id/reasonView"
+                app:layout_constraintDimensionRatio="1:1"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toEndOf="@id/photoToggle"
+                app:layout_constraintTop_toBottomOf="@id/dateButton"></ImageView>
 
             <Button
                 android:id="@+id/timeButton"
@@ -263,18 +281,6 @@
                 android:layout_marginTop="24dp"
                 app:layout_constraintStart_toEndOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/ConfirmAdd" />
-
-            <ImageView
-                android:id="@+id/tempImageView"
-                android:layout_width="0dp"
-                android:layout_height="0dp"
-                android:scaleType="fitCenter"
-                android:visibility="invisible"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toEndOf="@id/Addguideline"
-                app:layout_constraintTop_toTopOf="@id/Addcontent"
-                app:layout_constraintDimensionRatio="1:1">
-            </ImageView>
 
         </androidx.constraintlayout.widget.ConstraintLayout>
     </ScrollView>

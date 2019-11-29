@@ -11,10 +11,10 @@
     <Button
         android:id="@+id/returnButton"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_height="40dp"
         android:layout_marginStart="16dp"
-        android:layout_marginLeft="16dp"
-        android:layout_marginTop="16dp"
+        android:layout_marginLeft="8dp"
+        android:layout_marginTop="8dp"
         android:onClick="ReturnButton"
         android:text="@string/return_to_mood_history"
         app:layout_constraintStart_toStartOf="parent"
@@ -23,33 +23,39 @@
     <ListView
         android:id="@+id/followactivity_list"
         android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_marginTop="8dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/followButton" />
-
-    <Button
-        android:id="@+id/followButton"
-        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
-        android:text="@string/follow"
-        android:onClick="FollowButton"
-        app:layout_constraintEnd_toStartOf="@+id/guideline"
+        android:layout_marginBottom="8dp"
+        app:layout_constraintBottom_toTopOf="@id/followButton"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/returnButton" />
+        app:layout_constraintTop_toBottomOf="@id/returnButton">
+
+    </ListView>
 
     <Button
         android:id="@+id/Requests"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/requests"
+        android:layout_width="120dp"
+        android:layout_height="40dp"
+        android:layout_marginEnd="32dp"
+        android:layout_marginRight="32dp"
+        android:layout_marginBottom="8dp"
         android:onClick="RequestButton"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="@+id/guideline"
-        app:layout_constraintTop_toTopOf="@+id/followButton" />
+        android:text="@string/requests"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
+
+    <Button
+        android:id="@+id/followButton"
+        android:layout_width="120dp"
+        android:layout_height="40dp"
+        android:layout_marginStart="32dp"
+        android:layout_marginLeft="32dp"
+        android:layout_marginBottom="8dp"
+        android:onClick="FollowButton"
+        android:text="@string/follow"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
 
     <androidx.constraintlayout.widget.Guideline
         android:id="@+id/guideline"
