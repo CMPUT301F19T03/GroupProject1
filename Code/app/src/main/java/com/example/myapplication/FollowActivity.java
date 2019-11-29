@@ -20,6 +20,7 @@ import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.FirebaseFirestoreException;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 
 import java.util.HashMap;
@@ -44,6 +45,11 @@ public class FollowActivity extends AppCompatActivity {
             @Override
             public void onEvent(@Nullable QuerySnapshot queryDocumentSnapshots, @Nullable FirebaseFirestoreException e) {
                 Log.d(TAG, "Something changed");
+                for (QueryDocumentSnapshot doc : queryDocumentSnapshots) {
+                    if (doc.get("Username")==user1.getName()) {
+                        user1 = doc.get("Participant", Participant.class);
+                    }
+                }
             }
         });
         Intent intent = getIntent();

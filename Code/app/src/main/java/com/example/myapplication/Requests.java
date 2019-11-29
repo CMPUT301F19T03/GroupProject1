@@ -56,7 +56,7 @@ public class Requests extends AppCompatActivity {
                 Log.d(TAG, "Something changed");
                 for (QueryDocumentSnapshot doc : queryDocumentSnapshots) {
                     if (doc.get("Username")==user.getName()) {
-                        user = queryDocumentSnapshots.getDocuments().get(0).get("Participant", Participant.class);
+                        user = doc.get("Participant", Participant.class);
                     }
                 }
             }
