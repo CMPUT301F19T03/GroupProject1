@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
@@ -16,10 +17,11 @@
         <Button
             android:id="@+id/returnButton"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_height="40dp"
             android:layout_marginStart="16dp"
-            android:layout_marginLeft="16dp"
-            android:layout_marginTop="16dp"
+            android:layout_marginLeft="8dp"
+            android:layout_marginTop="4dp"
+            android:layout_marginBottom="8dp"
             android:onClick="ReturnButton"
             android:text="@string/return_to_mood_history" />
     </LinearLayout>
@@ -38,21 +40,37 @@
                 android:id="@+id/AddviewPager"
                 android:layout_width="0dp"
                 android:layout_height="0dp"
+                android:layout_marginStart="128dp"
+                android:layout_marginLeft="128dp"
+                android:layout_marginTop="16dp"
+                android:layout_marginEnd="128dp"
+                android:layout_marginRight="128dp"
                 android:adjustViewBounds="true"
                 app:layout_constraintDimensionRatio="1:1"
-                app:layout_constraintEnd_toEndOf="@id/Addguideline"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.0"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="@+id/Addcontent">
 
             </androidx.viewpager.widget.ViewPager>
 
+            <TextView
+                android:id="@+id/textView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:text="Emotion"
+                android:textSize="16sp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/AddviewPager" />
 
             <ToggleButton
                 android:id="@+id/locationToggle"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="10dp"
-                android:layout_marginLeft="10dp"
+                android:layout_height="40dp"
+                android:layout_marginStart="8dp"
+                android:layout_marginLeft="8dp"
                 android:layout_marginTop="8dp"
                 android:text="ToggleButton"
                 android:textOff="No"
@@ -62,11 +80,11 @@
 
             <TextView
                 android:id="@+id/locationView"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="44dp"
-                android:layout_marginLeft="44dp"
-                android:layout_marginTop="36dp"
+                android:layout_width="80dp"
+                android:layout_height="40dp"
+                android:layout_marginStart="64dp"
+                android:layout_marginLeft="64dp"
+                android:layout_marginTop="8dp"
                 android:text="Location?"
                 android:textColor="#000000"
                 app:layout_constraintStart_toStartOf="parent"
@@ -75,60 +93,62 @@
             <TextView
                 android:id="@+id/timeView"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_height="40dp"
                 android:layout_marginStart="16dp"
                 android:layout_marginLeft="16dp"
-                android:layout_marginBottom="16dp"
+                android:layout_marginTop="16dp"
+                android:layout_marginBottom="8dp"
                 android:text=""
                 android:textColor="#000000"
-                app:layout_constraintBottom_toTopOf="@+id/dateButton"
-                app:layout_constraintStart_toEndOf="@+id/timeButton" />
+                app:layout_constraintBottom_toTopOf="@id/dateView"
+                app:layout_constraintStart_toEndOf="@+id/timeButton"
+                app:layout_constraintTop_toBottomOf="@id/textView" />
 
             <TextView
                 android:id="@+id/dateView"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="12dp"
-                android:layout_marginLeft="12dp"
-                android:layout_marginBottom="16dp"
+                android:layout_height="40dp"
+                android:layout_marginStart="16dp"
+                android:layout_marginLeft="16dp"
+                android:layout_marginTop="8dp"
                 android:text=""
                 android:textColor="#000000"
-                app:layout_constraintBottom_toBottomOf="@+id/dateButton"
-                app:layout_constraintStart_toEndOf="@+id/dateButton" />
+                app:layout_constraintStart_toEndOf="@+id/dateButton"
+                app:layout_constraintTop_toBottomOf="@id/timeView" />
 
             <Button
                 android:id="@+id/ConfirmAdd"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="128dp"
-                android:layout_marginLeft="128dp"
-                android:layout_marginEnd="128dp"
-                android:layout_marginRight="128dp"
+                android:layout_marginTop="16dp"
+                android:layout_marginEnd="32dp"
+                android:layout_marginRight="32dp"
+                android:layout_marginBottom="16dp"
                 android:text="@string/confirm"
+                app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/spinner1" />
 
             <ToggleButton
                 android:id="@+id/photoToggle"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_height="40dp"
                 android:layout_marginStart="8dp"
                 android:layout_marginLeft="8dp"
-                android:layout_marginTop="120dp"
+                android:layout_marginTop="8dp"
                 android:text="ToggleButton"
                 android:textOff="No"
                 android:textOn="Yes"
                 app:layout_constraintStart_toEndOf="@+id/photoView"
-                app:layout_constraintTop_toBottomOf="@+id/AddviewPager" />
+                app:layout_constraintTop_toBottomOf="@id/dateView" />
 
             <TextView
                 android:id="@+id/photoView"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_width="80dp"
+                android:layout_height="40dp"
                 android:layout_marginStart="64dp"
                 android:layout_marginLeft="64dp"
-                android:layout_marginTop="12dp"
+                android:layout_marginTop="8dp"
                 android:text="Photo?"
                 android:textColor="#000000"
                 android:textSize="14sp"
@@ -137,79 +157,92 @@
 
             <Button
                 android:id="@+id/timeButton"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="16dp"
-                android:layout_marginLeft="16dp"
-                android:layout_marginTop="24dp"
+                android:layout_width="160dp"
+                android:layout_height="40dp"
+                android:layout_marginStart="64dp"
+                android:layout_marginLeft="64dp"
+                android:layout_marginTop="16dp"
                 android:text="Select a time"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/AddviewPager" />
+                app:layout_constraintTop_toBottomOf="@id/textView" />
 
             <Button
                 android:id="@+id/dateButton"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="16dp"
-                android:layout_marginLeft="16dp"
+                android:layout_width="160dp"
+                android:layout_height="40dp"
+                android:layout_marginStart="64dp"
+                android:layout_marginLeft="64dp"
+                android:layout_marginTop="8dp"
                 android:text="Select a date"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/timeButton" />
 
             <TextView
                 android:id="@+id/reasonView"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_width="80dp"
+                android:layout_height="20dp"
                 android:layout_marginStart="64dp"
                 android:layout_marginLeft="64dp"
-                android:layout_marginTop="56dp"
+                android:layout_marginTop="8dp"
                 android:text="Reason:"
                 android:textColor="#000000"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/locationView" />
+                app:layout_constraintTop_toBottomOf="@id/EditLocation" />
 
             <TextView
                 android:id="@+id/socialView"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_width="80dp"
+                android:layout_height="20dp"
                 android:layout_marginStart="64dp"
                 android:layout_marginLeft="64dp"
-                android:layout_marginTop="20dp"
+                android:layout_marginTop="8dp"
                 android:text="Social Situation:"
                 android:textColor="#000000"
-                android:textSize="18sp"
-                app:layout_constraintStart_toStartOf="@+id/reasonView"
-                app:layout_constraintTop_toBottomOf="@+id/reasonView" />
+                android:textSize="14sp"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/addReasonText" />
 
             <EditText
                 android:id="@+id/addReasonText"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="32dp"
+                android:layout_width="0dp"
+                android:layout_height="40dp"
+                android:layout_marginStart="64dp"
+                android:layout_marginLeft="64dp"
+                android:layout_marginTop="8dp"
+                android:layout_marginEnd="64dp"
+                android:layout_marginRight="64dp"
                 android:hint="Add reason"
                 android:inputType="text"
                 android:maxLength="20"
                 android:text=""
                 android:textSize="14sp"
-                app:layout_constraintStart_toEndOf="@+id/reasonView"
-                app:layout_constraintTop_toBottomOf="@+id/locationToggle" />
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/reasonView" />
 
             <Button
                 android:id="@+id/EditLocation"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="16dp"
-                android:layout_marginLeft="16dp"
+                android:layout_width="168dp"
+                android:layout_height="40dp"
+                android:layout_marginStart="64dp"
+                android:layout_marginLeft="64dp"
+                android:layout_marginTop="8dp"
                 android:text="Change Location?"
                 android:visibility="gone"
-                app:layout_constraintStart_toEndOf="@+id/locationToggle"
-                app:layout_constraintTop_toBottomOf="@+id/photoToggle" />
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/locationToggle" />
 
             <Spinner
                 android:id="@+id/spinner1"
+                style="@style/Widget.AppCompat.Spinner.Underlined"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                android:layout_height="40dp"
+                android:layout_marginStart="64dp"
+                android:layout_marginLeft="64dp"
                 android:layout_marginTop="8dp"
+                android:layout_marginEnd="64dp"
+                android:layout_marginRight="64dp"
+                android:fadingEdge="vertical"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintHorizontal_bias="0.0"
                 app:layout_constraintStart_toStartOf="parent"
@@ -221,7 +254,7 @@
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintGuide_percent="0.75"
+                app:layout_constraintGuide_percent="0.96"
                 app:layout_constraintStart_toStartOf="parent" />
 
             <TextView
@@ -230,6 +263,18 @@
                 android:layout_marginTop="24dp"
                 app:layout_constraintStart_toEndOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/ConfirmAdd" />
+
+            <ImageView
+                android:id="@+id/tempImageView"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:scaleType="fitCenter"
+                android:visibility="invisible"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toEndOf="@id/Addguideline"
+                app:layout_constraintTop_toTopOf="@id/Addcontent"
+                app:layout_constraintDimensionRatio="1:1">
+            </ImageView>
 
         </androidx.constraintlayout.widget.ConstraintLayout>
     </ScrollView>

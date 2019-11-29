@@ -1,16 +1,28 @@
 package com.example.myapplication;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
+import androidx.core.content.FileProvider;
 import androidx.fragment.app.DialogFragment;
 import androidx.viewpager.widget.ViewPager;
 
+import android.Manifest;
 import android.app.Activity;
 import android.app.DatePickerDialog;
 import android.app.TimePickerDialog;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.content.res.Resources;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.drawable.BitmapDrawable;
+import android.net.Uri;
 import android.os.Bundle;
+import android.os.Environment;
+import android.provider.MediaStore;
 import android.util.Log;
 import android.view.View;
 import android.widget.ArrayAdapter;
@@ -18,6 +30,7 @@ import android.widget.Button;
 import android.widget.CompoundButton;
 import android.widget.DatePicker;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.TimePicker;
@@ -25,21 +38,34 @@ import android.widget.Toast;
 import android.widget.ToggleButton;
 
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
+import com.google.firebase.storage.UploadTask;
 
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.IOException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.Locale;
 
 /**
  * This class is responsible for the Edit activity
  */
-public class Edit extends AppCompatActivity implements TimePickerDialog.OnTimeSetListener, DatePickerDialog.OnDateSetListener {
+public class Edit extends AppCompatActivity implements TimePickerDialog.OnTimeSetListener, DatePickerDialog.OnDateSetListener, imageChooserFragment.OnFragmentInteractionListener {
+    Mood editMood;
+    ArrayList<Mood> moodList;
     Calendar cal;
     TextView timeText;
     TextView dateText;
     EditText ReasonText;
     ToggleButton locationToggle;
+    ToggleButton photoToggle;
     String dateString;
     String timeString;
     Resources res;
@@ -51,6 +77,15 @@ public class Edit extends AppCompatActivity implements TimePickerDialog.OnTimeSe
 
     ViewPager viewpager;
 
+    ImageView temp;
+    FirebaseStorage mStorage;
+    Participant user;
+    String imagePath;
+    boolean imageChanged;
+
+
+    private static final int PERMISSIONS_REQUEST_ACCESS_CAMERA = 2;
+    private boolean mCameraPermissionGranted;
 
     /**
      * This is run when the Acitivity is created it sets initial values and finds layout objects
@@ -61,15 +96,18 @@ public class Edit extends AppCompatActivity implements TimePickerDialog.OnTimeSe
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_edit);
+        imageChanged = false;
         context = this;
+        mStorage = FirebaseStorage.getInstance();
         res = getResources();
         // Get the mood array from moodHistory
         final Intent intent = getIntent();
-        final ArrayList<Mood> moodList = (ArrayList<Mood>) intent.getSerializableExtra("moodList");
+        user = (Participant) intent.getSerializableExtra("user");
+        moodList = user.getMoodHistory();
         //Get the position of the item to be changed
         final int pos = intent.getIntExtra("pos", 0);
         // Get the mood that is being edited
-        final Mood editMood = moodList.get(pos);
+        editMood = moodList.get(pos);
 
         // Initialize with values from editMood
         cal = Calendar.getInstance();
@@ -165,6 +203,38 @@ public class Edit extends AppCompatActivity implements TimePickerDialog.OnTimeSe
             }
         });
 
+        temp = findViewById(R.id.tempImageView);
+        if (editMood.getPicture()!=null) {
+            StorageReference imRef = mStorage.getReference().child(editMood.getPicture());
+            imRef.getBytes(Long.MAX_VALUE).addOnSuccessListener(new OnSuccessListener<byte[]>() {
+                @Override
+                public void onSuccess(byte[] bytes) {
+                    temp.setImageBitmap(BitmapFactory.decodeByteArray(bytes,0,bytes.length));
+                }
+            }).addOnFailureListener(new OnFailureListener() {
+                @Override
+                public void onFailure(@NonNull Exception e) {
+                    Log.d("myTag","Failed to getBytes: "+e);
+                }
+            });
+        }
+        photoToggle = findViewById(R.id.photoToggle);
+        photoToggle.setChecked(editMood.getPicture()!=null);
+        photoToggle.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton compoundButton, boolean isChecked) {
+                imageChanged = true;
+                if (isChecked) {
+                    new imageChooserFragment().show(getSupportFragmentManager(),"AddImage");
+                } else {
+                    temp.setImageBitmap(null);
+                    if (currentPhotoPath!=null) {
+                        destroySavedImage();
+                    }
+                }
+            }
+        });
+
         // Set the behaviour for when the user tries to submit a Edited mood
         final Button confirm = findViewById(R.id.ConfirmEdit);
         confirm.setOnClickListener(new View.OnClickListener() {
@@ -188,16 +258,12 @@ public class Edit extends AppCompatActivity implements TimePickerDialog.OnTimeSe
                     //Do not include location
                     editMood.setLongitude(null);
                     editMood.setLatitude(null);
-
                 }
                 editMood.setDatetime(date);
                 editMood.setReason(reason);
                 editMood.setSocialSituation(social);
                 editMood.setEmoticon(emote);
-                Intent data = new Intent();
-                data.putExtra("Addmood", moodList);
-                setResult(RESULT_OK, data);
-                finish();
+                editImage();
             }
         });
 
@@ -210,6 +276,7 @@ public class Edit extends AppCompatActivity implements TimePickerDialog.OnTimeSe
      * @param view is the context for this view
      */
     public void ReturnButton(View view) {
+        destroySavedImage();
         finish();
     }
 
@@ -271,6 +338,207 @@ public class Edit extends AppCompatActivity implements TimePickerDialog.OnTimeSe
             if (resultCode==RESULT_OK) {
                 userLocation = data.getExtras().getParcelable("location");
             }
+        } else if (requestCode==3) {
+            if (resultCode == RESULT_OK) {
+                Uri imageURI;
+                if (data.getData()!=null) {
+                    imageURI = data.getData();
+                } else {
+                    imageURI = Uri.parse("file://"+currentPhotoPath);
+                }
+                temp.setImageURI(imageURI);
+            } else {
+                photoToggle.setChecked(false);
+            }
+        }
+    }
+
+    public void editImage() {
+        if (photoToggle.isChecked() && imageChanged) {
+            Log.d("myTag","New image added");
+            encodeBitmapAndSave();
+        } else if (!photoToggle.isChecked() && imageChanged){
+            Log.d("myTag","image removed");
+            if (editMood.getPicture()!=null) {
+                Log.d("myTag","Remove Image from storage");
+                mStorage.getReference().child(editMood.getPicture()).delete()
+                        .addOnFailureListener(new OnFailureListener() {
+                            @Override
+                            public void onFailure(@NonNull Exception e) {
+                                Log.d("myTag", "Failed to delete old image: " + e);
+                            }
+                        })
+                        .addOnSuccessListener(new OnSuccessListener<Void>() {
+                            @Override
+                            public void onSuccess(Void aVoid) {
+                                Log.d("myTag", "Removed old image successfully");
+                                editMood.setPicture(null);
+                                Intent data = new Intent();
+                                data.putExtra("Addmood", moodList);
+                                setResult(RESULT_OK, data);
+                                destroySavedImage();
+                                finish();
+                            }
+                        });
+            } else {
+                Log.d("myTag","No image in storage");
+                editMood.setPicture(null);
+                Intent data = new Intent();
+                data.putExtra("Addmood", moodList);
+                setResult(RESULT_OK, data);
+                destroySavedImage();
+                finish();
+            }
+        } else {
+            Log.d("myTag", "image unchanged");
+            Intent data = new Intent();
+            data.putExtra("Addmood", moodList);
+            setResult(RESULT_OK, data);
+            destroySavedImage();
+            finish();
+        }
+
+    }
+    public void encodeBitmapAndSave() {
+        Bitmap bitmap = ((BitmapDrawable) temp.getDrawable()).getBitmap();
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        bitmap.compress(Bitmap.CompressFormat.PNG,100,baos);
+        final byte[] data = baos.toByteArray();
+        imagePath = user.getUID()+"/"+Calendar.getInstance().getTime();
+        if (editMood.getPicture()!=null) {
+            mStorage.getReference().child(editMood.getPicture()).delete()
+                    .addOnFailureListener(new OnFailureListener() {
+                        @Override
+                        public void onFailure(@NonNull Exception e) {
+                            Log.d("myTag", "Failed to delete old image: " + e);
+                        }
+                    })
+                    .addOnSuccessListener(new OnSuccessListener<Void>() {
+                        @Override
+                        public void onSuccess(Void aVoid) {
+                            Log.d("myTag", "Removed old image successfully");
+
+                        }
+                    });
+        }
+        StorageReference ref = mStorage.getReference().child(imagePath);
+        UploadTask uploadTask = ref.putBytes(data);
+        uploadTask.addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+                Log.d("myTag","Upload Failed: "+e);
+            }
+        });
+        uploadTask.addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+        @Override
+        public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+            Log.d("myTag", "Upload Succeeded");
+            editMood.setPicture(imagePath);
+            Intent data = new Intent();
+            data.putExtra("Addmood", moodList);
+            setResult(RESULT_OK, data);
+            destroySavedImage();
+            finish();
+            }
+        });
+
+    }
+    private void getCameraPermission() {
+        if (ContextCompat.checkSelfPermission(this.getApplicationContext(), Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED) {
+            mCameraPermissionGranted = true;
+        } else {
+            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.CAMERA}, PERMISSIONS_REQUEST_ACCESS_CAMERA);
+        }
+    }
+
+    /**
+     * when the user decides if the app can access their current location
+     * either set the bool to true or exit the activity
+     * @param requestCode the request code sent in getLocationPermission
+     * @param permissions which permissions were requested
+     * @param grantResults array for which permissions were granted
+     */
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        mCameraPermissionGranted = false;
+        if (requestCode == PERMISSIONS_REQUEST_ACCESS_CAMERA) {
+            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                mCameraPermissionGranted = true;
+                startCameraIntent();
+            } else {
+                Toast.makeText(this, "App must have permissions for your camera if you want to use the camera", Toast.LENGTH_LONG).show();
+                setResult(RESULT_CANCELED);
+                destroySavedImage();
+                finish();
+            }
+        }
+    }
+    String currentPhotoPath;
+    private File createImageFile() throws IOException {
+        // Create an image file name
+        String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss", Locale.ENGLISH).format(new Date());
+        String imageFileName = "JPEG_" + timeStamp + "_";
+        File storageDir = getExternalFilesDir(Environment.DIRECTORY_PICTURES);
+        File image = File.createTempFile(
+                imageFileName,  /* prefix */
+                ".jpg",         /* suffix */
+                storageDir      /* directory */
+        );
+
+        // Save a file: path for use with ACTION_VIEW intents
+        currentPhotoPath = image.getAbsolutePath();
+        return image;
+    }
+
+    private void startCameraIntent() {
+        Intent cameraIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+        if (cameraIntent.resolveActivity(getPackageManager())!=null) {
+            File photoFile = null;
+            try {
+                photoFile = createImageFile();
+            } catch (IOException e) {
+                Log.e("myTag","Exception found while creating file: "+e);
+            }
+            if (photoFile!=null) {
+                Uri photoURI = FileProvider.getUriForFile(context,"com.example.android.fileprovider",
+                        photoFile);
+                cameraIntent.putExtra(MediaStore.EXTRA_OUTPUT, photoURI);
+                startActivityForResult(cameraIntent, 3);
+            }
+        } else {
+            Log.d("myTag","Could not resolve camera activity");
+        }
+    }
+
+    public void destroySavedImage() {
+        if (currentPhotoPath!=null) {
+            File fdelete = new File(currentPhotoPath);
+            if (fdelete.exists()) {
+                if (fdelete.delete()) {
+                    Log.d("myTag", "Deleted image: " + currentPhotoPath);
+                } else {
+                    Log.d("myTag", "COuld not delete: " + currentPhotoPath);
+                }
+            }
+        }
+    }
+
+    @Override
+    public void onButtonPressed(int button) {
+        switch (button) {
+            case 1:
+                Log.d("myTag","Camera Selected");
+                getCameraPermission();
+                if (mCameraPermissionGranted) {
+                    startCameraIntent();
+                }
+                break;
+            case 2:
+                Log.d("myTag","Gallery Selected");
+                Intent photoIntent = new Intent();
+                photoIntent.setType("image/*");
+                photoIntent.setAction(Intent.ACTION_GET_CONTENT);
+                startActivityForResult(Intent.createChooser(photoIntent,"Select Picture"),3);
         }
     }
 

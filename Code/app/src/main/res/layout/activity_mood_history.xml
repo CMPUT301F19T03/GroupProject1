@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
@@ -37,7 +38,8 @@
                 android:onClick="greatFilterButton"
                 android:padding="10dp"
                 android:scaleType="fitCenter"
-                android:src="@drawable/great"></ImageButton>
+                android:src="@drawable/great">
+            </ImageButton>
 
             <ImageButton
                 android:id="@+id/GoodFilterButton"
@@ -47,7 +49,8 @@
                 android:onClick="goodFilterButton"
                 android:padding="10dp"
                 android:scaleType="fitCenter"
-                android:src="@drawable/good"></ImageButton>
+                android:src="@drawable/good">
+            </ImageButton>
 
             <ImageButton
                 android:id="@+id/NeutralFilterButton"
@@ -57,7 +60,8 @@
                 android:onClick="neutralFilterButton"
                 android:padding="10dp"
                 android:scaleType="fitCenter"
-                android:src="@drawable/neutral"></ImageButton>
+                android:src="@drawable/neutral">
+            </ImageButton>
 
             <ImageButton
                 android:id="@+id/BadFilterButton"
@@ -67,7 +71,8 @@
                 android:onClick="badFilterButton"
                 android:padding="10dp"
                 android:scaleType="fitCenter"
-                android:src="@drawable/bad"></ImageButton>
+                android:src="@drawable/bad">
+            </ImageButton>
 
             <ImageButton
                 android:id="@+id/WorstFilterButton"
@@ -77,14 +82,16 @@
                 android:onClick="worstFilterButton"
                 android:padding="10dp"
                 android:scaleType="fitCenter"
-                android:src="@drawable/worst"></ImageButton>
+                android:src="@drawable/worst">
+            </ImageButton>
 
             <Button
                 android:id="@+id/ClearFilterButton"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:onClick="clearFilterButton"
-                android:text="Clear"></Button>
+                android:text="Clear">
+            </Button>
 
 
         </LinearLayout>
@@ -128,7 +135,9 @@
         android:id="@+id/mood_history"
         android:layout_width="0dp"
         android:layout_height="0dp"
-        app:layout_constraintBottom_toTopOf="@+id/viewFollowersButton"
+        android:layout_marginTop="8dp"
+        android:layout_marginBottom="8dp"
+        app:layout_constraintBottom_toTopOf="@+id/communityButton"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/FilterScroll">
@@ -136,37 +145,26 @@
     </ListView>
 
     <Button
-        android:id="@+id/requestsButton"
+        android:id="@+id/logOutButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
-        android:layout_marginLeft="16dp"
+        android:layout_marginStart="4dp"
+        android:layout_marginLeft="4dp"
         android:layout_marginBottom="8dp"
-        android:onClick="requestButton"
-        android:text="@string/requests"
+        android:onClick="logOut"
+        android:text="Log Out"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
 
     <Button
-        android:id="@+id/followButton"
+        android:id="@+id/communityButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
-        android:layout_marginLeft="16dp"
+        android:layout_marginEnd="4dp"
+        android:layout_marginRight="4dp"
         android:layout_marginBottom="8dp"
-        android:text="@string/follow"
-        app:layout_constraintBottom_toTopOf="@+id/requestsButton"
-        app:layout_constraintStart_toStartOf="parent" />
-
-    <Button
-        android:id="@+id/viewFollowersButton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginEnd="8dp"
-        android:layout_marginRight="8dp"
-        android:layout_marginBottom="64dp"
-        android:onClick="viewFollowButton"
-        android:text="@string/view_followers"
+        android:onClick="communityButton"
+        android:text="Community"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
 </androidx.constraintlayout.widget.ConstraintLayout>
