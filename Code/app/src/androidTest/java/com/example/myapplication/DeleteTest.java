@@ -174,6 +174,13 @@ public class DeleteTest {
 
     @After
     public void tearDown() throws Exception{
+        ListView moodHistory = (ListView)solo.getView(R.id.mood_history);
+        ArrayAdapter<Mood> adapt = (ArrayAdapter<Mood>) moodHistory.getAdapter();
+        while (adapt.getCount() > 0){
+            ImageButton delete = moodHistory.getChildAt(0).findViewById(R.id.ListDelete);
+            solo.clickOnView(delete);
+            solo.sleep(500);
+        }
         solo.finishOpenedActivities();
     }
 }

@@ -3,8 +3,8 @@ package com.example.myapplication;
 import android.Manifest;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.location.Location;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.widget.Toast;
 
@@ -13,6 +13,8 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
+import com.google.android.gms.location.FusedLocationProviderClient;
+import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
@@ -21,6 +23,7 @@ import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.android.gms.tasks.OnSuccessListener;
 
 /**
  * This class is responsible for holding the map for Add
@@ -37,6 +40,8 @@ public class AddMapActivity extends AppCompatActivity implements OnMapReadyCallb
     private static final int PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION = 1;
     private boolean mLocationPermissionGranted;
 
+    private FusedLocationProviderClient fusedLocationClient;
+
     /**
      * This is called when the activity is created. It sets up initial values and then starts the map fragment
      * @param savedInstanceState this is values saved by previous instances of the activity
@@ -45,6 +50,7 @@ public class AddMapActivity extends AppCompatActivity implements OnMapReadyCallb
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_map);
+        fusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
         // Start the map fragment and go to onMapReady when it is done
         SupportMapFragment mapFrag = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map);
         mapFrag.getMapAsync(this);
@@ -61,30 +67,42 @@ public class AddMapActivity extends AppCompatActivity implements OnMapReadyCallb
         getLocationPermission();
         // If we have been given permissions to access Location proceed
         if (mLocationPermissionGranted) {
-            mMap.setMyLocationEnabled(true);
-            // Otherwise go to the University Campus
-            mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(53.5232, -113.5263), 14.0f));
-            mMap.setMapType(GoogleMap.MAP_TYPE_HYBRID);
-            mMap.getUiSettings().setMapToolbarEnabled(false);
-            mMap.getUiSettings().setZoomControlsEnabled(true);
-            // When the user clicks on the map save that location and put a marker there
-            mMap.setOnMapClickListener(new GoogleMap.OnMapClickListener() {
-                @Override
-                public void onMapClick(LatLng point) {
-                    //save current location
-                    latLng = point;
+            fusedLocationClient.getLastLocation()
+                    .addOnSuccessListener(new OnSuccessListener<Location>() {
+                        @Override
+                        public void onSuccess(Location location) {
+                            mMap.setMyLocationEnabled(true);
+                            if (location!=null) {
+                                // If we can find a location for the user go to it
+                                mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(location.getLatitude(),location.getLongitude()),14.0f));
+                            } else {
+                                // Otherwise go to the University Campus
+                                mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(53.5232, -113.5263), 14.0f));
+                            }
+                            mMap.setMapType(GoogleMap.MAP_TYPE_HYBRID);
+                            mMap.getUiSettings().setMapToolbarEnabled(false);
+                            mMap.getUiSettings().setZoomControlsEnabled(true);
+                            // When the user clicks on the map save that location and put a marker there
+                            mMap.setOnMapClickListener(new GoogleMap.OnMapClickListener() {
+                                @Override
+                                public void onMapClick(LatLng point) {
+                                    //save current location
+                                    latLng = point;
 
-                    //remove previously placed Marker
-                    if (marker != null) {
-                        marker.remove();
-                    }
+                                    //remove previously placed Marker
+                                    if (marker != null) {
+                                        marker.remove();
+                                    }
 
-                    //place marker where user just clicked
-                    marker = mMap.addMarker(new MarkerOptions().position(point)
-                            .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_AZURE)));
+                                    //place marker where user just clicked
+                                    marker = mMap.addMarker(new MarkerOptions().position(point)
+                                            .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_AZURE)));
 
-                }
-            });
+                                }
+                            });
+                        }
+                    });
+
         }
     }
 
@@ -131,7 +149,6 @@ public class AddMapActivity extends AppCompatActivity implements OnMapReadyCallb
     public void SubmitLocation(View view) {
         if (latLng!=null) {
             Intent data = new Intent();
-            Log.d("myTag","sendlat: "+latLng.latitude);
             data.putExtra("location",latLng);
             setResult(RESULT_OK,data);
             finish();

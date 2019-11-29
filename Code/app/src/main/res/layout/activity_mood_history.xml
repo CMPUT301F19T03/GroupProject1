@@ -5,6 +5,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="#FFFFFF"
     tools:context=".MoodHistory">
 
     <HorizontalScrollView
@@ -20,10 +21,11 @@
             android:id="@+id/FilterButtons"
             android:layout_width="wrap_content"
             android:layout_height="match_parent">
+
             <TextView
-                android:paddingTop="10dp"
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
+                android:paddingTop="10dp"
                 android:text="Filter By:">
 
             </TextView>
@@ -97,8 +99,8 @@
 
     <Button
         android:id="@+id/addButton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="120dp"
+        android:layout_height="40dp"
         android:layout_marginTop="8dp"
         android:onClick="addButton"
         android:text="@string/add"
@@ -108,8 +110,8 @@
 
     <Button
         android:id="@+id/mapButton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="120dp"
+        android:layout_height="40dp"
         android:layout_marginTop="8dp"
         android:onClick="mapButton"
         android:text="@string/map"
@@ -120,8 +122,8 @@
 
     <Button
         android:id="@+id/filterButton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="120dp"
+        android:layout_height="40dp"
         android:layout_marginTop="8dp"
         android:onClick="filterButton"
         android:text="@string/filter"
@@ -133,7 +135,9 @@
         android:id="@+id/mood_history"
         android:layout_width="0dp"
         android:layout_height="0dp"
-        app:layout_constraintBottom_toTopOf="@+id/viewFollowersButton"
+        android:layout_marginTop="8dp"
+        android:layout_marginBottom="8dp"
+        app:layout_constraintBottom_toTopOf="@+id/communityButton"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/FilterScroll">
@@ -141,37 +145,26 @@
     </ListView>
 
     <Button
-        android:id="@+id/requestsButton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/requests"
-        android:layout_marginStart="16dp"
-        android:layout_marginLeft="16dp"
+        android:id="@+id/logOutButton"
+        android:layout_width="120dp"
+        android:layout_height="40dp"
+        android:layout_marginStart="32dp"
+        android:layout_marginLeft="32dp"
         android:layout_marginBottom="8dp"
-        android:onClick="requestButton"
+        android:onClick="logOut"
+        android:text="Log Out"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
 
     <Button
-        android:id="@+id/followButton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
-        android:layout_marginLeft="16dp"
+        android:id="@+id/communityButton"
+        android:layout_width="120dp"
+        android:layout_height="40dp"
+        android:layout_marginEnd="32dp"
+        android:layout_marginRight="32dp"
         android:layout_marginBottom="8dp"
-        android:text="@string/follow"
-        app:layout_constraintBottom_toTopOf="@+id/requestsButton"
-        app:layout_constraintStart_toStartOf="parent" />
-
-    <Button
-        android:id="@+id/viewFollowersButton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginEnd="8dp"
-        android:layout_marginRight="8dp"
-        android:layout_marginBottom="64dp"
-        android:text="@string/view_followers"
-        android:onClick="viewFollowButton"
+        android:onClick="communityButton"
+        android:text="Community"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -8,14 +8,19 @@ import android.util.Log;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.ImageButton;
 import android.widget.ListView;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.ToggleButton;
 
 import com.robotium.solo.Solo;
+
+import junit.framework.TestCase;
+
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Rule;
@@ -43,7 +48,7 @@ public class AddTest {
         solo.assertCurrentActivity("Wrong Activity", Login.class);
         solo.enterText((EditText) solo.getView(R.id.userText), "test_user");
         solo.clickOnButton("confirm");
-
+        solo.sleep(500);
     }
 
     @Test

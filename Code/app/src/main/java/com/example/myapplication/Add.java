@@ -1,22 +1,35 @@
 package com.example.myapplication;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
+import androidx.core.content.FileProvider;
 import androidx.fragment.app.DialogFragment;
 import androidx.viewpager.widget.ViewPager;
 
+import android.Manifest;
 import android.app.Activity;
 import android.app.DatePickerDialog;
 import android.app.TimePickerDialog;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.content.res.Resources;
+import android.graphics.Bitmap;
+import android.graphics.drawable.BitmapDrawable;
+import android.net.Uri;
 import android.os.Bundle;
+import android.os.Environment;
+import android.provider.MediaStore;
+import android.util.Log;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.CompoundButton;
 import android.widget.DatePicker;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.TimePicker;
@@ -24,25 +37,35 @@ import android.widget.Toast;
 import android.widget.ToggleButton;
 
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
+import com.google.firebase.storage.UploadTask;
 
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.IOException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.Locale;
 
 /**
  * This class is responsible for the Add activity
  * which creates a new Mood object based on the user's choices
- *
- *  Issues:
- *  Does not have any images
+ * Portions of this page are modifications based on work created and shared by Google and used according to terms described in the Creative Commons 4.0 Attribution License.
+ * https://developer.android.com/training/camera/photobasics
  */
 
-public class Add extends AppCompatActivity implements TimePickerDialog.OnTimeSetListener, DatePickerDialog.OnDateSetListener {
+public class Add extends AppCompatActivity implements TimePickerDialog.OnTimeSetListener, DatePickerDialog.OnDateSetListener, imageChooserFragment.OnFragmentInteractionListener {
     Calendar cal;
     TextView timeText;
     TextView dateText;
     EditText ReasonText;
     ToggleButton locationToggle;
+    ToggleButton photoToggle;
     String dateString;
     String timeString;
     Resources res;
@@ -51,6 +74,19 @@ public class Add extends AppCompatActivity implements TimePickerDialog.OnTimeSet
     Activity context;
 
     ViewPager viewPager;
+
+    ImageView temp;
+    FirebaseStorage mStorage;
+    Participant user;
+
+    String reason;
+    String social;
+    Date datetime;
+    String emoticon;
+    String imagePath;
+
+    private static final int PERMISSIONS_REQUEST_ACCESS_CAMERA = 2;
+    private boolean mCameraPermissionGranted;
 
     /**
      * This is run when the activity is created. It sets up listeners and initial values
@@ -61,9 +97,11 @@ public class Add extends AppCompatActivity implements TimePickerDialog.OnTimeSet
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add);
         context = this;
+        mStorage = FirebaseStorage.getInstance();
         // Get the List of Moods from moodHistory
         final Intent intent = getIntent();
-        final ArrayList<Mood> moodList = (ArrayList<Mood>) intent.getSerializableExtra("moodList");
+        user = (Participant) intent.getSerializableExtra("user");
+
         // Get a reference to current time/date
         cal = Calendar.getInstance();
         // Get a reference to the resources
@@ -83,10 +121,13 @@ public class Add extends AppCompatActivity implements TimePickerDialog.OnTimeSet
         myAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         add_situation.setAdapter(myAdapter);
 
+        // Create the viewPager for selecting a mood
         viewPager = findViewById(R.id.AddviewPager);
         ImagePagerAdapter adapter = new ImagePagerAdapter(context);
         viewPager.setAdapter(adapter);
         viewPager.setCurrentItem(2);
+
+        temp = findViewById(R.id.tempImageView);
 
         // Set up a button to start the time Picker
         Button timePick = findViewById(R.id.timeButton);
@@ -135,40 +176,84 @@ public class Add extends AppCompatActivity implements TimePickerDialog.OnTimeSet
             }
         });
 
+        photoToggle = findViewById(R.id.photoToggle);
+        photoToggle.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton compoundButton, boolean isChecked) {
+                if (isChecked) {
+                    new imageChooserFragment().show(getSupportFragmentManager(),"AddImage");
+                } else {
+                    temp.setImageBitmap(null);
+                    if (currentPhotoPath!=null) {
+                        destroySavedImage();
+                    }
+                }
+            }
+        });
+
         final Button confirm = findViewById(R.id.ConfirmAdd);
         confirm.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 //Get the date from the Calendar object that can be set from the Pickers
-                Date date = cal.getTime();
-                Mood mood;
+                datetime = cal.getTime();
                 //Get the reason and social situation of the mood
-                String reason = ReasonText.getText().toString();
+                reason = ReasonText.getText().toString();
                 if (reason.split(" ").length>3) {
                     Toast.makeText(context,"Reason can only be 3 words",Toast.LENGTH_SHORT).show();
                     return;
                 }
-                String social = add_situation.getSelectedItem().toString();
+                social = add_situation.getSelectedItem().toString();
                 // Get the name of the emoticon for future safe storage in the firebase
                 int pos = viewPager.getCurrentItem();
-                String emoticon = res.getStringArray(R.array.emotes)[pos];
-                // If the user added a location include it in the Mood
-                if (locationToggle.isChecked()) {
-                    mood = new Mood(date, userLocation.latitude, userLocation.longitude, reason, social, emoticon);
+                emoticon = res.getStringArray(R.array.emotes)[pos];
+                if (photoToggle.isChecked()) {
+                    encodeBitmapAndSave();
                 } else {
-                    mood = new Mood(date, reason, social, emoticon);
+                    createMood(null, datetime, reason, social, emoticon);
                 }
-                //Add the mood to the list and send the list back to moodHistory to update the firebase
-                moodList.add(mood);
-                Intent data = new Intent();
-                data.putExtra("Addmood", moodList);
-                setResult(RESULT_OK, data);
-                finish();
 
             }
         });
 
         Toast.makeText(this,"Swipe emote to select other moods",Toast.LENGTH_SHORT).show();
+    }
+
+    /**
+     * Creates the mood object and add it to the moodList
+     * @param task UploadTask for putting the image the user got from the camera or the gallery to the firebase
+     * @param date the date and time to set the mood at
+     * @param reason The reason the user supplied for the mood
+     * @param social The social situation the user supplied
+     * @param emoticon the emoticon the user chose from the viewPager
+     */
+    public void createMood(UploadTask task,Date date,String reason,String social,String emoticon) {
+        Mood mood;
+        ArrayList<Mood> moodList = user.getMoodHistory();
+        String image;
+        // If the user didn't add an image then set to null otherwise set to the path it was uploaded to
+        if (task==null) {
+            image = null;
+        } else {
+            image = imagePath;
+        }
+        // If the user got an image from the camera delete it from the phone's memory
+        if (currentPhotoPath!=null) {
+            destroySavedImage();
+        }
+
+        // If the user added a location include it in the Mood
+        if (locationToggle.isChecked()) {
+            mood = new Mood(date, userLocation.latitude, userLocation.longitude, reason, social, emoticon, image);
+        } else {
+            mood = new Mood(date, reason, social, emoticon, image);
+        }
+        //Add the mood to the list and send the list back to moodHistory to update the firebase
+        moodList.add(mood);
+        Intent data = new Intent();
+        data.putExtra("Addmood", moodList);
+        setResult(RESULT_OK, data);
+        finish();
     }
 
     /**
@@ -214,16 +299,18 @@ public class Add extends AppCompatActivity implements TimePickerDialog.OnTimeSet
     }
 
     /**
-     * This detects the return from the Location selecting activity (addMapActivity)
-     * It unchecks the include location box if the user cancels
-     * or puts the user's chosen location into an object for the end Mood object
+     * This detects the return from the Location selecting activity,
+     * the Location changing activity,
+     * adding an image from the gallery,
+     * and adding an image from the camera
      * @param requestCode this is the request code for the activity when it was created
      * @param resultCode this is the return value from the activity to tell if the user cancelled
-     * @param data holds the LatLng object being returned from the addMapActivity
+     * @param data holds the data that is returned from the other activity
      */
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
+        // If the user
         if (requestCode==1) {
             if (resultCode==RESULT_CANCELED) {
                 locationToggle.setChecked(false);
@@ -234,6 +321,138 @@ public class Add extends AppCompatActivity implements TimePickerDialog.OnTimeSet
             if (resultCode==RESULT_OK) {
                 userLocation = data.getExtras().getParcelable("location");
             }
+        } else if (requestCode==3) {
+            if (resultCode==RESULT_OK) {
+                Uri imageURI;
+                if (data.getData()!=null) {
+                    imageURI = data.getData();
+                } else {
+                    imageURI = Uri.parse("file://"+currentPhotoPath);
+                }
+                temp.setImageURI(imageURI);
+
+            } else {
+                photoToggle.setChecked(false);
+            }
+        }
+    }
+
+    public void encodeBitmapAndSave() {
+        Bitmap bitmap = ((BitmapDrawable) temp.getDrawable()).getBitmap();
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        bitmap.compress(Bitmap.CompressFormat.PNG,100,baos);
+        byte[] data = baos.toByteArray();
+        imagePath = user.getUID()+"/"+Calendar.getInstance().getTime();
+        StorageReference ref = mStorage.getReference().child(imagePath);
+        final UploadTask uploadTask = ref.putBytes(data);
+        uploadTask.addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+                Log.d("myTag","Upload Failed: "+e);
+            }
+        });
+        uploadTask.addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+            @Override
+            public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                Log.d("myTag", "Upload Succeeded");
+                createMood(uploadTask,datetime,reason,social,emoticon);
+            }
+        });
+    }
+
+    private void getCameraPermission() {
+        if (ContextCompat.checkSelfPermission(this.getApplicationContext(), Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED) {
+            mCameraPermissionGranted = true;
+        } else {
+            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.CAMERA}, PERMISSIONS_REQUEST_ACCESS_CAMERA);
+        }
+    }
+
+    /**
+     * when the user decides if the app can access their current location
+     * either set the bool to true or exit the activity
+     * @param requestCode the request code sent in getLocationPermission
+     * @param permissions which permissions were requested
+     * @param grantResults array for which permissions were granted
+     */
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        mCameraPermissionGranted = false;
+        if (requestCode == PERMISSIONS_REQUEST_ACCESS_CAMERA) {
+            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                mCameraPermissionGranted = true;
+                startCameraIntent();
+            } else {
+                Toast.makeText(this, "App must have permissions for your camera if you want to use the camera", Toast.LENGTH_LONG).show();
+                setResult(RESULT_CANCELED);
+                finish();
+            }
+        }
+    }
+    String currentPhotoPath;
+    private File createImageFile() throws IOException {
+        // Create an image file name
+        String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss", Locale.ENGLISH).format(new Date());
+        String imageFileName = "JPEG_" + timeStamp + "_";
+        File storageDir = getExternalFilesDir(Environment.DIRECTORY_PICTURES);
+        File image = File.createTempFile(
+                imageFileName,  /* prefix */
+                ".jpg",         /* suffix */
+                storageDir      /* directory */
+        );
+
+        // Save a file: path for use with ACTION_VIEW intents
+        currentPhotoPath = image.getAbsolutePath();
+        return image;
+    }
+
+    private void startCameraIntent() {
+        Intent cameraIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+        if (cameraIntent.resolveActivity(getPackageManager())!=null) {
+            File photoFile = null;
+            try {
+                photoFile = createImageFile();
+            } catch (IOException e) {
+                Log.e("myTag","Exception found while creating file: "+e);
+            }
+            if (photoFile!=null) {
+                Uri photoURI = FileProvider.getUriForFile(context,"com.example.android.fileprovider",
+                        photoFile);
+                cameraIntent.putExtra(MediaStore.EXTRA_OUTPUT, photoURI);
+                startActivityForResult(cameraIntent, 3);
+            }
+        } else {
+            Log.d("myTag","Could not resolve camera activity");
+        }
+    }
+
+    public void destroySavedImage() {
+        File fdelete = new File(currentPhotoPath);
+        if (fdelete.exists()) {
+            if (fdelete.delete()) {
+                Log.d("myTag","Deleted image: "+currentPhotoPath);
+            } else {
+                Log.d("myTag","COuld not delete: "+currentPhotoPath);
+            }
+        }
+    }
+
+    @Override
+    public void onButtonPressed(int button) {
+        switch (button) {
+            case 1:
+                Log.d("myTag","Camera Selected");
+                getCameraPermission();
+                if (mCameraPermissionGranted) {
+                    startCameraIntent();
+                }
+                break;
+            case 2:
+                Log.d("myTag","Gallery Selected");
+                Intent photoIntent = new Intent();
+                photoIntent.setType("image/*");
+                photoIntent.setAction(Intent.ACTION_GET_CONTENT);
+                startActivityForResult(Intent.createChooser(photoIntent,"Select Picture"),3);
         }
     }
 }
