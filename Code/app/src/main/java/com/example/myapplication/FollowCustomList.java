@@ -1,33 +1,21 @@
 package com.example.myapplication;
 
-import android.app.Activity;
 import android.content.Context;
-import android.content.Intent;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
-import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.firestore.QuerySnapshot;
 
-import org.w3c.dom.Text;
-
-import java.lang.reflect.ParameterizedType;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashMap;
 
 /**
  * This class is dedicated to acting as the custom adapter to our list used for the Mood History
@@ -36,18 +24,14 @@ import java.util.HashMap;
 public class FollowCustomList extends ArrayAdapter<Mood> {
     private ArrayList<Mood> moods;
     private Context context;
-    private CollectionReference users;
     Participant user;
-    private FollowCustomList list;
 
     public FollowCustomList(Context context,ArrayList<Mood> moods,Participant user){
         super(context,0,moods);
         FirebaseFirestore db = FirebaseFirestore.getInstance();
-        users = db.collection("Users");
         this.moods = moods;
         this.context = context;
         this.user = user;
-        this.list = this;
     }
 
     /**
@@ -73,7 +57,8 @@ public class FollowCustomList extends ArrayAdapter<Mood> {
         TextView time = view.findViewById(R.id.time_text1);
         TextView date = view.findViewById(R.id.date_text1);
         TextView user = view.findViewById(R.id.user_text);
-        emoticon.setImageResource(mood.getEmoteIcon());
+        int id = context.getResources().getIdentifier(mood.getEmoticon(),"drawable",context.getPackageName());
+        emoticon.setImageResource(id);
         time.setText(mood.getStringTime());
         date.setText(mood.getStringDate());
         user.setText(mood.getUser());

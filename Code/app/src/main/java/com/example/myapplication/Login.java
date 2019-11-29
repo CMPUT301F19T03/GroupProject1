@@ -6,6 +6,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.nfc.Tag;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -13,6 +14,7 @@ import android.widget.EditText;
 import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.CollectionReference;
@@ -41,12 +43,6 @@ public class Login extends AppCompatActivity {
         setContentView(R.layout.activity_login);
         db = FirebaseFirestore.getInstance();
         users = db.collection("Users");
-        users.addSnapshotListener(new EventListener<QuerySnapshot>() {
-            @Override
-            public void onEvent(@Nullable QuerySnapshot queryDocumentSnapshots, @Nullable FirebaseFirestoreException e) {
-                Log.d(TAG, "Something changed");
-            }
-        });
     }
 
 
@@ -81,18 +77,25 @@ public class Login extends AppCompatActivity {
                                 data.put("Username", Rname);
                                 users
                                         .add(data)
+                                        .addOnFailureListener(new OnFailureListener() {
+                                            @Override
+                                            public void onFailure(@NonNull Exception e) {
+                                                Log.d(TAG,"Adding new User Failed: "+e);
+                                            }
+                                        })
                                         .addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
                                             @Override
                                             public void onSuccess(DocumentReference documentReference) {
                                                 Log.d(TAG, "New user added Successfully");
+                                                user.setUID(documentReference.getId());
+
                                             }
                                         });
                             } else {
                                 Log.d("myTag","found existing user");
                                 user = queryDocumentSnapshots.getDocuments().get(0).get("Participant", Participant.class);
+                                user.setUID(queryDocumentSnapshots.getDocuments().get(0).getId());
                             }
-                            Log.d(TAG,"Input name: "+Rname);
-                            Log.d(TAG, "User: " + user.getName());
                             EditText nameText = findViewById(R.id.userText);
                             nameText.setText("");
                             Intent intent = new Intent(main, MoodHistory.class);

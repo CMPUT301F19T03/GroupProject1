@@ -21,6 +21,8 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QuerySnapshot;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -36,8 +38,16 @@ public class CustomList extends ArrayAdapter<Mood> {
     private CollectionReference users;
     Participant user;
     private CustomList list;
+    private String emote;
 
-    public CustomList(Context context,ArrayList<Mood> moods,Participant user){
+    /**
+     *
+     * @param context this is the Activity that created teh CustomList
+     * @param moods This is the array to build the CustomList from
+     * @param user This is the user that owns the array
+     * @param emote This is the emote to filter by if it exists
+     */
+    public CustomList(Context context,ArrayList<Mood> moods,Participant user,String emote){
         super(context,0,moods);
         FirebaseFirestore db = FirebaseFirestore.getInstance();
         users = db.collection("Users");
@@ -45,6 +55,7 @@ public class CustomList extends ArrayAdapter<Mood> {
         this.context = context;
         this.user = user;
         this.list = this;
+        this.emote = emote;
     }
 
     /**
@@ -54,7 +65,7 @@ public class CustomList extends ArrayAdapter<Mood> {
      * @param parent This is the parent of this view
      * @return returns a view for a Mood object within a ListView
      */
-    public View getView(final int position, @Nullable View convertView, @NonNull final ViewGroup
+    public View getView(final int position, @Nullable final View convertView, @NonNull final ViewGroup
             parent) {
         //Sort the array whenever it needs to be drawn
         Collections.sort(moods, new MoodComparator());
@@ -68,12 +79,15 @@ public class CustomList extends ArrayAdapter<Mood> {
         ImageView emoticon = view.findViewById(R.id.emoticon_image);
         TextView time = view.findViewById(R.id.time_text);
         TextView date = view.findViewById(R.id.date_text);
-        int id = context.getResources().getIdentifier(mood.getEmoticon(),"drawable", context.getPackageName());
+
+        int id = context.getResources().getIdentifier(mood.getEmoticon(),"drawable",context.getPackageName());
         emoticon.setImageResource(id);
+
         time.setText(mood.getStringTime());
         date.setText(mood.getStringDate());
         ImageButton editButton = view.findViewById(R.id.ListEdit);
         ImageButton deleteButton = view.findViewById(R.id.ListDelete);
+        // When the user clicks on the mood go to ViewMood with that mood
         view.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -87,8 +101,8 @@ public class CustomList extends ArrayAdapter<Mood> {
             @Override
             public void onClick(View view) {
                 Intent intent = new Intent(context, Edit.class);
-                intent.putExtra("moodList", MoodHistory.moodArrayList);
-                int pos = MoodHistory.moodArrayList.indexOf(mood);
+                intent.putExtra("user", user);
+                int pos = user.getMoodHistory().indexOf(mood);
                 intent.putExtra("pos", pos);
                 ((Activity)context).startActivityForResult(intent,1);
             }
@@ -97,6 +111,7 @@ public class CustomList extends ArrayAdapter<Mood> {
         deleteButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                Mood temp = moods.get(position);
                 moods.remove(position);
                 list.notifyDataSetChanged();
                 final HashMap<String, Object> userUpdate = new HashMap<>();
@@ -115,7 +130,6 @@ public class CustomList extends ArrayAdapter<Mood> {
                                             .addOnSuccessListener(new OnSuccessListener<Void>() {
                                                 @Override
                                                 public void onSuccess(Void aVoid) {
-
                                                     Log.d("myTag","deleted successfully");
                                                 }
                                             });
@@ -123,8 +137,21 @@ public class CustomList extends ArrayAdapter<Mood> {
                                 }
                             }
                         });
+                if (temp.getPicture()!=null) {
+                    FirebaseStorage.getInstance().getReference().child(temp.getPicture()).delete()
+                            .addOnSuccessListener(new OnSuccessListener<Void>() {
+                                @Override
+                                public void onSuccess(Void aVoid) {
+                                    Log.d("myTag","Deleted image successfully");
+                                }
+                            });
+                }
             }
         });
         return view;
+    }
+
+    public String getEmote() {
+        return emote;
     }
 }

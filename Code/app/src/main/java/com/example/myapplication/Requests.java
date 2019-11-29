@@ -12,7 +12,6 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ListView;
-import android.widget.TextView;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -57,14 +56,14 @@ public class Requests extends AppCompatActivity {
                 Log.d(TAG, "Something changed");
                 for (QueryDocumentSnapshot doc : queryDocumentSnapshots) {
                     if (doc.get("Username")==user.getName()) {
-                        user = queryDocumentSnapshots.getDocuments().get(0).get("Participant", Participant.class);
+                        user = doc.get("Participant", Participant.class);
                     }
                 }
             }
         });
         all_requests = user.getRequests();
 
-        final ArrayAdapter <String> requestsAdapter = new ArrayAdapter(this, android.R.layout.simple_list_item_1, all_requests);
+        final ArrayAdapter <String> requestsAdapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, all_requests);
         requests.setAdapter(requestsAdapter);
         requests.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
