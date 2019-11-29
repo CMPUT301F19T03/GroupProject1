@@ -16,11 +16,6 @@
     <string name="return_to_mood_history">Return to Mood History</string>
     <string name="DateString">Date: %1$4d-%2$02d-%3$02d</string>
     <string name="TimeString">Time: %1$02d:%2$02d</string>
-    <string name="Great">:D</string>
-    <string name="Good">:)</string>
-    <string name="Neutral">:|</string>
-    <string name="Bad">:(</string>
-    <string name="Worst">>:(</string>
     <string name="mainTitleSplash">mainTitleSplash</string>
 
     <string-array name="SocialSituations">

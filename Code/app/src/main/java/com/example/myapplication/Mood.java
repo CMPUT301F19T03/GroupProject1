@@ -1,12 +1,8 @@
 package com.example.myapplication;
 
-import android.content.res.Resources;
 import android.location.Location;
-import android.media.Image;
 
 import com.google.firebase.firestore.Exclude;
-import android.media.Image;
-import android.util.Log;
 
 import java.io.Serializable;
 import java.util.Date;
@@ -20,20 +16,19 @@ public class Mood implements Serializable {
     private String reason;
     private String socialSituation;
     private String emoticon;
-    private Image picture;
+    private String picture = null;
     private String user;
-
-
 
     public Mood(){}
 
-    public Mood(Date datetime, String reason, String socialSituation, String Emoticon) {
+    public Mood(Date datetime, String reason, String socialSituation, String Emoticon,String image) {
         this.datetime = datetime;
         this.reason = reason;
         this.socialSituation = socialSituation;
         this.emoticon = Emoticon;
+        this.picture = image;
     }
-    public Mood(Date datetime, Double lat, Double lng, String reason, String socialSituation,String Emoticon, Image picture) {
+    public Mood(Date datetime, Double lat, Double lng, String reason, String socialSituation,String Emoticon, String picture) {
         this.datetime = datetime;
         this.latitude = lat;
         this.longitude = lng;
@@ -84,7 +79,6 @@ public class Mood implements Serializable {
     }
 
     public void setDatetime(Date date) {
-        Log.d("myTag","Setting datetime");
         this.datetime = date;
     }
 
@@ -131,22 +125,11 @@ public class Mood implements Serializable {
         this.emoticon = emoticon;
     }
 
-    @Exclude
-    public int getEmoteIcon() {
-        Resources res = MainActivity.RESOURCES;
-        return res.getIdentifier(this.emoticon,"drawable",MainActivity.PACKAGE_NAME);
-    }
-    @Exclude
-    public void setEmoteIcon(int emoteIcon) {
-        Resources res = MainActivity.RESOURCES;
-        this.emoticon = res.getResourceEntryName(emoteIcon);
-    }
-    public Image getPicture() {
+    public String getPicture() {
         return picture;
     }
-
-    public void setPicture(Image picture) {
-        this.picture = picture;
+    public void setPicture(String image) {
+        this.picture = image;
     }
 
     public Double getLongitude() {
