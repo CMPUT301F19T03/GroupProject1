@@ -28,6 +28,10 @@ import static junit.framework.TestCase.assertTrue;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 
+/**
+ * Edit function also secondarily tests view as view is how EditTest checks to see values have changed
+ */
+
 @RunWith(AndroidJUnit4.class)
 public class EditTest {
     private Solo solo;
@@ -42,6 +46,7 @@ public class EditTest {
         solo.assertCurrentActivity("Wrong Activity", Login.class);
         solo.enterText((EditText) solo.getView(R.id.userText), "test_user_tim");
         solo.clickOnButton("confirm");
+        solo.sleep(5000);
         solo.assertCurrentActivity("Wrong Activity", MoodHistory.class);
         solo.clickOnButton("Add");
         solo.assertCurrentActivity("Wrong Activity", Add.class);
@@ -55,6 +60,9 @@ public class EditTest {
 
     @Test
     // How I got the button click to work: https://stackoverflow.com/questions/21479646/unable-to-click-on-imageview-in-robotium/21480263
+    /**
+     * Tests if editing a mood actually changes it
+     */
     public void changeMood() {
         solo.assertCurrentActivity("Wrong Activity",MoodHistory.class);
         View view = solo.getView("ListEdit");
@@ -72,6 +80,10 @@ public class EditTest {
         View button = solo.getView(R.id.returnButton);
         solo.clickOnView(button);
     }
+
+    /**
+     * Tests if text edits are actually applied
+     */
     @Test
     public void changeText(){
         solo.assertCurrentActivity("Wrong Activity",MoodHistory.class);
@@ -88,6 +100,9 @@ public class EditTest {
         solo.clickOnView(button);
     }
 
+    /**
+     * Tests if changing time and time pickers function
+     */
     @Test
     public void changeTime(){
         solo.assertCurrentActivity("Wrong Activity",MoodHistory.class);
@@ -105,6 +120,10 @@ public class EditTest {
         View button = solo.getView(R.id.returnButton);
         solo.clickOnView(button);
     }
+
+    /**
+     * Tets if date changes and date pickers function
+     */
     @Test
     public void changeDate(){
         solo.assertCurrentActivity("Wrong Activity",MoodHistory.class);
@@ -123,6 +142,10 @@ public class EditTest {
         View button = solo.getView(R.id.returnButton);
         solo.clickOnView(button);
     }
+
+    /**
+     * Tets if changing location and all associated functions like edit location works
+     */
     @Test
     public void changeLocation(){
         solo.assertCurrentActivity("Wrong Activity",MoodHistory.class);
@@ -147,6 +170,9 @@ public class EditTest {
         solo.clickOnButton("confirm");
     }
 
+    /**
+     * Checks if editing social situation and spinner functions
+     */
     @Test
     public void editSocialSituation(){
         solo.assertCurrentActivity("Wrong Activity",MoodHistory.class);
