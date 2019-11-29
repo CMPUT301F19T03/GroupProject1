@@ -70,6 +70,7 @@ public class MoodHistory extends AppCompatActivity {
                         if (doc.getDocument().get("Username").equals(user.getName())) {
                             user = doc.getDocument().get("Participant", Participant.class);
                             user.setUID(doc.getDocument().getId());
+                            moodArrayList = user.getMoodHistory();
                             moodArrayAdapter.clear();
                             moodArrayAdapter.addAll(user.getMoodHistory());
                         }
