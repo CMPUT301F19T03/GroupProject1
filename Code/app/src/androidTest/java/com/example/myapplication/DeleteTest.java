@@ -4,8 +4,12 @@ import androidx.test.ext.junit.runners.AndroidJUnit4;
 import androidx.test.platform.app.InstrumentationRegistry;
 import androidx.test.rule.ActivityTestRule;
 
+import android.util.Log;
 import android.view.View;
+import android.widget.ArrayAdapter;
 import android.widget.EditText;
+import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.ListView;
 import com.robotium.solo.Solo;
 import org.junit.After;
@@ -13,6 +17,9 @@ import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+
+import java.lang.reflect.Array;
+
 import static junit.framework.TestCase.assertTrue;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
@@ -30,13 +37,7 @@ public class DeleteTest {
         solo = new Solo(InstrumentationRegistry.getInstrumentation(), rule.getActivity());
         //initialize the ShowActivity environment before testing
         solo.assertCurrentActivity("Wrong Activity", Login.class);
-        solo.enterText((EditText) solo.getView(R.id.userText), "test_user");
-        solo.clickOnButton("confirm");
-        solo.assertCurrentActivity("Wrong Activity", MoodHistory.class);
-        solo.clickOnButton("Add");
-        solo.assertCurrentActivity("Wrong Activity", Add.class);
-        solo.clickOnImageButton(2);
-        solo.enterText((EditText) solo.getView(R.id.addReasonText), "test 1 to delete");
+        solo.enterText((EditText) solo.getView(R.id.userText), "test_user_delete");
         solo.clickOnButton("confirm");
 
     }
@@ -51,14 +52,123 @@ public class DeleteTest {
      */
     @Test
     public void deleteList() {
-        // Asserts that the current activity is the MainActivity. Otherwise, show “Wrong Activity”
-        solo.clickInList(1);
-        solo.clickOnButton("Delete");
-        solo.assertCurrentActivity("Wrong Activity", MoodHistory.class);
-        solo.goBack();
-        solo.assertCurrentActivity("Wrong Activity", Login.class);
 
+        solo.assertCurrentActivity("Wrong Activity 1", MoodHistory.class);
+        solo.clickOnButton("Add");
+        solo.clickOnButton("confirm");
+
+        // Asserts that the current activity is the MainActivity. Otherwise, show “Wrong Activity”
+        ListView moodHistory = (ListView)solo.getView(R.id.mood_history);
+        ArrayAdapter<Mood> adapt = (ArrayAdapter<Mood>) moodHistory.getAdapter();
+        while (adapt.getCount() > 0){
+            ImageButton delete = moodHistory.getChildAt(0).findViewById(R.id.ListDelete);
+            solo.clickOnView(delete);
+            solo.sleep(500);
+        }
+        if (moodHistory.getCount() == 0){
+            Log.d("myTag","Count: "+moodHistory.getCount());
+        }else{
+            assertTrue(1 == -1);
+        }
     }
+
+    /**
+     * Delete element somewhere in the middle and then verify list
+     *
+     */
+    @Test
+    public void deletemid() {
+
+        solo.assertCurrentActivity("Wrong Activity 1", MoodHistory.class);
+        solo.clickOnButton("Add");
+        solo.clickOnButton("confirm");
+
+        solo.clickOnButton("Add");
+        solo.scrollViewToSide(solo.getView(R.id.AddviewPager), solo.LEFT);
+        solo.scrollViewToSide(solo.getView(R.id.AddviewPager), solo.LEFT);
+        solo.clickOnButton("confirm");
+
+        solo.clickOnButton("Add");
+        solo.clickOnButton("confirm");
+
+        // Asserts that the current activity is the MainActivity. Otherwise, show “Wrong Activity”
+        ListView moodHistory = (ListView)solo.getView(R.id.mood_history);
+
+        ImageButton delete = moodHistory.getChildAt(1).findViewById(R.id.ListDelete);
+        solo.clickOnView(delete);
+        solo.sleep(500);
+
+        if (moodHistory.getCount() == 2){
+            Log.d("myTag","Count: "+moodHistory.getCount());
+        }else{
+            assertTrue(1 == -1);
+        }
+        solo.clickInList(1);
+        ImageView emote = (ImageView) solo.getView(R.id.emoticonView);
+
+        if (emote.getDrawable().getConstantState().equals(solo.getCurrentActivity().getResources().getDrawable(R.drawable.neutral).getConstantState())){
+            Log.d("myTag","middle delete works");
+        }else{
+            assertTrue(1==11);
+        }
+        solo.clickOnButton("Return to Mood History");
+        ArrayAdapter<Mood> adapt = (ArrayAdapter<Mood>) moodHistory.getAdapter();
+
+        while (adapt.getCount() > 0){
+            ImageButton delete2 = moodHistory.getChildAt(0).findViewById(R.id.ListDelete);
+            solo.clickOnView(delete2);
+            solo.sleep(500);
+        }
+    }
+    /**
+     * Delete element somewhere at the end and then verify list
+     *
+     */
+    @Test
+    public void deleteend() {
+
+        solo.assertCurrentActivity("Wrong Activity 1", MoodHistory.class);
+        solo.clickOnButton("Add");
+        solo.clickOnButton("confirm");
+
+        solo.clickOnButton("Add");
+        solo.scrollViewToSide(solo.getView(R.id.AddviewPager), solo.LEFT);
+        solo.scrollViewToSide(solo.getView(R.id.AddviewPager), solo.LEFT);
+        solo.clickOnButton("confirm");
+
+        solo.clickOnButton("Add");
+        solo.clickOnButton("confirm");
+
+        // Asserts that the current activity is the MainActivity. Otherwise, show “Wrong Activity”
+        ListView moodHistory = (ListView)solo.getView(R.id.mood_history);
+
+        ImageButton delete = moodHistory.getChildAt(2).findViewById(R.id.ListDelete);
+        solo.clickOnView(delete);
+        solo.sleep(500);
+
+        if (moodHistory.getCount() == 2){
+            Log.d("myTag","Count: "+moodHistory.getCount());
+        }else{
+            assertTrue(1 == -1);
+        }
+        solo.clickInList(2);
+        ImageView emote = (ImageView) solo.getView(R.id.emoticonView);
+
+        if (emote.getDrawable().getConstantState().equals(solo.getCurrentActivity().getResources().getDrawable(R.drawable.worst).getConstantState())){
+            Log.d("myTag","middle delete works");
+        }else{
+            assertTrue(1==11);
+        }
+        solo.clickOnButton("Return to Mood History");
+        ArrayAdapter<Mood> adapt = (ArrayAdapter<Mood>) moodHistory.getAdapter();
+
+        while (adapt.getCount() > 0){
+            ImageButton delete2 = moodHistory.getChildAt(0).findViewById(R.id.ListDelete);
+            solo.clickOnView(delete2);
+            solo.sleep(500);
+        }
+    }
+
 
 
 
